@@ -2,4 +2,7 @@
     <string name="app_name">EstherProject</string>
     <string name="create_account">Create Account</string>
     <string name="import_account">Import Account</string>
+    <string name="password">Password</string>
+    <string name="repeat_password">Repeat Password</string>
+    <string name="private_key">Private key</string>
 </resources>
