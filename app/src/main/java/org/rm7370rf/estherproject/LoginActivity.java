@@ -1,6 +1,8 @@
 package org.rm7370rf.estherproject;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -10,9 +12,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.rm7370rf.estherproject.utils.Toast;
 import org.rm7370rf.estherproject.utils.Verifier;
+import org.web3j.crypto.Credentials;
 import org.web3j.crypto.ECKeyPair;
 import org.web3j.crypto.Keys;
+import org.web3j.crypto.Wallet;
+import org.web3j.crypto.WalletUtils;
+import org.web3j.utils.Numeric;
 
+import java.io.File;
+import java.math.BigInteger;
 import java.security.Provider;
 import java.security.Security;
 import java.util.ArrayList;
@@ -21,6 +29,8 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static org.rm7370rf.estherproject.utils.Config.WALLET;
+
 public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +38,6 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
         setupBouncyCastle();
-
     }
 
     private void setupBouncyCastle() {
@@ -49,7 +58,6 @@ public class LoginActivity extends AppCompatActivity {
         Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
         Security.insertProviderAt(new BouncyCastleProvider(), 1);
     }
-
 
     @OnClick({R.id.createAccountBtn, R.id.importAccountBtn})
     public void onClick(View view) {
@@ -75,6 +83,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
         List<EditText> editTextList = dialog.getEditTextList(resourceList);
+        //TODO: Add ProgressBar to Button
         dialog.setOnClickListener(v -> {
             try {
                 String password = editTextList.get(0).getText().toString(),
@@ -87,8 +96,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 switch (view.getId()) {
                     case R.id.createAccountBtn:
-                        ECKeyPair ecKeyPair = Keys.createEcKeyPair();
-                        privateKey = "0x" + ecKeyPair.getPrivateKey().toString(16);
+                        privateKey = Numeric.toHexStringWithPrefix(Keys.createEcKeyPair().getPrivateKey());
                         Log.d("PRIVATE_KEY", "|" + privateKey + "|");
                         Log.d("POSITIVE", "CREATE");
                         break;
@@ -99,14 +107,28 @@ public class LoginActivity extends AppCompatActivity {
                     default:
                         return;
                 }
+
                 Verifier.verifyPrivateKey(this, privateKey);
+
+                Credentials credentials = Credentials.create(privateKey);
+
+                File file = new File(getApplicationInfo().dataDir + "/keystore");
+
+                if(!file.exists()) {
+                    file.mkdir();
+                }
+
+                WalletUtils.generateWalletFile(password, credentials.getEcKeyPair(), file, false);
+
+                SharedPreferences.Editor ed = getPreferences(MODE_PRIVATE).edit();
+                ed.putString(WALLET, file.getPath() + "/" + file.getName());
+                ed.commit();
             }
             catch (Exception e) {
                 e.printStackTrace();
                 Toast.show(this, e.getLocalizedMessage());
             }
         });
-
         dialog.show();
     }
 }
