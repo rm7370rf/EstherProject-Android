@@ -16,7 +16,7 @@ public class Verifier {
         if(privateKey.isEmpty()) {
             throw new VerifierException(context, private_key_required);
         }
-        if(WalletUtils.isValidPrivateKey(privateKey)) {
+        if(!WalletUtils.isValidPrivateKey(privateKey)) {
             throw new VerifierException(context, invalid_private_key);
         }
     }
