@@ -31,11 +31,11 @@ public class AMDialog {
         builder.setView(view);
     }
 
-    public List<EditText> getEditTextList(int... resources) {
+    public List<EditText> getEditTextList(List<Integer> resourceList) {
         List<EditText> list = new ArrayList<>();
 
-        for (int resource : resources) {
-            list.add(activity.findViewById(resource));
+        for (int resource : resourceList) {
+            list.add(view.findViewById(resource));
         }
 
         return list;
