@@ -28,9 +28,16 @@
         android:inputType="textPassword" />
 
     <Button
-        android:id="@+id/createAccountBtn"
+        android:id="@+id/positiveBtn"
         android:layout_margin="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/create_account" />
+
+    <Button
+        android:id="@+id/negativeBtn"
+        android:layout_margin="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/cancel" />
 </LinearLayout>
