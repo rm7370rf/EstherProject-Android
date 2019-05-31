@@ -7,11 +7,14 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.rm7370rf.estherproject.utils.Toast;
 import org.rm7370rf.estherproject.utils.Verifier;
 import org.web3j.crypto.ECKeyPair;
 import org.web3j.crypto.Keys;
 
+import java.security.Provider;
+import java.security.Security;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +27,29 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+        setupBouncyCastle();
+
     }
+
+    private void setupBouncyCastle() {
+        //Based on https://github.com/web3j/web3j/issues/915
+        final Provider provider = Security.getProvider(BouncyCastleProvider.PROVIDER_NAME);
+        if (provider == null) {
+            // Web3j will set up the provider lazily when it's first used.
+            return;
+        }
+        if (provider.getClass().equals(BouncyCastleProvider.class)) {
+            // BC with same package name, shouldn't happen in real life.
+            return;
+        }
+        // Android registers its own BC provider. As it might be outdated and might not include
+        // all needed ciphers, we substitute it with a known BC bundled in the app.
+        // Android's BC has its package rewritten to "com.android.org.bouncycastle" and because
+        // of that it's possible to have another BC implementation loaded in VM.
+        Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
+        Security.insertProviderAt(new BouncyCastleProvider(), 1);
+    }
+
 
     @OnClick({R.id.createAccountBtn, R.id.importAccountBtn})
     public void onClick(View view) {
@@ -63,7 +88,7 @@ public class LoginActivity extends AppCompatActivity {
                 switch (view.getId()) {
                     case R.id.createAccountBtn:
                         ECKeyPair ecKeyPair = Keys.createEcKeyPair();
-                        privateKey = ecKeyPair.getPrivateKey().toString(16);
+                        privateKey = "0x" + ecKeyPair.getPrivateKey().toString(16);
                         Log.d("PRIVATE_KEY", "|" + privateKey + "|");
                         Log.d("POSITIVE", "CREATE");
                         break;
