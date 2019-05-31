@@ -11,7 +11,11 @@ import androidx.appcompat.app.AlertDialog;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 public class AMDialog {
+    private AMDialog.OnClickListener listener;
     private Activity activity;
     private AlertDialog.Builder builder;
 
@@ -22,6 +26,7 @@ public class AMDialog {
 
     public void setLayout(int resource) {
         View builderView = activity.getLayoutInflater().inflate(resource, null);
+        ButterKnife.bind(activity, builderView);
         builder.setView(builderView);
     }
 
@@ -35,7 +40,28 @@ public class AMDialog {
         return list;
     }
 
+    @OnClick({R.id.positiveBtn, R.id.negativeBtn})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.positiveBtn:
+                listener.onPositiveClick();
+                break;
+            case R.id.negativeBtn:
+                listener.onNegativeClick();
+                break;
+        }
+    }
+
+    public void setOnClickListener(AMDialog.OnClickListener listener) {
+        this.listener = listener;
+    }
+
     public void show() {
         builder.create().show();
+    }
+
+    interface OnClickListener {
+        void onPositiveClick();
+        void onNegativeClick();
     }
 }
