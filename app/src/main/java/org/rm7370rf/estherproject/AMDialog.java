@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.appcompat.app.AlertDialog;
@@ -15,9 +16,10 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class AMDialog {
-    private AMDialog.OnClickListener listener;
     private Activity activity;
     private AlertDialog.Builder builder;
+    private AlertDialog alertDialog;
+    private View view;
 
     public AMDialog(Activity activity) {
         this.activity = activity;
@@ -25,9 +27,8 @@ public class AMDialog {
     }
 
     public void setLayout(int resource) {
-        View builderView = activity.getLayoutInflater().inflate(resource, null);
-        ButterKnife.bind(activity, builderView);
-        builder.setView(builderView);
+        view = activity.getLayoutInflater().inflate(resource, null);
+        builder.setView(view);
     }
 
     public List<EditText> getEditTextList(int... resources) {
@@ -40,28 +41,16 @@ public class AMDialog {
         return list;
     }
 
-    @OnClick({R.id.positiveBtn, R.id.negativeBtn})
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.positiveBtn:
-                listener.onPositiveClick();
-                break;
-            case R.id.negativeBtn:
-                listener.onNegativeClick();
-                break;
-        }
-    }
+    public void setOnClickListener(View.OnClickListener listener) {
+        Button positiveBtn = view.findViewById(R.id.positiveBtn),
+               negativeBtn = view.findViewById(R.id.negativeBtn);
 
-    public void setOnClickListener(AMDialog.OnClickListener listener) {
-        this.listener = listener;
+        positiveBtn.setOnClickListener(v -> listener.onClick(positiveBtn));
+        negativeBtn.setOnClickListener(v-> alertDialog.cancel());
     }
 
     public void show() {
-        builder.create().show();
-    }
-
-    interface OnClickListener {
-        void onPositiveClick();
-        void onNegativeClick();
+        alertDialog = builder.create();
+        alertDialog.show();
     }
 }
