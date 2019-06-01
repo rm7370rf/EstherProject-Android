@@ -14,4 +14,5 @@
     <string name="save">Save</string>
     <string name="account_saved">Account saved</string>
     <string name="account_already_exists">Account Already Exists</string>
+    <string name="topics">Topics</string>
 </resources>
