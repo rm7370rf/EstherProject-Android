@@ -7,13 +7,16 @@ import org.web3j.crypto.WalletUtils;
 
 import static org.rm7370rf.estherproject.R.string.invalid_private_key;
 import static org.rm7370rf.estherproject.R.string.password_required;
+import static org.rm7370rf.estherproject.R.string.account_already_exists;
 import static org.rm7370rf.estherproject.R.string.passwords_do_not_match;
 import static org.rm7370rf.estherproject.R.string.private_key_required;
 import static org.rm7370rf.estherproject.R.string.repeat_password_required;
+import static org.rm7370rf.estherproject.utils.Config.PREFS;
+import static org.rm7370rf.estherproject.utils.Config.WALLET;
 
 public class Verifier {
     public static void verifyPrivateKey(Context context, String privateKey) throws VerifierException {
-        if(privateKey.isEmpty()) {
+        if(privateKey == null || privateKey.isEmpty()) {
             throw new VerifierException(context, private_key_required);
         }
         if(!WalletUtils.isValidPrivateKey(privateKey)) {
@@ -36,6 +39,11 @@ public class Verifier {
     public static void verifyPasswords(Context context, String password, String repeatPassword) throws VerifierException {
         if(!password.equals(repeatPassword)) {
             throw new VerifierException(context, passwords_do_not_match);
+        }
+    }
+    public static void verifyAccountExistence(Context context) throws VerifierException {
+        if(context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).contains(WALLET)) {
+            throw new VerifierException(context, account_already_exists);
         }
     }
 }
