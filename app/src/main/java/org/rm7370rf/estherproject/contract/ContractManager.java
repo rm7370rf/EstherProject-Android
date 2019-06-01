@@ -32,7 +32,7 @@ public class ContractManager {
         this.account = account;
     }
 
-    private String callFunction(Function function) throws Exception {
+    public String callFunction(Function function) throws Exception {
         String encodedFunction = FunctionEncoder.encode(function);
 
         EthCall response = web3j.ethCall(
@@ -43,7 +43,7 @@ public class ContractManager {
         return response.getValue();
     }
 
-    private String executeFunction(String password, Function function, String contractAddress) throws Exception {
+    public String executeFunction(String password, Function function) throws Exception {
         Credentials credentials = WalletUtils.loadCredentials(password, account.getWalletFolder() + account.getWalletName());
         BigInteger nonce = getNonce(credentials.getAddress());
 
@@ -53,7 +53,7 @@ public class ContractManager {
                 nonce,
                 GAS_PRICE,
                 GAS_LIMIT,
-                contractAddress,
+                CONTRACT_ADDRESS,
                 encodedFunction);
 
         byte[] signedMessage = TransactionEncoder.signMessage(rawTransaction, credentials);
