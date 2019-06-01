@@ -5,30 +5,38 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Topic {
-    private final BigInteger id;
-    private final String subject;
-    private final String message;
-    private final String userAddress;
-    private final BigInteger timestamp;
-    private final BigInteger numberOfPosts;
-    private final List<Post> posts;
+    private BigInteger id;
+    private String subject;
+    private String message;
+    private String userAddress;
+    private BigInteger timestamp;
+    private BigInteger numberOfPosts;
+    private List<Post> posts = new ArrayList<>();
 
-    private Topic(BigInteger id, String subject, String message, String userAddress, BigInteger timestamp, BigInteger numberOfPosts, List<Post> posts) {
+    public Topic() { }
+
+    public void setId(BigInteger id) {
         this.id = id;
+    }
+
+    public void setSubject(String subject) {
         this.subject = subject;
+    }
+
+    public void setMessage(String message) {
         this.message = message;
+    }
+
+    public void setUserAddress(String userAddress) {
         this.userAddress = userAddress;
+    }
+
+    public void setTimestamp(BigInteger timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public void setNumberOfPosts(BigInteger numberOfPosts) {
         this.numberOfPosts = numberOfPosts;
-        this.posts = posts;
-    }
-
-    public static Topic create(BigInteger id, String subject, String message, String userAddress, BigInteger timestamp, BigInteger numberOfPosts) {
-        return new Topic(id, subject, message, userAddress, timestamp, numberOfPosts, new ArrayList<>());
-    }
-
-    public static Topic create(BigInteger id, String subject, String message, String userAddress, BigInteger timestamp, BigInteger numberOfPosts, List<Post> posts) {
-        return new Topic(id, subject, message, userAddress, timestamp, numberOfPosts, posts);
     }
 
     public BigInteger getId() {
