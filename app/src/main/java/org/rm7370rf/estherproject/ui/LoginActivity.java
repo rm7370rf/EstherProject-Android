@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.rm7370rf.estherproject.R;
+import org.rm7370rf.estherproject.model.Account;
 import org.rm7370rf.estherproject.utils.AMDialog;
 import org.rm7370rf.estherproject.utils.Toast;
 import org.rm7370rf.estherproject.utils.Verifier;
@@ -33,6 +34,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableCompletableObserver;
 import io.reactivex.schedulers.Schedulers;
+import io.realm.Realm;
 
 import static org.rm7370rf.estherproject.R.string.account_saved;
 import static org.rm7370rf.estherproject.utils.Config.PREFS;
@@ -131,11 +133,14 @@ public class LoginActivity extends AppCompatActivity {
                     file.mkdir();
                 }
 
-                WalletUtils.generateWalletFile(password, credentials.getEcKeyPair(), file, false);
+                String walletName = WalletUtils.generateWalletFile(password, credentials.getEcKeyPair(), file, false);
 
-                SharedPreferences.Editor ed = getSharedPreferences(PREFS, MODE_PRIVATE).edit();
-                ed.putString(WALLET, file.getPath() + "/" + file.getName());
-                ed.commit();
+                Account account = new Account();
+                account.setWalletName(walletName);
+                account.setWalletFolder(file.getPath());
+                account.setWalletAddress(credentials.getAddress());
+
+                Realm.getDefaultInstance().executeTransaction(realm -> realm.copyToRealm(account));
             }).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeWith(new DisposableCompletableObserver() {
