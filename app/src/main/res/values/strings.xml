@@ -15,4 +15,8 @@
     <string name="account_saved">Account saved</string>
     <string name="account_already_exists">Account Already Exists</string>
     <string name="topics">Topics</string>
+    <string name="set_username">Set username</string>
+    <string name="logout">Logout</string>
+    <string name="balance">Balance</string>
+    <string name="account_data">Account Data</string>
 </resources>
