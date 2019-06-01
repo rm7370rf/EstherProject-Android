@@ -1,20 +1,18 @@
-package org.rm7370rf.estherproject;
+package org.rm7370rf.estherproject.ui;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.Animation;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.ekalips.fancybuttonproj.FancyButton;
-
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.rm7370rf.estherproject.R;
+import org.rm7370rf.estherproject.utils.AMDialog;
 import org.rm7370rf.estherproject.utils.Toast;
 import org.rm7370rf.estherproject.utils.Verifier;
 import org.web3j.crypto.Credentials;
@@ -30,7 +28,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -44,8 +41,6 @@ import static org.rm7370rf.estherproject.utils.Verifier.isAccountExists;
 import static org.rm7370rf.estherproject.utils.Verifier.verifyAccountExistence;
 
 public class LoginActivity extends AppCompatActivity {
-    @BindView(R.id.progressBar)
-    ProgressBar progressBar;
     private Disposable disposable;
 
     @Override

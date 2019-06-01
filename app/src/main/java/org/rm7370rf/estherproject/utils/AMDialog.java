@@ -1,21 +1,17 @@
-package org.rm7370rf.estherproject;
+package org.rm7370rf.estherproject.utils;
 
 import android.app.Activity;
-import android.content.Context;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.appcompat.app.AlertDialog;
 
 import com.ekalips.fancybuttonproj.FancyButton;
 
+import org.rm7370rf.estherproject.R;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 public class AMDialog {
     private Activity activity;
@@ -56,7 +52,7 @@ public class AMDialog {
         alertDialog.show();
     }
 
-    interface OnClickListener {
+    public interface OnClickListener {
         void onClick(FancyButton button);
     }
 }

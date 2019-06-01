@@ -1,4 +1,4 @@
-package org.rm7370rf.estherproject;
+package org.rm7370rf.estherproject.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+
+import org.rm7370rf.estherproject.R;
 
 import static org.rm7370rf.estherproject.R.string.topics;
 
