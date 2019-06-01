@@ -9,6 +9,7 @@ public class Topic {
     private String subject;
     private String message;
     private String userAddress;
+    private String userName;
     private BigInteger timestamp;
     private BigInteger numberOfPosts;
     private List<Post> posts = new ArrayList<>();
@@ -29,6 +30,10 @@ public class Topic {
 
     public void setUserAddress(String userAddress) {
         this.userAddress = userAddress;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public void setTimestamp(BigInteger timestamp) {
@@ -53,6 +58,10 @@ public class Topic {
 
     public String getUserAddress() {
         return userAddress;
+    }
+
+    public String getUserName() {
+        return userName;
     }
 
     public BigInteger getTimestamp() {
