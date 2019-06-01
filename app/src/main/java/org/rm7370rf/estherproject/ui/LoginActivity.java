@@ -37,8 +37,6 @@ import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
 
 import static org.rm7370rf.estherproject.R.string.account_saved;
-import static org.rm7370rf.estherproject.utils.Config.PREFS;
-import static org.rm7370rf.estherproject.utils.Config.WALLET;
 import static org.rm7370rf.estherproject.utils.Verifier.isAccountExists;
 import static org.rm7370rf.estherproject.utils.Verifier.verifyAccountExistence;
 
@@ -52,7 +50,7 @@ public class LoginActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         setupBouncyCastle();
 
-        if(isAccountExists(this)) {
+        if(isAccountExists()) {
             startTopicListActivity();
         }
     }
@@ -167,7 +165,6 @@ public class LoginActivity extends AppCompatActivity {
         });
         dialog.show();
     }
-
 
     @Override
     protected void onDestroy() {

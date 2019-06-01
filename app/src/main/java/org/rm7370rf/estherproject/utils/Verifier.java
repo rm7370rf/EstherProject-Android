@@ -3,7 +3,10 @@ package org.rm7370rf.estherproject.utils;
 import android.content.Context;
 
 import org.rm7370rf.estherproject.expceptions.VerifierException;
+import org.rm7370rf.estherproject.model.Account;
 import org.web3j.crypto.WalletUtils;
+
+import io.realm.Realm;
 
 import static org.rm7370rf.estherproject.R.string.invalid_private_key;
 import static org.rm7370rf.estherproject.R.string.password_required;
@@ -11,8 +14,6 @@ import static org.rm7370rf.estherproject.R.string.account_already_exists;
 import static org.rm7370rf.estherproject.R.string.passwords_do_not_match;
 import static org.rm7370rf.estherproject.R.string.private_key_required;
 import static org.rm7370rf.estherproject.R.string.repeat_password_required;
-import static org.rm7370rf.estherproject.utils.Config.PREFS;
-import static org.rm7370rf.estherproject.utils.Config.WALLET;
 
 public class Verifier {
     public static void verifyPrivateKey(Context context, String privateKey) throws VerifierException {
@@ -43,12 +44,12 @@ public class Verifier {
     }
 
     public static void verifyAccountExistence(Context context) throws VerifierException {
-        if(isAccountExists(context)) {
+        if(isAccountExists()) {
             throw new VerifierException(context, account_already_exists);
         }
     }
 
-    public static boolean isAccountExists(Context context) {
-        return context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).contains(WALLET);
+    public static boolean isAccountExists() {
+        return (Realm.getDefaultInstance().where(Account.class).count() > 0);
     }
 }
