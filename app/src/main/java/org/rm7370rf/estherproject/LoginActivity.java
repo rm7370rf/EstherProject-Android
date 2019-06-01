@@ -2,10 +2,10 @@ package org.rm7370rf.estherproject;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.Preference;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -13,25 +13,34 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.rm7370rf.estherproject.utils.Toast;
 import org.rm7370rf.estherproject.utils.Verifier;
 import org.web3j.crypto.Credentials;
-import org.web3j.crypto.ECKeyPair;
 import org.web3j.crypto.Keys;
-import org.web3j.crypto.Wallet;
 import org.web3j.crypto.WalletUtils;
 import org.web3j.utils.Numeric;
 
 import java.io.File;
-import java.math.BigInteger;
 import java.security.Provider;
 import java.security.Security;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.Completable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.observers.DisposableCompletableObserver;
+import io.reactivex.schedulers.Schedulers;
 
+import static org.rm7370rf.estherproject.R.string.account_saved;
+import static org.rm7370rf.estherproject.utils.Config.PREFS;
 import static org.rm7370rf.estherproject.utils.Config.WALLET;
 
 public class LoginActivity extends AppCompatActivity {
+    @BindView(R.id.progressBar)
+    ProgressBar progressBar;
+    private Disposable disposable;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,50 +94,77 @@ public class LoginActivity extends AppCompatActivity {
         List<EditText> editTextList = dialog.getEditTextList(resourceList);
         //TODO: Add ProgressBar to Button
         dialog.setOnClickListener(v -> {
-            try {
+            this.disposable = Completable.fromAction(() -> {
+//                verifyAccountExistence(this); //TODO: Need Uncomment
+
                 String password = editTextList.get(0).getText().toString(),
-                       repeatPassword = editTextList.get(1).getText().toString(),
-                       privateKey;
+                        repeatPassword = editTextList.get(1).getText().toString(),
+                        privateKey = "";
 
                 Verifier.verifyPassword(this, password);
                 Verifier.verifyRepeatPassword(this, repeatPassword);
                 Verifier.verifyPasswords(this, password, repeatPassword);
 
-                switch (view.getId()) {
-                    case R.id.createAccountBtn:
-                        privateKey = Numeric.toHexStringWithPrefix(Keys.createEcKeyPair().getPrivateKey());
-                        Log.d("PRIVATE_KEY", "|" + privateKey + "|");
-                        Log.d("POSITIVE", "CREATE");
-                        break;
-                    case R.id.importAccountBtn:
-                        privateKey = editTextList.get(2).getText().toString();
-                        Log.d("POSITIVE", "IMPORT");
-                        break;
-                    default:
-                        return;
+                if (view.getId() == R.id.importAccountBtn) {
+                    privateKey = editTextList.get(2).getText().toString();
+                } else {
+                    privateKey = Numeric.toHexStringWithPrefix(Keys.createEcKeyPair().getPrivateKey());
                 }
 
                 Verifier.verifyPrivateKey(this, privateKey);
+
+                Thread.sleep(2000); //TODO: Remove
 
                 Credentials credentials = Credentials.create(privateKey);
 
                 File file = new File(getApplicationInfo().dataDir + "/keystore");
 
-                if(!file.exists()) {
+                if (!file.exists()) {
                     file.mkdir();
                 }
 
                 WalletUtils.generateWalletFile(password, credentials.getEcKeyPair(), file, false);
 
-                SharedPreferences.Editor ed = getPreferences(MODE_PRIVATE).edit();
+                SharedPreferences.Editor ed = getSharedPreferences(PREFS, MODE_PRIVATE).edit();
                 ed.putString(WALLET, file.getPath() + "/" + file.getName());
                 ed.commit();
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-                Toast.show(this, e.getLocalizedMessage());
-            }
+            }).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeWith(new DisposableCompletableObserver() {
+                        @Override
+                        public void onStart() {
+                            progressBar.setVisibility(View.VISIBLE);
+                        }
+
+                        @Override
+                        public void onComplete() {
+                            System.out.println("ON_COMPLETE");
+                            Toast.show(view.getContext(), account_saved);
+                            progressBar.setVisibility(View.GONE);
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            e.printStackTrace();
+                            System.out.println("ON_ERROR");
+                            Toast.show(view.getContext(), e.getLocalizedMessage());
+                            progressBar.setVisibility(View.GONE);
+                        }
+                    });
         });
         dialog.show();
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        this.disposable.dispose();
+        if(disposable.isDisposed()) {
+            Log.d("DISPOSABLE", "YES");
+        }
+        else {
+            Log.d("DISPOSABLE", "NO");
+        }
+        super.onDestroy();
     }
 }

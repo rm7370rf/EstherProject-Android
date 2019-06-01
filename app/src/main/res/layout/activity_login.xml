@@ -8,6 +8,16 @@
     android:layout_height="match_parent"
     tools:context=".LoginActivity">
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:visibility="gone"
+        android:indeterminate="true"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="15dp"
+        android:layout_gravity="top"
+        app:layout_constraintTop_toTopOf="parent"/>
+
     <Button
         android:id="@+id/createAccountBtn"
         android:layout_width="wrap_content"
@@ -48,4 +58,10 @@
         android:id="@+id/guidelineRight"
         android:orientation="vertical"
         app:layout_constraintGuide_end="25dp"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/guidelineTop"
+        android:orientation="horizontal"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
