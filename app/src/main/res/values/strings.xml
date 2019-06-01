@@ -12,4 +12,6 @@
     <string name="passwords_do_not_match">Passwords Do Not Match</string>
     <string name="invalid_private_key">Invalid Private Key</string>
     <string name="save">Save</string>
+    <string name="account_saved">Account saved</string>
+    <string name="account_already_exists">Account Already Exists</string>
 </resources>
