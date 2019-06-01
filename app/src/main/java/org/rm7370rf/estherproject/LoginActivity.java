@@ -1,5 +1,6 @@
 package org.rm7370rf.estherproject;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -39,6 +40,8 @@ import io.reactivex.schedulers.Schedulers;
 import static org.rm7370rf.estherproject.R.string.account_saved;
 import static org.rm7370rf.estherproject.utils.Config.PREFS;
 import static org.rm7370rf.estherproject.utils.Config.WALLET;
+import static org.rm7370rf.estherproject.utils.Verifier.isAccountExists;
+import static org.rm7370rf.estherproject.utils.Verifier.verifyAccountExistence;
 
 public class LoginActivity extends AppCompatActivity {
     @BindView(R.id.progressBar)
@@ -51,6 +54,14 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
         setupBouncyCastle();
+
+        if(isAccountExists(this)) {
+            startTopicListActivity();
+        }
+    }
+
+    private void startTopicListActivity() {
+        startActivity(new Intent(this, TopicListActivity.class));
     }
 
     private void setupBouncyCastle() {
@@ -98,8 +109,7 @@ public class LoginActivity extends AppCompatActivity {
 
         dialog.setOnClickListener(button -> {
             this.disposable = Completable.fromAction(() -> {
-//                verifyAccountExistence(this); //TODO: Need Uncomment
-
+                verifyAccountExistence(this);
                 String password = editTextList.get(0).getText().toString(),
                         repeatPassword = editTextList.get(1).getText().toString(),
                         privateKey = "";
@@ -141,9 +151,9 @@ public class LoginActivity extends AppCompatActivity {
 
                         @Override
                         public void onComplete() {
-                            System.out.println("ON_COMPLETE");
                             Toast.show(button.getContext(), account_saved);
                             button.expand();
+                            startTopicListActivity();
                         }
 
                         @Override
