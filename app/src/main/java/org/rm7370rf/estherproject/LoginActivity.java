@@ -4,10 +4,14 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.ekalips.fancybuttonproj.FancyButton;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.rm7370rf.estherproject.utils.Toast;
@@ -68,8 +72,8 @@ public class LoginActivity extends AppCompatActivity {
         Security.insertProviderAt(new BouncyCastleProvider(), 1);
     }
 
-    @OnClick({R.id.createAccountBtn, R.id.importAccountBtn})
     public void onClick(View view) {
+        System.out.println("Click");
         int dialogId;
         List<Integer> resourceList = new ArrayList<>();
         resourceList.add(R.id.passwordEdit);
@@ -90,10 +94,9 @@ public class LoginActivity extends AppCompatActivity {
 
         dialog.setLayout(dialogId);
 
-
         List<EditText> editTextList = dialog.getEditTextList(resourceList);
-        //TODO: Add ProgressBar to Button
-        dialog.setOnClickListener(v -> {
+
+        dialog.setOnClickListener(button -> {
             this.disposable = Completable.fromAction(() -> {
 //                verifyAccountExistence(this); //TODO: Need Uncomment
 
@@ -133,22 +136,22 @@ public class LoginActivity extends AppCompatActivity {
                     .subscribeWith(new DisposableCompletableObserver() {
                         @Override
                         public void onStart() {
-                            progressBar.setVisibility(View.VISIBLE);
+                            button.collapse();
                         }
 
                         @Override
                         public void onComplete() {
                             System.out.println("ON_COMPLETE");
-                            Toast.show(view.getContext(), account_saved);
-                            progressBar.setVisibility(View.GONE);
+                            Toast.show(button.getContext(), account_saved);
+                            button.expand();
                         }
 
                         @Override
                         public void onError(Throwable e) {
                             e.printStackTrace();
                             System.out.println("ON_ERROR");
-                            Toast.show(view.getContext(), e.getLocalizedMessage());
-                            progressBar.setVisibility(View.GONE);
+                            Toast.show(button.getContext(), e.getLocalizedMessage());
+                            button.expand();
                         }
                     });
         });

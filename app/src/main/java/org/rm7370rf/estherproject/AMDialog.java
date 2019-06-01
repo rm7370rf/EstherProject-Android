@@ -9,6 +9,8 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AlertDialog;
 
+import com.ekalips.fancybuttonproj.FancyButton;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,9 +43,9 @@ public class AMDialog {
         return list;
     }
 
-    public void setOnClickListener(View.OnClickListener listener) {
-        Button positiveBtn = view.findViewById(R.id.positiveBtn),
-               negativeBtn = view.findViewById(R.id.negativeBtn);
+    public void setOnClickListener(AMDialog.OnClickListener listener) {
+        FancyButton positiveBtn = view.findViewById(R.id.positiveBtn),
+                               negativeBtn = view.findViewById(R.id.negativeBtn);
 
         positiveBtn.setOnClickListener(v -> listener.onClick(positiveBtn));
         negativeBtn.setOnClickListener(v-> alertDialog.cancel());
@@ -52,5 +54,9 @@ public class AMDialog {
     public void show() {
         alertDialog = builder.create();
         alertDialog.show();
+    }
+
+    interface OnClickListener {
+        void onClick(FancyButton button);
     }
 }
