@@ -41,9 +41,14 @@ public class Verifier {
             throw new VerifierException(context, passwords_do_not_match);
         }
     }
+
     public static void verifyAccountExistence(Context context) throws VerifierException {
-        if(context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).contains(WALLET)) {
+        if(isAccountExists(context)) {
             throw new VerifierException(context, account_already_exists);
         }
+    }
+
+    public static boolean isAccountExists(Context context) {
+        return context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).contains(WALLET);
     }
 }
