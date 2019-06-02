@@ -38,7 +38,7 @@ public class ContractManager {
         EthCall response = web3j.ethCall(
                 Transaction.createEthCallTransaction(account.getWalletAddress(), CONTRACT_ADDRESS, encodedFunction),
                 DefaultBlockParameterName.LATEST)
-                .sendAsync().get();
+                .send();
 
         return response.getValue();
     }
