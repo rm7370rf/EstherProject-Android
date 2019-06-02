@@ -85,6 +85,7 @@ public class Contract extends ContractManager {
                         new TypeReference<Utf8String>() {},
                         new TypeReference<Address>() {},
                         new TypeReference<Utf8String>() {},
+                        new TypeReference<Uint256>() {},
                         new TypeReference<Uint256>() {}
                 )
         );
@@ -99,7 +100,7 @@ public class Contract extends ContractManager {
         topic.setUserAddress((String) response.get(3).getValue());
         topic.setUserName((String) response.get(4).getValue());
         topic.setTimestamp((BigInteger) response.get(5).getValue());
-        topic.setNumberOfPosts((BigInteger) response.get(6).getValue());
+        topic.setNumberOfPosts(BigInteger.ZERO); //TODO: Replace to (BigInteger) response.get(6).getValue()
 
         return topic;
     }
@@ -126,6 +127,7 @@ public class Contract extends ContractManager {
 
         Post post = new Post();
         post.setId((BigInteger) response.get(0).getValue());
+        post.setTopicsId(topicId);
         post.setMessage((String) response.get(1).getValue());
         post.setUserAddress((String) response.get(2).getValue());
         post.setUserName((String) response.get(3).getValue());
