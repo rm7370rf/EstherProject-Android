@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import org.rm7370rf.estherproject.R;
@@ -26,14 +27,29 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
+import io.realm.RealmResults;
+
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import static org.rm7370rf.estherproject.R.string.topics;
 
 public class TopicListActivity extends AppCompatActivity {
+    @BindView(R.id.swipeRefreshLayout)
+    SwipeRefreshLayout swipeRefreshLayout;
+
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
+
+    @BindView(R.id.recyclerView)
+    RecyclerView recyclerView;
+
     private Disposable disposable;
     private Contract contract;
+    private TRVAdapter adapter;
+    private Realm realm = Realm.getDefaultInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,21 +57,34 @@ public class TopicListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_topic_list);
         ButterKnife.bind(this);
         setTitle(topics);
+        setContract();
+        setSwipeRefreshLayout();
+        setRecyclerAdapter();
+        updateDB(false);
+    }
 
-        Realm realm = Realm.getDefaultInstance();
-
+    private void setContract() {
         Account account = realm.where(Account.class).findFirst();
         this.contract = new Contract(realm.copyFromRealm(account));
-
         Log.d("ADDRESS", account.getWalletAddress());
         Log.d("FOLDER", account.getWalletFolder());
         Log.d("FILENAME", account.getWalletName());
         Log.d("BALANCE", "" + account.getBalance());
-
-        refreshContent();
     }
 
-    private void refreshContent() {
+    private void setRecyclerAdapter() {
+        this.adapter = new TRVAdapter(realm.where(Topic.class).findAll());
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+    }
+
+    public void setSwipeRefreshLayout() {
+        this.swipeRefreshLayout.setOnRefreshListener(() -> updateDB(true));
+    }
+
+    private void updateDB(boolean bySwipe) {
         this.disposable = Observable.create((ObservableEmitter<Topic> emitter) -> {
             try {
                 BigInteger numberOfTopics = contract.countTopics();
@@ -88,12 +117,21 @@ public class TopicListActivity extends AppCompatActivity {
                         },
                         () -> {
                             Log.d("RF", "GONE");
-                            progressBar.setVisibility(View.GONE);
+                            if(!bySwipe) {
+                                progressBar.setVisibility(View.GONE);
+                                recyclerView.setVisibility(View.VISIBLE);
+                            }
+                            else {
+                                swipeRefreshLayout.setRefreshing(false);
+                            }
 
                         },
                         i -> {
                             Log.d("RF", "VISIBLE");
-                            progressBar.setVisibility(View.VISIBLE);
+                            if(!bySwipe) {
+                                progressBar.setVisibility(View.VISIBLE);
+                                recyclerView.setVisibility(View.GONE);
+                            }
                         }
                 );
     }
@@ -108,6 +146,10 @@ public class TopicListActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        /*
+             menu.setGroupVisible(R.id.group_normal_mode, true);
+menu.setGroupVisible(R.id.group_delete_mode, false);
+         */
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_topic_list, menu);
         return true;
@@ -134,5 +176,4 @@ public class TopicListActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
-
 }
