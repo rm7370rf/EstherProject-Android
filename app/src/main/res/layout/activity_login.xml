@@ -8,16 +8,6 @@
     android:layout_height="match_parent"
     tools:context=".ui.LoginActivity">
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:visibility="gone"
-        android:indeterminate="true"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
-        android:layout_height="15dp"
-        android:layout_gravity="top"
-        app:layout_constraintTop_toTopOf="parent"/>
-
     <Button
         android:id="@+id/createAccountBtn"
         android:onClick="onClick"
