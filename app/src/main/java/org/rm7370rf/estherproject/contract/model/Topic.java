@@ -4,20 +4,31 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Topic {
-    private BigInteger id;
+import io.realm.RealmList;
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.Required;
+
+public class Topic extends RealmObject {
+    @PrimaryKey
+    private String id;
+    @Required
     private String subject;
+    @Required
     private String message;
+    @Required
     private String userAddress;
+    @Required
     private String userName;
-    private BigInteger timestamp;
-    private BigInteger numberOfPosts;
-    private List<Post> posts = new ArrayList<>();
+    @Required
+    private String timestamp;
+    @Required
+    private String numberOfPosts;
 
     public Topic() { }
 
     public void setId(BigInteger id) {
-        this.id = id;
+        this.id = String.valueOf(id);
     }
 
     public void setSubject(String subject) {
@@ -37,15 +48,15 @@ public class Topic {
     }
 
     public void setTimestamp(BigInteger timestamp) {
-        this.timestamp = timestamp;
+        this.timestamp = String.valueOf(timestamp);
     }
 
     public void setNumberOfPosts(BigInteger numberOfPosts) {
-        this.numberOfPosts = numberOfPosts;
+        this.numberOfPosts = String.valueOf(numberOfPosts);
     }
 
     public BigInteger getId() {
-        return id;
+        return new BigInteger(id);
     }
 
     public String getSubject() {
@@ -65,18 +76,10 @@ public class Topic {
     }
 
     public BigInteger getTimestamp() {
-        return timestamp;
+        return new BigInteger(timestamp);
     }
 
     public BigInteger getNumberOfPosts() {
-        return numberOfPosts;
-    }
-
-    public boolean hasPosts() {
-        return !posts.isEmpty();
-    }
-
-    public List<Post> getPosts() {
-        return posts;
+        return new BigInteger(numberOfPosts);
     }
 }
