@@ -30,9 +30,14 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.Completable;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableCompletableObserver;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
 
@@ -103,66 +108,69 @@ public class LoginActivity extends AppCompatActivity {
         List<EditText> editTextList = dialog.getEditTextList(resourceList);
 
         dialog.setOnClickListener(button -> {
-            this.disposable = Completable.fromAction(() -> {
-                verifyAccountExistence(this);
-                String password = editTextList.get(0).getText().toString(),
-                        repeatPassword = editTextList.get(1).getText().toString(),
-                        privateKey = "";
+                    //TODO: Try AndroidObservable.bindActivity
+                    Single<Account> single = Single.fromCallable(() -> {
+                        verifyAccountExistence(this);
+                        String password = editTextList.get(0).getText().toString(),
+                                repeatPassword = editTextList.get(1).getText().toString(),
+                                privateKey;
 
-                Verifier.verifyPassword(this, password);
-                Verifier.verifyRepeatPassword(this, repeatPassword);
-                Verifier.verifyPasswords(this, password, repeatPassword);
+                        Verifier.verifyPassword(this, password);
+                        Verifier.verifyRepeatPassword(this, repeatPassword);
+                        Verifier.verifyPasswords(this, password, repeatPassword);
 
-                if (view.getId() == R.id.importAccountBtn) {
-                    privateKey = editTextList.get(2).getText().toString();
-                } else {
-                    privateKey = Numeric.toHexStringWithPrefix(Keys.createEcKeyPair().getPrivateKey());
-                }
+                        if (view.getId() == R.id.importAccountBtn) {
+                            privateKey = editTextList.get(2).getText().toString();
+                        } else {
+                            privateKey = Numeric.toHexStringWithPrefix(Keys.createEcKeyPair().getPrivateKey());
+                        }
 
-                Verifier.verifyPrivateKey(this, privateKey);
+                        Verifier.verifyPrivateKey(this, privateKey);
 
-                Thread.sleep(2000); //TODO: Remove
+                        Thread.sleep(2000); //TODO: Remove
 
-                Credentials credentials = Credentials.create(privateKey);
+                        Credentials credentials = Credentials.create(privateKey);
 
-                File file = new File(getApplicationInfo().dataDir + "/keystore");
+                        File file = new File(getApplicationInfo().dataDir + "/keystore");
 
-                if (!file.exists()) {
-                    file.mkdir();
-                }
+                        if (!file.exists()) {
+                            file.mkdir();
+                        }
 
-                String walletName = WalletUtils.generateWalletFile(password, credentials.getEcKeyPair(), file, false);
+                        String walletName = WalletUtils.generateWalletFile(password, credentials.getEcKeyPair(), file, false);
 
-                Account account = new Account();
-                account.setWalletName(walletName);
-                account.setWalletFolder(file.getPath());
-                account.setWalletAddress(credentials.getAddress());
+                        Account account = new Account();
+                        account.setWalletName(walletName);
+                        account.setWalletFolder(file.getPath());
+                        account.setWalletAddress(credentials.getAddress());
+                        return account;
+                    }).subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread());
 
-                Realm.getDefaultInstance().executeTransaction(realm -> realm.copyToRealm(account));
-            }).subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeWith(new DisposableCompletableObserver() {
+                    this.disposable = single.subscribeWith(new DisposableSingleObserver<Account>() {
                         @Override
-                        public void onStart() {
+                        protected void onStart() {
                             button.collapse();
                         }
 
                         @Override
-                        public void onComplete() {
-                            Toast.show(button.getContext(), account_saved);
+                        public void onSuccess(Account account) {
+                            Realm.getDefaultInstance().executeTransaction(realm -> realm.copyToRealm(account));
+                            Toast.show(view.getContext(), account_saved);
                             button.expand();
                             startTopicListActivity();
                         }
 
                         @Override
                         public void onError(Throwable e) {
+                            Toast.show(view.getContext(), e.getLocalizedMessage());
                             e.printStackTrace();
-                            System.out.println("ON_ERROR");
-                            Toast.show(button.getContext(), e.getLocalizedMessage());
                             button.expand();
                         }
                     });
-        });
+                });
+
+
         dialog.show();
     }
 
