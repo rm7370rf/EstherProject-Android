@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -17,18 +18,23 @@ import org.rm7370rf.estherproject.R;
 import org.rm7370rf.estherproject.contract.Contract;
 import org.rm7370rf.estherproject.contract.model.Topic;
 import org.rm7370rf.estherproject.model.Account;
+import org.rm7370rf.estherproject.utils.FieldDialog;
 import org.rm7370rf.estherproject.utils.Toast;
+import org.rm7370rf.estherproject.utils.Verifier;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Action;
+import io.reactivex.observers.DisposableCompletableObserver;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
@@ -38,7 +44,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.ekalips.fancybuttonproj.FancyButton;
+
+import static org.rm7370rf.estherproject.R.string.request_successfully_sent;
 import static org.rm7370rf.estherproject.R.string.topics;
+import static org.rm7370rf.estherproject.R.string.username_already_exists;
 
 public class TopicListActivity extends AppCompatActivity {
     @BindView(R.id.swipeRefreshLayout)
@@ -259,6 +269,57 @@ public class TopicListActivity extends AppCompatActivity {
     }
 
     private void showSetUsernameDialog() {
+        if(!account.hasUsername()) {
+            FieldDialog dialog = new FieldDialog(this);
+            dialog.setLayout(R.layout.dialog_set_username);
 
+            EditText userNameEdit = dialog.getEditText(R.id.userNameEdit);
+            EditText passwordEdit = dialog.getEditText(R.id.passwordEdit);
+
+            dialog.setOnClickListener(button -> {
+                try {
+                    String userName = userNameEdit.getText().toString();
+                    String password = passwordEdit.getText().toString();
+
+                    Verifier.verifyUserName(this, userName);
+                    Verifier.verifyPassword(this, password);
+
+                    disposables.add(
+                            Completable.fromAction(() -> contract.setUsername(password, userName))
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableCompletableObserver() {
+                                @Override
+                                protected void onStart() {
+                                    super.onStart();
+                                    button.collapse();
+
+                                }
+
+                                @Override
+                                public void onComplete() {
+                                    button.expand();
+                                    account.setUserName(userName);
+                                    Toast.show(dialog.getContext(), request_successfully_sent);
+                                    invalidateOptionsMenu();
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+                                    button.expand();
+                                    Toast.show(dialog.getContext(), e.getLocalizedMessage());
+                                }
+                            })
+                    );
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.show(this, e.getLocalizedMessage());
+                }
+            });
+            dialog.show();
+        }
+        else {
+            Toast.show(this, username_already_exists);
+        }
     }
 }
