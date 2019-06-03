@@ -2,10 +2,10 @@
 EstherProject is sample forum on Ethereum blockchain.
 
 # TODO:
-- [ ] Logout.
+- [x] Logout.
 - [x] Set Username.
 - [x] QR-code of address to Account Data Dialog.
-- [ ] Add topic dialog.
+- [x] Add topic dialog.
 - [ ] List of posts of topic.
 - [ ] Add post dialog.
 - [x] Backup dialog

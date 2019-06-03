@@ -10,14 +10,28 @@ import org.web3j.crypto.WalletUtils;
 import io.realm.Realm;
 
 import static org.rm7370rf.estherproject.R.string.invalid_private_key;
+import static org.rm7370rf.estherproject.R.string.message_required;
 import static org.rm7370rf.estherproject.R.string.password_required;
 import static org.rm7370rf.estherproject.R.string.account_already_exists;
 import static org.rm7370rf.estherproject.R.string.passwords_do_not_match;
 import static org.rm7370rf.estherproject.R.string.private_key_required;
 import static org.rm7370rf.estherproject.R.string.repeat_password_required;
+import static org.rm7370rf.estherproject.R.string.subject_required;
 import static org.rm7370rf.estherproject.R.string.username_required;
 
 public class Verifier {
+    public static void verifySubject(Context context, String privateKey) throws VerifierException {
+        if(privateKey == null || privateKey.isEmpty()) {
+            throw new VerifierException(context, subject_required);
+        }
+    }
+
+    public static void verifyMessage(Context context, String privateKey) throws VerifierException {
+        if(privateKey == null || privateKey.isEmpty()) {
+            throw new VerifierException(context, message_required);
+        }
+    }
+
     public static void verifyPrivateKey(Context context, String privateKey) throws VerifierException {
         if(privateKey == null || privateKey.isEmpty()) {
             throw new VerifierException(context, private_key_required);

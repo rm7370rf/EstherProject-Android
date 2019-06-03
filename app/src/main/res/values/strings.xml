@@ -8,6 +8,8 @@
     <string name="cancel">Cancel</string>
     <string name="username_required">UserName Required</string>
     <string name="password_required">Password Required</string>
+    <string name="subject_required">Password Required</string>
+    <string name="message_required">Password Required</string>
     <string name="repeat_password_required">Repeat Password Required</string>
     <string name="private_key_required">Private Key Required</string>
     <string name="passwords_do_not_match">Passwords Do Not Match</string>
@@ -33,4 +35,6 @@
     <string name="load">Load</string>
     <string name="send">Send</string>
     <string name="add_topic">Topic</string>
+    <string name="subject">Subject</string>
+    <string name="message">Message</string>
 </resources>

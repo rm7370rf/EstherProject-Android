@@ -45,6 +45,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.ekalips.fancybuttonproj.FancyButton;
+
 import static org.rm7370rf.estherproject.R.string.load;
 import static org.rm7370rf.estherproject.R.string.please_backup_private_key;
 import static org.rm7370rf.estherproject.R.string.request_successfully_sent;
@@ -214,7 +216,48 @@ public class TopicListActivity extends AppCompatActivity {
 
     private void showAddTopicDialog() {
         FieldDialog dialog = new FieldDialog(this);
-        dialog.setLayout(R.layout.dialog);
+        dialog.setLayout(R.layout.dialog_add_topic);
+
+        EditText subjectEdit = dialog.getEditText(R.id.subjectEdit);
+        EditText messageEdit = dialog.getEditText(R.id.messageEdit);
+        EditText passwordEdit = dialog.getEditText(R.id.passwordEdit);
+
+        dialog.setOnClickListener(
+                send,
+                button -> disposables.add(
+                        Completable.fromAction(() -> {
+                            String subject = subjectEdit.getText().toString();
+                            String message = messageEdit.getText().toString();
+                            String password = passwordEdit.getText().toString();
+                            Verifier.verifySubject(this, subject);
+                            Verifier.verifyMessage(this, message);
+                            Verifier.verifyPassword(this, password);
+                            contract.addTopic(password, subject, message);
+                        })
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableCompletableObserver() {
+                            @Override
+                            protected void onStart() {
+                                button.collapse();
+                            }
+
+                            @Override
+                            public void onComplete() {
+                                Toast.show(dialog.getContext(), request_successfully_sent);
+                                button.expand();
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                e.printStackTrace();
+                                Toast.show(dialog.getContext(), e.getLocalizedMessage());
+                                button.expand();
+                            }
+                        })
+                )
+        );
+        dialog.show();
     }
 
     private void showBackupDialog() {
