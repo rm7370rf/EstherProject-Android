@@ -1,8 +1,10 @@
 package org.rm7370rf.estherproject.utils;
 
 import android.app.Activity;
+import android.content.Context;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -27,6 +29,18 @@ public class FieldDialog {
     public void setLayout(int resource) {
         view = activity.getLayoutInflater().inflate(resource, null);
         builder.setView(view);
+    }
+
+    public Context getContext() {
+        return activity;
+    }
+
+    public TextView getTextView(int resource) {
+        return view.findViewById(resource);
+    }
+
+    public EditText getEditText(int resource) {
+        return view.findViewById(resource);
     }
 
     public List<EditText> getEditTextList(List<Integer> resourceList) {
