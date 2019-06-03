@@ -13,13 +13,13 @@ import org.rm7370rf.estherproject.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AMDialog {
+public class FieldDialog {
     private Activity activity;
     private AlertDialog.Builder builder;
     private AlertDialog alertDialog;
     private View view;
 
-    public AMDialog(Activity activity) {
+    public FieldDialog(Activity activity) {
         this.activity = activity;
         builder = new AlertDialog.Builder(activity);
     }
@@ -39,7 +39,7 @@ public class AMDialog {
         return list;
     }
 
-    public void setOnClickListener(AMDialog.OnClickListener listener) {
+    public void setOnClickListener(FieldDialog.OnClickListener listener) {
         FancyButton positiveBtn = view.findViewById(R.id.positiveBtn),
                                negativeBtn = view.findViewById(R.id.negativeBtn);
 

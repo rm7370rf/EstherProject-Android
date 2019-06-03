@@ -1,19 +1,17 @@
 package org.rm7370rf.estherproject.ui;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.rm7370rf.estherproject.R;
 import org.rm7370rf.estherproject.model.Account;
-import org.rm7370rf.estherproject.utils.AMDialog;
+import org.rm7370rf.estherproject.utils.FieldDialog;
 import org.rm7370rf.estherproject.utils.Toast;
 import org.rm7370rf.estherproject.utils.Verifier;
 import org.web3j.crypto.Credentials;
@@ -27,16 +25,10 @@ import java.security.Security;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.Completable;
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.observers.DisposableCompletableObserver;
-import io.reactivex.observers.DisposableObserver;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
@@ -90,7 +82,7 @@ public class LoginActivity extends AppCompatActivity {
         resourceList.add(R.id.passwordEdit);
         resourceList.add(R.id.repeatPasswordEdit);
 
-        AMDialog dialog = new AMDialog(this);
+        FieldDialog dialog = new FieldDialog(this);
         switch (view.getId()) {
             case R.id.createAccountBtn:
                 dialogId = R.layout.dialog_create_account;
