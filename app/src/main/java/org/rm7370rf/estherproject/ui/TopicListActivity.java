@@ -14,6 +14,7 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import org.apache.commons.lang3.StringUtils;
 import org.rm7370rf.estherproject.R;
 import org.rm7370rf.estherproject.contract.Contract;
 import org.rm7370rf.estherproject.contract.model.Topic;
@@ -22,9 +23,16 @@ import org.rm7370rf.estherproject.utils.FieldDialog;
 import org.rm7370rf.estherproject.utils.Utils;
 import org.rm7370rf.estherproject.utils.Toast;
 import org.rm7370rf.estherproject.utils.Verifier;
+import org.web3j.abi.FunctionEncoder;
+import org.web3j.abi.datatypes.Function;
+import org.web3j.abi.datatypes.Utf8String;
+import org.web3j.protocol.core.methods.request.Transaction;
+import org.web3j.protocol.core.methods.response.EthEstimateGas;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.Collections;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,6 +42,7 @@ import io.reactivex.ObservableEmitter;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableCompletableObserver;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
@@ -47,6 +56,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import static org.rm7370rf.estherproject.R.string.request_successfully_sent;
 import static org.rm7370rf.estherproject.R.string.topics;
 import static org.rm7370rf.estherproject.R.string.username_already_exists;
+import static org.rm7370rf.estherproject.utils.Config.CONTRACT_ADDRESS;
+import static org.web3j.tx.gas.DefaultGasProvider.GAS_LIMIT;
 
 public class TopicListActivity extends AppCompatActivity {
     @BindView(R.id.swipeRefreshLayout)
@@ -68,12 +79,15 @@ public class TopicListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_topic_list);
+
         ButterKnife.bind(this);
         setTitle(topics);
         setContract();
         setSwipeRefreshLayout();
         setRecyclerAdapter();
         updateDB(false);
+
+        realm.executeTransaction(r -> account.setUserName(""));
     }
 
     private void setContract() {
@@ -305,13 +319,14 @@ public class TopicListActivity extends AppCompatActivity {
                                 protected void onStart() {
                                     super.onStart();
                                     button.collapse();
-
                                 }
 
                                 @Override
                                 public void onComplete() {
                                     button.expand();
-                                    account.setUserName(userName);
+                                    dialog.hide();
+                                    realm.executeTransaction(realm -> account.setUserName(userName));
+
                                     Toast.show(dialog.getContext(), request_successfully_sent);
                                     invalidateOptionsMenu();
                                 }
@@ -319,6 +334,7 @@ public class TopicListActivity extends AppCompatActivity {
                                 @Override
                                 public void onError(Throwable e) {
                                     button.expand();
+                                    e.printStackTrace();
                                     Toast.show(dialog.getContext(), e.getLocalizedMessage());
                                 }
                             })
