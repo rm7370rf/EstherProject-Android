@@ -146,12 +146,13 @@ public class TopicListActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        /*
-             menu.setGroupVisible(R.id.group_normal_mode, true);
-menu.setGroupVisible(R.id.group_delete_mode, false);
-         */
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_topic_list, menu);
+
+        boolean hasUsername = realm.where(Account.class).findFirst().hasUsername();
+
+        MenuItem setUsernameItem = menu.findItem(R.id.setUsername);
+        setUsernameItem.setVisible(!hasUsername);
         return true;
     }
 
