@@ -38,6 +38,10 @@ public class Account extends RealmObject {
         this.walletFolder = walletFolder;
     }
 
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
     public void setBalance(BigInteger balance) {
         this.balance = String.valueOf(balance);
     }
