@@ -25,7 +25,7 @@ public class Contract extends ContractManager {
 
     public String setUsername(String password, String userName) throws Exception {
         Function function = new Function(
-                "setUsername",
+                "setUserName",
                 Collections.singletonList(
                         new Utf8String(userName)
                 ),
