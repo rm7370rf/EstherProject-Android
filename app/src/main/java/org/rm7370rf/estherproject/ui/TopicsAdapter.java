@@ -66,7 +66,7 @@ public class TopicsAdapter extends RealmRecyclerViewAdapter<Topic, TopicsAdapter
 
         public void bind(int position) {
             final Topic topic = getItem(position);
-            numberText.setText(String.valueOf(position + 1));
+            numberText.setText(String.valueOf(topic.getId()));
             subjectText.setText(StringUtils.abbreviate(topic.getSubject(), MAX_LIST_ITEM_TEXT_LENGTH));
             messageText.setText(StringUtils.abbreviate(topic.getMessage(), MAX_LIST_ITEM_TEXT_LENGTH));
             itemView.setOnClickListener(v -> {
