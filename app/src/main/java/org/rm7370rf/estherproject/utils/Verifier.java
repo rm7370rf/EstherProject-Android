@@ -2,6 +2,7 @@ package org.rm7370rf.estherproject.utils;
 
 import android.content.Context;
 
+import org.rm7370rf.estherproject.R;
 import org.rm7370rf.estherproject.expceptions.VerifierException;
 import org.rm7370rf.estherproject.model.Account;
 import org.web3j.crypto.WalletUtils;
@@ -14,6 +15,7 @@ import static org.rm7370rf.estherproject.R.string.account_already_exists;
 import static org.rm7370rf.estherproject.R.string.passwords_do_not_match;
 import static org.rm7370rf.estherproject.R.string.private_key_required;
 import static org.rm7370rf.estherproject.R.string.repeat_password_required;
+import static org.rm7370rf.estherproject.R.string.username_required;
 
 public class Verifier {
     public static void verifyPrivateKey(Context context, String privateKey) throws VerifierException {
@@ -22,6 +24,12 @@ public class Verifier {
         }
         if(!WalletUtils.isValidPrivateKey(privateKey)) {
             throw new VerifierException(context, invalid_private_key);
+        }
+    }
+
+    public static void verifyUserName(Context context, String userName) throws VerifierException {
+        if(userName.isEmpty()) {
+            throw new VerifierException(context, username_required);
         }
     }
 
