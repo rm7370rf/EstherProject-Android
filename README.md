@@ -1,7 +1,7 @@
 # EstherProject Client for Android
 EstherProject is sample forum on Ethereum blockchain.
 
-# TODO
+# TODO:
 - [ ] Logout.
 - [ ] Set Username.
 - [ ] QR-code of address to Account Data Dialog.
