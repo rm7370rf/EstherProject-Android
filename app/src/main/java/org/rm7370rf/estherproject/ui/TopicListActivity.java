@@ -217,7 +217,8 @@ public class TopicListActivity extends AppCompatActivity {
                 showBackupDialog();
                 return true;
             case R.id.logout:
-                Log.d("MENU", "LOGOUT");
+                realm.delete(Account.class);
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
