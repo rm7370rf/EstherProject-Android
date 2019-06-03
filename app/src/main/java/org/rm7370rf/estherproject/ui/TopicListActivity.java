@@ -86,8 +86,6 @@ public class TopicListActivity extends AppCompatActivity {
         setSwipeRefreshLayout();
         setRecyclerAdapter();
         updateDB(false);
-
-        realm.executeTransaction(r -> account.setUserName(""));
     }
 
     private void setContract() {
