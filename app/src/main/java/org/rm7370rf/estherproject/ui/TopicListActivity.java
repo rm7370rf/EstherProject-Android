@@ -39,6 +39,7 @@ import io.reactivex.observers.DisposableCompletableObserver;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
+import io.realm.Sort;
 
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -93,7 +94,7 @@ public class TopicListActivity extends AppCompatActivity {
     }
 
     private void setRecyclerAdapter() {
-        this.adapter = new TRVAdapter(realm.where(Topic.class).findAll());
+        this.adapter = new TRVAdapter(realm.where(Topic.class).findAll().sort("id", Sort.DESCENDING));
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(true);
@@ -269,49 +270,38 @@ public class TopicListActivity extends AppCompatActivity {
 
         dialog.setOnClickListener(
                 load,
-                button -> {
-            disposables.add(Single.fromCallable(() -> {
-                        String password = passwordEdit.getText().toString();
-                        Verifier.verifyPassword(this, password);
-                        Credentials credentials = contract.getCredentials(password);
-                        return credentials.getEcKeyPair().getPrivateKey().toString(16);
+                button -> disposables.add(
+                        Single.fromCallable(() -> {
+                            String password = passwordEdit.getText().toString();
+                            Verifier.verifyPassword(this, password);
+                            Credentials credentials = contract.getCredentials(password);
+                            return credentials.getEcKeyPair().getPrivateKey().toString(16);
+                        }
+                )
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableSingleObserver<String>() {
+                    @Override
+                    protected void onStart() {
+                        button.collapse();
                     }
-            )
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeWith(new DisposableSingleObserver<String>() {
-                @Override
-                protected void onStart() {
-                    button.collapse();
-                }
 
-                @Override
-                public void onSuccess(String privateKey) {
-                    privateKeyText.setText(privateKey);
-                    privateKeyText.setVisibility(View.VISIBLE);
-                    privateKeyText.setOnClickListener(v -> Utils.copyToClipboard(dialog.getContext(), privateKey));
-                    Toast.show(dialog.getContext(), please_backup_private_key);
-                    button.expand();
-                }
+                    @Override
+                    public void onSuccess(String privateKey) {
+                        privateKeyText.setText(privateKey);
+                        privateKeyText.setVisibility(View.VISIBLE);
+                        privateKeyText.setOnClickListener(v -> Utils.copyToClipboard(dialog.getContext(), privateKey));
+                        Toast.show(dialog.getContext(), please_backup_private_key);
+                        button.expand();
+                    }
 
-                @Override
-                public void onError(Throwable e) {
-                    Toast.show(dialog.getContext(), e.getLocalizedMessage());
-                    button.expand();
-                }
-            })
-            );
-            try {
-                String password = passwordEdit.getText().toString();
-                Verifier.verifyPassword(this, password);
-
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-                Toast.show(this, e.getLocalizedMessage());
-            }
-        });
-
+                    @Override
+                    public void onError(Throwable e) {
+                        Toast.show(dialog.getContext(), e.getLocalizedMessage());
+                        button.expand();
+                    }
+                }))
+        );
         dialog.show();
     }
 
