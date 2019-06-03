@@ -17,6 +17,9 @@
     <string name="topics">Topics</string>
     <string name="set_username">Set username</string>
     <string name="logout">Logout</string>
-    <string name="balance">Balance</string>
+    <string name="balance_label">Balance:</string>
+    <string name="address_label">Address:</string>
     <string name="account_data">Account Data</string>
+    <string name="username_label">UserName:</string>
+    <string name="qr_code_description">QR-code of address</string>
 </resources>
