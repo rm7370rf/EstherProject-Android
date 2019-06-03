@@ -10,7 +10,7 @@ public class Post extends RealmObject {
     @PrimaryKey
     private String id;
     @Required
-    private String topicsId;
+    private String topicId;
     @Required
     private String message;
     @Required
@@ -26,8 +26,8 @@ public class Post extends RealmObject {
         this.id = String.valueOf(id);
     }
 
-    public void setTopicsId(BigInteger topicsId) {
-        this.topicsId = String.valueOf(topicsId);
+    public void setTopicId(BigInteger topicId) {
+        this.topicId = String.valueOf(topicId);
     }
 
     public void setMessage(String message) {
@@ -50,8 +50,8 @@ public class Post extends RealmObject {
         return new BigInteger(id);
     }
 
-    public BigInteger getTopicsId() {
-        return new BigInteger(topicsId);
+    public BigInteger getTopicId() {
+        return new BigInteger(topicId);
     }
 
     public String getMessage() {
