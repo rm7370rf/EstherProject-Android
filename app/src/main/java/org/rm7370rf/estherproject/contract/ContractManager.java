@@ -4,6 +4,7 @@ import org.rm7370rf.estherproject.model.Account;
 import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.datatypes.Function;
 import org.web3j.abi.datatypes.Utf8String;
+import org.web3j.crypto.CipherException;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.RawTransaction;
 import org.web3j.crypto.TransactionEncoder;
@@ -62,7 +63,8 @@ public class ContractManager {
     }
 
     public String executeFunction(String password, Function function) throws Exception {
-        Credentials credentials = WalletUtils.loadCredentials(password, account.getWalletFolder() + account.getWalletName());
+        Credentials credentials = getCredentials(password);
+
         BigInteger nonce = getNonce(credentials.getAddress());
 
         String encodedFunction = FunctionEncoder.encode(function);
@@ -85,9 +87,12 @@ public class ContractManager {
         return transactionResponse.getTransactionHash();
     }
 
-
     private BigInteger getNonce(String address) throws Exception {
         EthGetTransactionCount ethGetTransactionCount = web3j.ethGetTransactionCount(address, DefaultBlockParameterName.LATEST).sendAsync().get();
         return ethGetTransactionCount.getTransactionCount();
+    }
+
+    public Credentials getCredentials(String password) throws CipherException, IOException {
+        return WalletUtils.loadCredentials(password, account.getWalletFolder() + account.getWalletName());
     }
 }
