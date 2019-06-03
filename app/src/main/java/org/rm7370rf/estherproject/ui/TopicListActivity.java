@@ -1,8 +1,10 @@
 package org.rm7370rf.estherproject.ui;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -18,6 +20,7 @@ import org.rm7370rf.estherproject.R;
 import org.rm7370rf.estherproject.contract.Contract;
 import org.rm7370rf.estherproject.model.Topic;
 import org.rm7370rf.estherproject.model.Account;
+import org.rm7370rf.estherproject.utils.Config;
 import org.rm7370rf.estherproject.utils.FieldDialog;
 import org.rm7370rf.estherproject.utils.Utils;
 import org.rm7370rf.estherproject.utils.Toast;
@@ -42,6 +45,7 @@ import io.realm.Realm;
 import io.realm.Sort;
 
 import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -85,18 +89,19 @@ public class TopicListActivity extends AppCompatActivity {
     private void setContract() {
         this.account = realm.where(Account.class).findFirst();
         this.contract = new Contract(realm.copyFromRealm(account));
-        Log.d("ADDRESS", account.getWalletAddress());
-        Log.d("FOLDER", account.getWalletFolder());
-        Log.d("FILENAME", account.getWalletName());
-        Log.d("BALANCE", "" + account.getBalance());
     }
 
     private void setRecyclerAdapter() {
         this.adapter = new TopicsAdapter(realm.where(Topic.class).findAll().sort("id", Sort.DESCENDING));
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(adapter);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        this.adapter.setListener(topicId -> {
+            Intent intent = new Intent(this, TopicActivity.class);
+            intent.putExtra(Config.TOPIC_ID_KEY, String.valueOf(topicId));
+            startActivity(intent);
+        });
+        this.recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        this.recyclerView.setAdapter(adapter);
+        this.recyclerView.setHasFixedSize(true);
+        this.recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
     }
 
     public void setSwipeRefreshLayout() {
