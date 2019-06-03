@@ -10,7 +10,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.LinearLayout;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -19,6 +19,7 @@ import org.rm7370rf.estherproject.contract.Contract;
 import org.rm7370rf.estherproject.contract.model.Topic;
 import org.rm7370rf.estherproject.model.Account;
 import org.rm7370rf.estherproject.utils.FieldDialog;
+import org.rm7370rf.estherproject.utils.Utils;
 import org.rm7370rf.estherproject.utils.Toast;
 import org.rm7370rf.estherproject.utils.Verifier;
 
@@ -33,7 +34,6 @@ import io.reactivex.ObservableEmitter;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.functions.Action;
 import io.reactivex.observers.DisposableCompletableObserver;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
@@ -43,8 +43,6 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
-import com.ekalips.fancybuttonproj.FancyButton;
 
 import static org.rm7370rf.estherproject.R.string.request_successfully_sent;
 import static org.rm7370rf.estherproject.R.string.topics;
@@ -183,7 +181,12 @@ public class TopicListActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.accountData:
                 Log.d("MENU", "ACCOUNT_DATA");
-                showAccountDataDialog();
+                try {
+                    showAccountDataDialog();
+                }
+                catch (Exception e) {
+                    Toast.show(this, e.getLocalizedMessage());
+                }
                 return true;
             case R.id.setUsername:
                 Log.d("MENU", "SET_USERNAME");
@@ -197,7 +200,7 @@ public class TopicListActivity extends AppCompatActivity {
         }
     }
 
-    private void showAccountDataDialog() {
+    private void showAccountDataDialog() throws Exception {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = getLayoutInflater().inflate(R.layout.dialog_account_data, null);
 
@@ -205,14 +208,24 @@ public class TopicListActivity extends AppCompatActivity {
         TextView userNameLabel = view.findViewById(R.id.userNameLabel);
         TextView userNameText = view.findViewById(R.id.userName);
         TextView userAddressText = view.findViewById(R.id.userAddress);
+        ImageButton qrCode = view.findViewById(R.id.qrCodeImage);
+
+        userAddressText.setOnClickListener(v -> Utils.copyToClipboard(this, account.getWalletAddress()));
+        qrCode.setOnClickListener(v -> Utils.copyToClipboard(this, account.getWalletAddress()));
+
+        String address = account.getWalletAddress();
+
+        int size = getResources().getDisplayMetrics().widthPixels/2;
+        qrCode.setImageBitmap(Utils.createQrCode(address, size, size));
 
         userBalanceText.setText(String.valueOf(account.getBalance()));
+
         int userNameVisibility = account.hasUsername() ? View.VISIBLE : View.GONE;
         userNameLabel.setVisibility(userNameVisibility);
         userNameText.setVisibility(userNameVisibility);
 
-        if(!account.hasUsername()) {
-            userNameText.setText(account.getUserName());
+        if (!account.hasUsername()) {
+            userNameText.setText(address);
         }
 
         userAddressText.setText(account.getWalletAddress());
