@@ -17,7 +17,7 @@ import io.realm.RealmRecyclerViewAdapter;
 
 import static org.rm7370rf.estherproject.utils.Config.MAX_LIST_ITEM_TEXT_LENGTH;
 
-public class TopicsAdapter extends RealmRecyclerViewAdapter<Topic, TopicsAdapter.TRVViewHolder> {
+public class TopicsAdapter extends RealmRecyclerViewAdapter<Topic, TopicsAdapter.ViewHolder> {
     public TopicsAdapter(OrderedRealmCollection<Topic> data) {
         super(data, true);
         setHasStableIds(true);
@@ -25,13 +25,13 @@ public class TopicsAdapter extends RealmRecyclerViewAdapter<Topic, TopicsAdapter
 
     @NonNull
     @Override
-    public TRVViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.topic_recyclerview_item, parent, false);
-        return new TRVViewHolder(itemView);
+        return new ViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull TRVViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final Topic topic = getItem(position);
         holder.itemNumberText.setText(String.valueOf(position + 1));
         holder.itemSubjectText.setText(StringUtils.abbreviate(topic.getSubject(), MAX_LIST_ITEM_TEXT_LENGTH));
@@ -44,12 +44,12 @@ public class TopicsAdapter extends RealmRecyclerViewAdapter<Topic, TopicsAdapter
     }
 
 
-    class TRVViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
         TextView itemNumberText;
         TextView itemSubjectText;
         TextView itemMessageText;
 
-        TRVViewHolder(View view) {
+        ViewHolder(View view) {
             super(view);
             itemNumberText = view.findViewById(R.id.itemNumber);
             itemSubjectText = view.findViewById(R.id.itemSubject);
