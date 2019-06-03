@@ -1,77 +1,82 @@
-<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-    android:id="@+id/swipeRefreshLayout"
-    android:orientation="vertical"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:android="http://schemas.android.com/apk/res/android">
-    <RelativeLayout
+    android:layout_height="wrap_content">
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:indeterminate="true"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <ProgressBar
-            android:id="@+id/progressBar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:indeterminate="true"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="-6dp"
+        android:visibility="visible"/>
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:orientation="vertical">
+        <RelativeLayout
+            android:gravity="center_vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="-6dp"
-            android:visibility="visible"/>
+            android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/userBalanceLabel"
-            android:layout_marginTop="8dp"
-            android:labelFor="@id/userBalance"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:text="@string/balance_label" />
+            <TextView
+                android:id="@+id/userBalanceLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:labelFor="@id/userBalance"
+                android:text="@string/balance_label"
+                android:textAlignment="center" />
 
-        <TextView
-            android:id="@+id/userBalance"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/userBalanceLabel"
-            android:textAlignment="center"/>
-        <TextView
-            android:id="@+id/userNameLabel"
-            android:labelFor="@id/userName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:layout_below="@id/userBalance"
-            android:text="@string/username_label" />
+            <TextView
+                android:id="@+id/userBalance"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/userBalanceLabel"
+                android:textAlignment="center" />
 
-        <TextView
-            android:id="@+id/userName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/userNameLabel"
-            android:textAlignment="center"/>
+            <TextView
+                android:id="@+id/userNameLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/userBalance"
+                android:labelFor="@id/userName"
+                android:text="@string/username_label"
+                android:textAlignment="center" />
 
-        <TextView
-            android:id="@+id/userAddressLabel"
-            android:labelFor="@id/userAddress"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:layout_below="@id/userName"
-            android:text="@string/address_label" />
+            <TextView
+                android:id="@+id/userName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/userNameLabel"
+                android:textAlignment="center" />
 
-        <TextView
-            android:id="@+id/userAddress"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/userAddressLabel"
-            android:textAlignment="center"/>
+            <TextView
+                android:id="@+id/userAddressLabel"
+                android:labelFor="@id/userAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:layout_below="@id/userName"
+                android:text="@string/address_label" />
 
-        <ImageButton
-            android:id="@+id/qrCode"
-            android:contentDescription="@string/qr_code_description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/userAddress"
-            android:layout_centerHorizontal="true"/>
-    </RelativeLayout>
-</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+            <TextView
+                android:id="@+id/userAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/userAddressLabel"
+                android:textAlignment="center"/>
 
+            <ImageButton
+                android:id="@+id/qrCodeImage"
+                android:background="@color/zxing_transparent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/userAddress"
+                android:layout_centerInParent="true"
+                android:contentDescription="@string/qr_code_description" />
+        </RelativeLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+</RelativeLayout>
