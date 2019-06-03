@@ -65,7 +65,7 @@ public class TopicListActivity extends AppCompatActivity {
 
     private CompositeDisposable disposables = new CompositeDisposable();
     private Contract contract;
-    private TRVAdapter adapter;
+    private TopicsAdapter adapter;
     private Realm realm = Realm.getDefaultInstance();
     private Account account;
 
@@ -92,7 +92,7 @@ public class TopicListActivity extends AppCompatActivity {
     }
 
     private void setRecyclerAdapter() {
-        this.adapter = new TRVAdapter(realm.where(Topic.class).findAll().sort("id", Sort.DESCENDING));
+        this.adapter = new TopicsAdapter(realm.where(Topic.class).findAll().sort("id", Sort.DESCENDING));
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(true);

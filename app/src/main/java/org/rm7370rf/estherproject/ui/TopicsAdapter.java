@@ -17,8 +17,8 @@ import io.realm.RealmRecyclerViewAdapter;
 
 import static org.rm7370rf.estherproject.utils.Config.MAX_LIST_ITEM_TEXT_LENGTH;
 
-public class TRVAdapter extends RealmRecyclerViewAdapter<Topic, TRVAdapter.TRVViewHolder> {
-    public TRVAdapter(OrderedRealmCollection<Topic> data) {
+public class TopicsAdapter extends RealmRecyclerViewAdapter<Topic, TopicsAdapter.TRVViewHolder> {
+    public TopicsAdapter(OrderedRealmCollection<Topic> data) {
         super(data, true);
         setHasStableIds(true);
     }
