@@ -26,6 +26,7 @@ import org.rm7370rf.estherproject.utils.Verifier;
 import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.datatypes.Function;
 import org.web3j.abi.datatypes.Utf8String;
+import org.web3j.crypto.Credentials;
 import org.web3j.protocol.core.methods.request.Transaction;
 import org.web3j.protocol.core.methods.response.EthEstimateGas;
 
@@ -53,7 +54,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.ekalips.fancybuttonproj.FancyButton;
+
+import static org.rm7370rf.estherproject.R.string.load;
+import static org.rm7370rf.estherproject.R.string.please_backup_private_key;
 import static org.rm7370rf.estherproject.R.string.request_successfully_sent;
+import static org.rm7370rf.estherproject.R.string.send;
 import static org.rm7370rf.estherproject.R.string.topics;
 import static org.rm7370rf.estherproject.R.string.username_already_exists;
 import static org.rm7370rf.estherproject.utils.Config.CONTRACT_ADDRESS;
@@ -191,6 +197,9 @@ public class TopicListActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.addPost:
+                showAddPostDialog();
+                return true;
             case R.id.accountData:
                 Log.d("MENU", "ACCOUNT_DATA");
                 try {
@@ -204,12 +213,74 @@ public class TopicListActivity extends AppCompatActivity {
                 Log.d("MENU", "SET_USERNAME");
                 showSetUsernameDialog();
                 return true;
+            case R.id.backup:
+                showBackupDialog();
+                return true;
             case R.id.logout:
                 Log.d("MENU", "LOGOUT");
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void showAddPostDialog() {
+
+    }
+
+    private void showBackupDialog() {
+        FieldDialog dialog = new FieldDialog(this);
+        dialog.setLayout(R.layout.dialog_backup);
+
+        TextView privateKeyText = dialog.getTextView(R.id.privateKeyText);
+        EditText passwordEdit = dialog.getEditText(R.id.passwordEdit);
+
+        dialog.setOnClickListener(
+                load,
+                button -> {
+            disposables.add(Single.fromCallable(() -> {
+                        String password = passwordEdit.getText().toString();
+                        Verifier.verifyPassword(this, password);
+                        Credentials credentials = contract.getCredentials(password);
+                        return credentials.getEcKeyPair().getPrivateKey().toString(16);
+                    }
+            )
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeWith(new DisposableSingleObserver<String>() {
+                @Override
+                protected void onStart() {
+                    button.collapse();
+                }
+
+                @Override
+                public void onSuccess(String privateKey) {
+                    privateKeyText.setText(privateKey);
+                    privateKeyText.setVisibility(View.VISIBLE);
+                    privateKeyText.setOnClickListener(v -> Utils.copyToClipboard(dialog.getContext(), privateKey));
+                    Toast.show(dialog.getContext(), please_backup_private_key);
+                    button.expand();
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    Toast.show(dialog.getContext(), e.getLocalizedMessage());
+                    button.expand();
+                }
+            })
+            );
+            try {
+                String password = passwordEdit.getText().toString();
+                Verifier.verifyPassword(this, password);
+
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+                Toast.show(this, e.getLocalizedMessage());
+            }
+        });
+
+        dialog.show();
     }
 
     private void showAccountDataDialog() throws Exception {
@@ -301,7 +372,9 @@ public class TopicListActivity extends AppCompatActivity {
             EditText userNameEdit = dialog.getEditText(R.id.userNameEdit);
             EditText passwordEdit = dialog.getEditText(R.id.passwordEdit);
 
-            dialog.setOnClickListener(button -> {
+            dialog.setOnClickListener(
+                    send,
+                    button -> {
                 try {
                     String userName = userNameEdit.getText().toString();
                     String password = passwordEdit.getText().toString();
