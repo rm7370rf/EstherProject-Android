@@ -32,4 +32,5 @@
     <string name="add_post">Add post</string>
     <string name="load">Load</string>
     <string name="send">Send</string>
+    <string name="add_topic">Topic</string>
 </resources>
