@@ -45,10 +45,6 @@ public class ContractManager {
         this.account = account;
     }
 
-    public Web3j getWeb3j() {
-        return web3j;
-    }
-
     public BigDecimal getBalance() throws Exception {
         EthGetBalance ethGetBalance = web3j.ethGetBalance(account.getWalletAddress(), DefaultBlockParameterName.LATEST).send();
         return Convert.fromWei(ethGetBalance.getBalance().toString(), Convert.Unit.ETHER);
