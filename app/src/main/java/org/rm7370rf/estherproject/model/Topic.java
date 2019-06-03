@@ -1,4 +1,4 @@
-package org.rm7370rf.estherproject.contract.model;
+package org.rm7370rf.estherproject.model;
 
 import java.math.BigInteger;
 import java.util.ArrayList;

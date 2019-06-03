@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import org.rm7370rf.estherproject.R;
 import org.rm7370rf.estherproject.contract.Contract;
-import org.rm7370rf.estherproject.contract.model.Topic;
+import org.rm7370rf.estherproject.model.Topic;
 import org.rm7370rf.estherproject.model.Account;
 import org.rm7370rf.estherproject.utils.FieldDialog;
 import org.rm7370rf.estherproject.utils.Utils;
@@ -45,8 +45,6 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
-import com.ekalips.fancybuttonproj.FancyButton;
 
 import static org.rm7370rf.estherproject.R.string.load;
 import static org.rm7370rf.estherproject.R.string.please_backup_private_key;

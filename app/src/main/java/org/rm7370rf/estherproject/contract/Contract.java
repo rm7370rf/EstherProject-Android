@@ -1,9 +1,8 @@
 package org.rm7370rf.estherproject.contract;
 
-import org.rm7370rf.estherproject.contract.model.Post;
-import org.rm7370rf.estherproject.contract.model.Topic;
+import org.rm7370rf.estherproject.model.Post;
+import org.rm7370rf.estherproject.model.Topic;
 import org.rm7370rf.estherproject.model.Account;
-import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.FunctionReturnDecoder;
 import org.web3j.abi.TypeReference;
 import org.web3j.abi.datatypes.Address;
@@ -11,7 +10,6 @@ import org.web3j.abi.datatypes.Function;
 import org.web3j.abi.datatypes.Type;
 import org.web3j.abi.datatypes.Utf8String;
 import org.web3j.abi.datatypes.generated.Uint256;
-import org.web3j.abi.datatypes.generated.Uint8;
 
 import java.math.BigInteger;
 import java.util.Arrays;

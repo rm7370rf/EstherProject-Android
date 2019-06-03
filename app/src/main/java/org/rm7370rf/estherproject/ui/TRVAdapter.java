@@ -10,13 +10,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.apache.commons.lang3.StringUtils;
 import org.rm7370rf.estherproject.R;
-import org.rm7370rf.estherproject.contract.model.Topic;
-import org.rm7370rf.estherproject.utils.Config;
+import org.rm7370rf.estherproject.model.Topic;
 
-import java.math.BigInteger;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import io.realm.OrderedRealmCollection;
 import io.realm.RealmRecyclerViewAdapter;
 
