@@ -21,7 +21,12 @@ import org.rm7370rf.estherproject.R;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.math.BigInteger;
+import java.security.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import static android.content.Context.CLIPBOARD_SERVICE;
@@ -40,5 +45,9 @@ public class Utils {
         ClipData clip = ClipData.newPlainText("Copied Text", text);
         clipboard.setPrimaryClip(clip);
         Toast.show(context, copied_to_clipboard);
+    }
+
+    public static String timestampToDate(BigInteger timestamp) {
+        return new SimpleDateFormat("MM/dd/yyyy HH:mm:ss", Locale.US).format(new Date (timestamp.longValue()*1000));
     }
 }
