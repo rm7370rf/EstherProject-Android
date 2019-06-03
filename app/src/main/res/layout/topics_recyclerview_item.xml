@@ -14,7 +14,7 @@
             android:id="@+id/numberText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="@dimen/ra_item_margin"
             app:layout_constraintBottom_toBottomOf="@+id/messageText"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/subjectText" />
@@ -23,7 +23,7 @@
             android:id="@+id/subjectText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="@dimen/ra_item_margin"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -31,8 +31,8 @@
             android:id="@+id/messageText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginTop="@dimen/ra_item_margin"
+            android:layout_marginEnd="@dimen/ra_item_margin"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/subjectText" />
     </androidx.constraintlayout.widget.ConstraintLayout>
