@@ -38,7 +38,7 @@ public class TRVAdapter extends RealmRecyclerViewAdapter<Topic, TRVAdapter.TRVVi
     @Override
     public void onBindViewHolder(@NonNull TRVViewHolder holder, int position) {
         final Topic topic = getItem(position);
-        holder.itemNumberText.setText(String.valueOf(topic.getId().add(BigInteger.ONE)));
+        holder.itemNumberText.setText(String.valueOf(position + 1));
         holder.itemSubjectText.setText(StringUtils.abbreviate(topic.getSubject(), MAX_LIST_ITEM_TEXT_LENGTH));
         holder.itemMessageText.setText(StringUtils.abbreviate(topic.getMessage(), MAX_LIST_ITEM_TEXT_LENGTH));
     }
