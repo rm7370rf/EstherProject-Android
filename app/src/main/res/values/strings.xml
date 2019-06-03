@@ -26,4 +26,5 @@
     <string name="qr_code_description">QR-code Of Address</string>
     <string name="username_already_exists">Username Already Exists</string>
     <string name="request_successfully_sent">Request successfully sent</string>
+    <string name="copied_to_clipboard">Copied to clipboard</string>
 </resources>
