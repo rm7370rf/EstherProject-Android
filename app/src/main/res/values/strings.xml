@@ -37,4 +37,5 @@
     <string name="add_topic">Topic</string>
     <string name="subject">Subject</string>
     <string name="message">Message</string>
+    <string name="invalid_topic_id">Invalid Topic Id</string>
 </resources>
