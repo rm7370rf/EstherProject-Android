@@ -1,6 +1,7 @@
 package org.rm7370rf.estherproject.model;
 
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -18,6 +19,9 @@ public class Account extends RealmObject {
     private String walletName;
     @Required
     private String walletFolder;
+    @Required
+    private String userName = "";
+    @Required
     private String balance = String.valueOf(BigInteger.ZERO);
 
     public Account() { }
@@ -48,6 +52,14 @@ public class Account extends RealmObject {
 
     public String getWalletAddress() {
         return walletAddress;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public boolean hasUsername() {
+        return !userName.isEmpty();
     }
 
     public BigInteger getBalance() {
