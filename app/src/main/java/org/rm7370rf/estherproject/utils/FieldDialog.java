@@ -61,6 +61,10 @@ public class FieldDialog {
         negativeBtn.setOnClickListener(v-> alertDialog.cancel());
     }
 
+    public void hide() {
+        alertDialog.hide();
+    }
+
     public void show() {
         alertDialog = builder.create();
         alertDialog.show();
