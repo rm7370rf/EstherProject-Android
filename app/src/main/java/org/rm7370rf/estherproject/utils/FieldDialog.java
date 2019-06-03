@@ -54,8 +54,20 @@ public class FieldDialog {
     }
 
     public void setOnClickListener(FieldDialog.OnClickListener listener) {
+        setOnClickListener(null, listener);
+    }
+
+    public void setOnClickListener(int resource, FieldDialog.OnClickListener listener) {
+        setOnClickListener(getContext().getString(resource), listener);
+    }
+
+    public void setOnClickListener(String name, FieldDialog.OnClickListener listener) {
         FancyButton positiveBtn = view.findViewById(R.id.positiveBtn),
-                               negativeBtn = view.findViewById(R.id.negativeBtn);
+                    negativeBtn = view.findViewById(R.id.negativeBtn);
+
+        if(name != null) {
+            positiveBtn.setText(name);
+        }
 
         positiveBtn.setOnClickListener(v -> listener.onClick(positiveBtn));
         negativeBtn.setOnClickListener(v-> alertDialog.cancel());
