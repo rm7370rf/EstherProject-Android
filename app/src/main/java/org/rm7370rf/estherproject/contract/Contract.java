@@ -113,7 +113,6 @@ public class Contract extends ContractManager {
                 Arrays.asList(
                         new TypeReference<Uint256>() {},
                         new TypeReference<Utf8String>() {},
-                        new TypeReference<Utf8String>() {},
                         new TypeReference<Address>() {},
                         new TypeReference<Utf8String>() {},
                         new TypeReference<Uint256>() {}
@@ -124,13 +123,13 @@ public class Contract extends ContractManager {
         List<Type> response = FunctionReturnDecoder.decode(responseValue, function.getOutputParameters());
 
         Post post = new Post();
-        post.setId((BigInteger) response.get(0).getValue());
-        post.setTopicsId(topicId);
+        post.setId(((BigInteger) response.get(0).getValue()).add(BigInteger.ONE));
+        post.setTopicId(topicId);
         post.setMessage((String) response.get(1).getValue());
         post.setUserAddress((String) response.get(2).getValue());
         post.setUserName((String) response.get(3).getValue());
         post.setTimestamp((BigInteger) response.get(4).getValue());
-        return null;
+        return post;
     }
 
     public BigInteger countPostsAtTopic(BigInteger topicId) throws Exception {
