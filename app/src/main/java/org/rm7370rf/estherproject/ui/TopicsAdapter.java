@@ -26,7 +26,7 @@ public class TopicsAdapter extends RealmRecyclerViewAdapter<Topic, TopicsAdapter
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.topic_recyclerview_item, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.topics_recyclerview_item, parent, false);
         return new ViewHolder(itemView);
     }
 
