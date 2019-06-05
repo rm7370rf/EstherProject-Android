@@ -3,6 +3,7 @@ package org.rm7370rf.estherproject.util;
 import android.app.Activity;
 import android.content.Context;
 import android.view.View;
+import android.view.Window;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -20,6 +21,7 @@ public class FieldDialog {
     private AlertDialog.Builder builder;
     private AlertDialog alertDialog;
     private View view;
+    private List<EditText> editTextList = new ArrayList<>();
 
     public FieldDialog(Activity activity) {
         this.activity = activity;
@@ -40,14 +42,18 @@ public class FieldDialog {
     }
 
     public EditText getEditText(int resource) {
-        return view.findViewById(resource);
+        EditText editText = view.findViewById(resource);
+        editTextList.add(editText);
+        return editText;
     }
 
     public List<EditText> getEditTextList(List<Integer> resourceList) {
         List<EditText> list = new ArrayList<>();
 
         for (int resource : resourceList) {
-            list.add(view.findViewById(resource));
+            EditText editText = view.findViewById(resource);
+            list.add(editText);
+            editTextList.add(editText);
         }
 
         return list;
@@ -69,8 +75,17 @@ public class FieldDialog {
             positiveBtn.setText(name);
         }
 
-        positiveBtn.setOnClickListener(v -> listener.onClick(positiveBtn));
+        positiveBtn.setOnClickListener(v -> {
+            hideKeyboard();
+            listener.onClick(positiveBtn);
+        });
         negativeBtn.setOnClickListener(v-> alertDialog.cancel());
+    }
+
+    public void hideKeyboard() {
+        for (EditText et : editTextList) {
+            Utils.hideKeyboard(et);
+        }
     }
 
     public void hide() {

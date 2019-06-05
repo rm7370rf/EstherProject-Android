@@ -1,9 +1,13 @@
 package org.rm7370rf.estherproject.util;
 
+import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
@@ -25,6 +29,11 @@ public class Utils {
         BitMatrix bitMatrix = multiFormatWriter.encode(text, BarcodeFormat.QR_CODE, width, height);
         BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
         return barcodeEncoder.createBitmap(bitMatrix);
+    }
+
+    public static void hideKeyboard(EditText editText) {
+        InputMethodManager imm = (InputMethodManager) editText.getContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
     }
 
     public static void copyToClipboard(Context context, String text) {
