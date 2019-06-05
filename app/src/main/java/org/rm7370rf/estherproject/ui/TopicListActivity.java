@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import org.rm7370rf.estherproject.R;
 import org.rm7370rf.estherproject.contract.Contract;
+import org.rm7370rf.estherproject.expceptions.VerifierException;
 import org.rm7370rf.estherproject.model.Topic;
 import org.rm7370rf.estherproject.model.Account;
 import org.rm7370rf.estherproject.ui.adapter.TopicsAdapter;
@@ -83,12 +84,18 @@ public class TopicListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_topic_list);
         ButterKnife.bind(this);
-        setTitle(topics);
-        setContract();
-        setSwipeRefreshLayout();
-        setRecyclerAdapter();
-        setRefreshAnimationUtil();
-        updateDB((countTopics() == 0) ? RefreshType.FIRST : RefreshType.AFTER_START);
+        try {
+            setTitle(topics);
+            setContract();
+            setSwipeRefreshLayout();
+            setRecyclerAdapter();
+            setRefreshAnimationUtil();
+            updateDB((countTopics() == 0) ? RefreshType.FIRST : RefreshType.AFTER_START);
+        }
+        catch (Exception e) {
+            Toast.show(this, e.getLocalizedMessage());
+            finish();
+        }
     }
 
     public void setRefreshAnimationUtil() {
@@ -102,8 +109,9 @@ public class TopicListActivity extends AppCompatActivity {
         return Realm.getDefaultInstance().where(Topic.class).count();
     }
 
-    private void setContract() {
+    private void setContract() throws VerifierException {
         this.account = realm.where(Account.class).findFirst();
+        Verifier.verifyRealmObject(this, account);
         this.contract = new Contract(realm.copyFromRealm(account));
     }
 
@@ -187,12 +195,7 @@ public class TopicListActivity extends AppCompatActivity {
                 return true;
             case R.id.accountData:
                 Log.d("MENU", "ACCOUNT_DATA");
-                try {
-                    showAccountDataDialog();
-                }
-                catch (Exception e) {
-                    Toast.show(this, e.getLocalizedMessage());
-                }
+                showAccountDataDialog();
                 return true;
             case R.id.setUsername:
                 Log.d("MENU", "SET_USERNAME");
@@ -300,45 +303,50 @@ public class TopicListActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private void showAccountDataDialog() throws Exception {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        View view = getLayoutInflater().inflate(R.layout.dialog_account_data, null);
+    private void showAccountDataDialog() {
+        try {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            View view = getLayoutInflater().inflate(R.layout.dialog_account_data, null);
 
-        TextView userBalanceText = view.findViewById(R.id.userBalance);
-        TextView userNameLabel = view.findViewById(R.id.userNameLabel);
-        TextView userNameText = view.findViewById(R.id.userName);
-        TextView userAddressText = view.findViewById(R.id.userAddress);
-        ImageButton qrCode = view.findViewById(R.id.qrCodeImage);
+            TextView userBalanceText = view.findViewById(R.id.userBalance);
+            TextView userNameLabel = view.findViewById(R.id.userNameLabel);
+            TextView userNameText = view.findViewById(R.id.userName);
+            TextView userAddressText = view.findViewById(R.id.userAddress);
+            ImageButton qrCode = view.findViewById(R.id.qrCodeImage);
 
-        userAddressText.setOnClickListener(v -> Utils.copyToClipboard(this, account.getWalletAddress()));
-        qrCode.setOnClickListener(v -> Utils.copyToClipboard(this, account.getWalletAddress()));
+            userAddressText.setOnClickListener(v -> Utils.copyToClipboard(this, account.getWalletAddress()));
+            qrCode.setOnClickListener(v -> Utils.copyToClipboard(this, account.getWalletAddress()));
 
-        String address = account.getWalletAddress();
+            String address = account.getWalletAddress();
 
-        int size = getResources().getDisplayMetrics().widthPixels/2;
-        qrCode.setImageBitmap(Utils.createQrCode(address, size, size));
+            int size = getResources().getDisplayMetrics().widthPixels / 2;
+            qrCode.setImageBitmap(Utils.createQrCode(address, size, size));
 
-        userBalanceText.setText(String.valueOf(account.getBalance()));
+            userBalanceText.setText(String.valueOf(account.getBalance()));
 
-        int userNameVisibility = account.hasUsername() ? View.VISIBLE : View.GONE;
-        userNameLabel.setVisibility(userNameVisibility);
-        userNameText.setVisibility(userNameVisibility);
+            int userNameVisibility = account.hasUsername() ? View.VISIBLE : View.GONE;
+            userNameLabel.setVisibility(userNameVisibility);
+            userNameText.setVisibility(userNameVisibility);
 
-        if (account.hasUsername()) {
-            userNameText.setText(account.getUserName());
+            if (account.hasUsername()) {
+                userNameText.setText(account.getUserName());
+            }
+
+            userAddressText.setText(account.getWalletAddress());
+
+            SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
+            swipeRefreshLayout.setOnRefreshListener(() -> refreshUserData(view, userBalanceText, swipeRefreshLayout, true));
+
+            refreshUserData(view, userBalanceText, swipeRefreshLayout, false);
+
+            builder.setView(view);
+            AlertDialog dialog = builder.create();
+            dialog.setCancelable(true);
+            dialog.show();
         }
-
-        userAddressText.setText(account.getWalletAddress());
-
-        SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
-        swipeRefreshLayout.setOnRefreshListener(() -> refreshUserData(view, userBalanceText, swipeRefreshLayout, true));
-
-        refreshUserData(view, userBalanceText, swipeRefreshLayout, false);
-
-        builder.setView(view);
-        AlertDialog dialog = builder.create();
-        dialog.setCancelable(true);
-        dialog.show();
+        catch (Exception e) {
+            Toast.show(this, e.getLocalizedMessage());
+        }
     }
 
     private void refreshUserData(View view, TextView userBalanceText, SwipeRefreshLayout swipeRefreshLayout, boolean bySwipe) {
@@ -382,7 +390,7 @@ public class TopicListActivity extends AppCompatActivity {
     }
 
     private void showSetUsernameDialog() {
-        if(!account.hasUsername()) {
+        if (!account.hasUsername()) {
             FieldDialog dialog = new FieldDialog(this);
             dialog.setLayout(R.layout.dialog_set_username);
 
@@ -392,50 +400,44 @@ public class TopicListActivity extends AppCompatActivity {
             dialog.setOnClickListener(
                     send,
                     button -> {
-                try {
-                    String userName = userNameEdit.getText().toString();
-                    String password = passwordEdit.getText().toString();
+                        String userName = userNameEdit.getText().toString();
+                        String password = passwordEdit.getText().toString();
 
-                    Verifier.verifyUserName(this, userName);
-                    Verifier.verifyPassword(this, password);
+                        disposables.add(
+                                Completable.fromAction(() -> {
+                                    Verifier.verifyUserName(this, userName);
+                                    Verifier.verifyPassword(this, password);
+                                    contract.setUsername(password, userName);
+                                })
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableCompletableObserver() {
+                                    @Override
+                                    protected void onStart() {
+                                        super.onStart();
+                                        button.collapse();
+                                    }
 
-                    disposables.add(
-                            Completable.fromAction(() -> contract.setUsername(password, userName))
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableCompletableObserver() {
-                                @Override
-                                protected void onStart() {
-                                    super.onStart();
-                                    button.collapse();
-                                }
+                                    @Override
+                                    public void onComplete() {
+                                        button.expand();
+                                        dialog.hide();
+                                        realm.executeTransaction(realm -> account.setUserName(userName));
 
-                                @Override
-                                public void onComplete() {
-                                    button.expand();
-                                    dialog.hide();
-                                    realm.executeTransaction(realm -> account.setUserName(userName));
+                                        Toast.show(dialog.getContext(), request_successfully_sent);
+                                        invalidateOptionsMenu();
+                                    }
 
-                                    Toast.show(dialog.getContext(), request_successfully_sent);
-                                    invalidateOptionsMenu();
-                                }
-
-                                @Override
-                                public void onError(Throwable e) {
-                                    button.expand();
-                                    e.printStackTrace();
-                                    Toast.show(dialog.getContext(), e.getLocalizedMessage());
-                                }
-                            })
-                    );
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                    Toast.show(this, e.getLocalizedMessage());
-                }
-            });
+                                    @Override
+                                    public void onError(Throwable e) {
+                                        button.expand();
+                                        e.printStackTrace();
+                                        Toast.show(dialog.getContext(), e.getLocalizedMessage());
+                                    }
+                                })
+                        );
+                    });
             dialog.show();
-        }
-        else {
+        } else {
             Toast.show(this, username_already_exists);
         }
     }
