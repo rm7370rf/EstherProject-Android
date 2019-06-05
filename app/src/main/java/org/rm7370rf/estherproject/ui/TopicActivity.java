@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 
 import org.apache.commons.lang3.StringUtils;
@@ -20,20 +21,28 @@ import org.rm7370rf.estherproject.contract.Contract;
 import org.rm7370rf.estherproject.model.Account;
 import org.rm7370rf.estherproject.model.Post;
 import org.rm7370rf.estherproject.model.Topic;
+import org.rm7370rf.estherproject.utils.FieldDialog;
 import org.rm7370rf.estherproject.utils.Toast;
+import org.rm7370rf.estherproject.utils.Verifier;
 
 import java.math.BigInteger;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.observers.DisposableCompletableObserver;
 import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
+import io.realm.RealmResults;
+import io.realm.Sort;
 
 import static org.rm7370rf.estherproject.R.string.invalid_topic_id;
+import static org.rm7370rf.estherproject.R.string.request_successfully_sent;
+import static org.rm7370rf.estherproject.R.string.send;
 import static org.rm7370rf.estherproject.utils.Config.MAX_LIST_ITEM_TEXT_LENGTH;
 import static org.rm7370rf.estherproject.utils.Config.TOPIC_ID_KEY;
 
@@ -82,6 +91,7 @@ public class TopicActivity extends AppCompatActivity {
             firstPost.setUserAddress(topic.getUserAddress());
             firstPost.setUserName(topic.getUserName());
             firstPost.setTimestamp(topic.getTimestamp());
+            firstPost.createPrimaryKey();
             realm.executeTransaction(r -> r.copyToRealm(firstPost));
         }
     }
@@ -104,7 +114,12 @@ public class TopicActivity extends AppCompatActivity {
     }
 
     private void setRecyclerAdapter() {
-        TopicAdapter adapter = new TopicAdapter(realm.where(Post.class).findAll());
+        RealmResults<Post> posts = realm.where(Post.class)
+                .equalTo("topicId", String.valueOf(topic.getId()))
+                .sort("timestamp", Sort.ASCENDING)
+                .findAll();
+
+        TopicAdapter adapter = new TopicAdapter(posts);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(true);
@@ -135,34 +150,34 @@ public class TopicActivity extends AppCompatActivity {
                         e.printStackTrace();
                         emitter.onError(e);
                     }
-                }).subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                                post -> {
-                                    Log.d("NEW POST", String.valueOf(post.getId()));
-                                    realm.executeTransaction(r -> r.copyToRealm(post));
-                                },
-                                error -> {
-                                    error.printStackTrace();
-                                    Toast.show(this, error.getLocalizedMessage());
-                                },
-                                () -> {
-                                    if(!bySwipe) {
-                                        progressBar.setVisibility(View.GONE);
-                                        recyclerView.setVisibility(View.VISIBLE);
-                                    }
-                                    else {
-                                        swipeRefreshLayout.setRefreshing(false);
-                                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    post -> {
+                        Log.d("NEW POST", String.valueOf(post.getId()));
+                        realm.executeTransaction(r -> r.copyToRealm(post));
+                    },
+                    error -> {
+                        error.printStackTrace();
+                        Toast.show(this, error.getLocalizedMessage());
+                    },
+                    () -> {
+                        if (!bySwipe) {
+                            progressBar.setVisibility(View.GONE);
+                            recyclerView.setVisibility(View.VISIBLE);
+                        } else {
+                            swipeRefreshLayout.setRefreshing(false);
+                        }
 
-                                },
-                                i -> {
-                                    if(!bySwipe) {
-                                        progressBar.setVisibility(View.VISIBLE);
-                                        recyclerView.setVisibility(View.GONE);
-                                    }
-                                }
-                        )
+                    },
+                    i -> {
+                        if (!bySwipe) {
+                            progressBar.setVisibility(View.VISIBLE);
+                            recyclerView.setVisibility(View.GONE);
+                        }
+                    }
+                )
         );
     }
 
@@ -188,12 +203,53 @@ public class TopicActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.addPost:
-//                showAddTopicDialog();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if(item.getItemId() == R.id.addPost) {
+            showAddPostDialog();
+            return true;
         }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void showAddPostDialog() {
+        FieldDialog dialog = new FieldDialog(this);
+        dialog.setLayout(R.layout.dialog_add_post);
+
+        EditText messageEdit = dialog.getEditText(R.id.messageEdit);
+        EditText passwordEdit = dialog.getEditText(R.id.passwordEdit);
+
+        dialog.setOnClickListener(
+                send,
+                button -> disposables.add(
+                        Completable.fromAction(() -> {
+                            String message = messageEdit.getText().toString();
+                            String password = passwordEdit.getText().toString();
+                            Verifier.verifyMessage(this, message);
+                            Verifier.verifyPassword(this, password);
+                            contract.addPostToTopic(password, topic.getId(), message);
+                        })
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableCompletableObserver() {
+                            @Override
+                            protected void onStart() {
+                                button.collapse();
+                            }
+
+                            @Override
+                            public void onComplete() {
+                                Toast.show(dialog.getContext(), request_successfully_sent);
+                                button.expand();
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                e.printStackTrace();
+                                Toast.show(dialog.getContext(), e.getLocalizedMessage());
+                                button.expand();
+                            }
+                        })
+                )
+        );
+        dialog.show();
     }
 }
