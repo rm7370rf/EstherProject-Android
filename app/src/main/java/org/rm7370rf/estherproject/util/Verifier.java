@@ -1,8 +1,8 @@
-package org.rm7370rf.estherproject.utils;
+package org.rm7370rf.estherproject.util;
 
 import android.content.Context;
 
-import org.rm7370rf.estherproject.expceptions.VerifierException;
+import org.rm7370rf.estherproject.expception.VerifierException;
 import org.rm7370rf.estherproject.model.Account;
 import org.web3j.crypto.WalletUtils;
 

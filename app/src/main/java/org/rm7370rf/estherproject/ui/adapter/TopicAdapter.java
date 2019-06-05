@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.rm7370rf.estherproject.R;
 import org.rm7370rf.estherproject.model.Post;
-import org.rm7370rf.estherproject.utils.Utils;
+import org.rm7370rf.estherproject.util.Utils;
 
 import io.realm.OrderedRealmCollection;
 import io.realm.RealmRecyclerViewAdapter;

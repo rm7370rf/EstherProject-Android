@@ -17,17 +17,17 @@ import android.widget.TextView;
 
 import org.rm7370rf.estherproject.R;
 import org.rm7370rf.estherproject.contract.Contract;
-import org.rm7370rf.estherproject.expceptions.VerifierException;
+import org.rm7370rf.estherproject.expception.VerifierException;
 import org.rm7370rf.estherproject.model.Topic;
 import org.rm7370rf.estherproject.model.Account;
 import org.rm7370rf.estherproject.ui.adapter.TopicsAdapter;
 import org.rm7370rf.estherproject.other.Config;
-import org.rm7370rf.estherproject.utils.FieldDialog;
-import org.rm7370rf.estherproject.utils.RefreshAnimationUtil;
-import org.rm7370rf.estherproject.utils.RefreshAnimationUtil.RefreshType;
-import org.rm7370rf.estherproject.utils.Utils;
-import org.rm7370rf.estherproject.utils.Toast;
-import org.rm7370rf.estherproject.utils.Verifier;
+import org.rm7370rf.estherproject.util.FieldDialog;
+import org.rm7370rf.estherproject.util.RefreshAnimationUtil;
+import org.rm7370rf.estherproject.util.RefreshAnimationUtil.RefreshType;
+import org.rm7370rf.estherproject.util.Utils;
+import org.rm7370rf.estherproject.util.Toast;
+import org.rm7370rf.estherproject.util.Verifier;
 import org.web3j.crypto.Credentials;
 
 import java.math.BigDecimal;

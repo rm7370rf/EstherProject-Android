@@ -1,4 +1,4 @@
-package org.rm7370rf.estherproject.expceptions;
+package org.rm7370rf.estherproject.expception;
 
 import android.content.Context;
 

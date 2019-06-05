@@ -1,4 +1,4 @@
-package org.rm7370rf.estherproject.utils;
+package org.rm7370rf.estherproject.util;
 
 import android.view.View;
 import android.widget.ProgressBar;

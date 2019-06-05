@@ -18,16 +18,16 @@ import android.widget.ProgressBar;
 import org.apache.commons.lang3.StringUtils;
 import org.rm7370rf.estherproject.R;
 import org.rm7370rf.estherproject.contract.Contract;
-import org.rm7370rf.estherproject.expceptions.VerifierException;
+import org.rm7370rf.estherproject.expception.VerifierException;
 import org.rm7370rf.estherproject.model.Account;
 import org.rm7370rf.estherproject.model.Post;
 import org.rm7370rf.estherproject.model.Topic;
 import org.rm7370rf.estherproject.ui.adapter.TopicAdapter;
-import org.rm7370rf.estherproject.utils.FieldDialog;
-import org.rm7370rf.estherproject.utils.RefreshAnimationUtil;
-import org.rm7370rf.estherproject.utils.RefreshAnimationUtil.RefreshType;
-import org.rm7370rf.estherproject.utils.Toast;
-import org.rm7370rf.estherproject.utils.Verifier;
+import org.rm7370rf.estherproject.util.FieldDialog;
+import org.rm7370rf.estherproject.util.RefreshAnimationUtil;
+import org.rm7370rf.estherproject.util.RefreshAnimationUtil.RefreshType;
+import org.rm7370rf.estherproject.util.Toast;
+import org.rm7370rf.estherproject.util.Verifier;
 
 import java.math.BigInteger;
 

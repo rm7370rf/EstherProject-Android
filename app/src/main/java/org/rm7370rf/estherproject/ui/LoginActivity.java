@@ -12,9 +12,9 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.rm7370rf.estherproject.R;
 import org.rm7370rf.estherproject.contract.Contract;
 import org.rm7370rf.estherproject.model.Account;
-import org.rm7370rf.estherproject.utils.FieldDialog;
-import org.rm7370rf.estherproject.utils.Toast;
-import org.rm7370rf.estherproject.utils.Verifier;
+import org.rm7370rf.estherproject.util.FieldDialog;
+import org.rm7370rf.estherproject.util.Toast;
+import org.rm7370rf.estherproject.util.Verifier;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.Keys;
 import org.web3j.crypto.WalletUtils;
@@ -35,8 +35,8 @@ import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
 
 import static org.rm7370rf.estherproject.R.string.account_saved;
-import static org.rm7370rf.estherproject.utils.Verifier.isAccountExists;
-import static org.rm7370rf.estherproject.utils.Verifier.verifyAccountExistence;
+import static org.rm7370rf.estherproject.util.Verifier.isAccountExists;
+import static org.rm7370rf.estherproject.util.Verifier.verifyAccountExistence;
 
 public class LoginActivity extends AppCompatActivity {
     private Disposable disposable;
