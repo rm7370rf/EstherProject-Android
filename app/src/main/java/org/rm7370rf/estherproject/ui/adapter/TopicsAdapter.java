@@ -1,4 +1,4 @@
-package org.rm7370rf.estherproject.ui;
+package org.rm7370rf.estherproject.ui.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
