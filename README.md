@@ -1,8 +1,8 @@
-#EN:
+# EN:
 ## EstherProject Client for Android
 EstherProject is sample forum on Ethereum blockchain.
 
-#RU
+# RU
 ## В этом репозитории размещен исходый код клиента EstherProject для Android.
 
 ## Информация
@@ -19,3 +19,13 @@ EstherProject is sample forum on Ethereum blockchain.
 <img src="/screenshots/6.png?raw=true" width="360" height="640">
 <img src="/screenshots/7.png?raw=true" width="360" height="640">
 <img src="/screenshots/8.png?raw=true" width="360" height="640">
+
+
+![Alt text]( | 960x640 "Начальный экран")
+![Alt text]( "Список тем")
+![Alt text]( "Данные о аккаунте")
+![Alt text]( "Форма добавления новой темы")
+![Alt text]( "Открытая тема с комментариями)")
+![Alt text]( "Открытая тема без комментариев")
+![Alt text]( "Открытая тема без комментариев, но с указанием имени пользователя")
+![Alt text](/screenshots/8.png?raw=true?s=200 "Форма добавления постов")
