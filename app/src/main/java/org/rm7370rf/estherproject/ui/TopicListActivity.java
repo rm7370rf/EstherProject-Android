@@ -57,11 +57,31 @@ import static org.rm7370rf.estherproject.R.string.topics;
 import static org.rm7370rf.estherproject.R.string.username_already_exists;
 
 public class TopicListActivity extends AppCompatActivity {
+    static class RefreshType {
+        static final int FIRST = 1;
+        static final int AFTER_START = 2;
+        static final int BY_REQUEST = 3;
+
+        public static boolean isFirst(int refreshType) {
+            return (refreshType == FIRST);
+        }
+
+        public static boolean isAfterStart(int refreshType) {
+            return (refreshType == AFTER_START);
+        }
+
+        public static boolean isByRequest(int refreshType) {
+            return (refreshType == BY_REQUEST);
+        }
+    }
     @BindView(R.id.swipeRefreshLayout)
     SwipeRefreshLayout swipeRefreshLayout;
 
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
+
+    @BindView(R.id.topProgressBar)
+    ProgressBar topProgressBar;
 
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
@@ -82,7 +102,13 @@ public class TopicListActivity extends AppCompatActivity {
         setContract();
         setSwipeRefreshLayout();
         setRecyclerAdapter();
-        updateDB(false);
+
+
+        updateDB((countTopics() == 0) ? RefreshType.FIRST : RefreshType.AFTER_START);
+    }
+
+    private long countTopics() {
+        return Realm.getDefaultInstance().where(Topic.class).count();
     }
 
     private void setContract() {
@@ -104,17 +130,16 @@ public class TopicListActivity extends AppCompatActivity {
     }
 
     public void setSwipeRefreshLayout() {
-        this.swipeRefreshLayout.setOnRefreshListener(() -> updateDB(true));
+        this.swipeRefreshLayout.setOnRefreshListener(() -> updateDB(RefreshType.BY_REQUEST));
     }
 
-    private void updateDB(boolean bySwipe) {
+    private void updateDB(int refreshType) {
         disposables.add(
                 Observable.create((ObservableEmitter<Topic> emitter) -> {
                     try {
                         BigInteger numberOfTopics = contract.countTopics();
-                        long count = Realm.getDefaultInstance().where(Topic.class).count();
-                        Log.d("RF", "|" + count + "|" + numberOfTopics + "|");
-                        BigInteger localNumberOfTopics = BigInteger.valueOf(count);
+                        long amount = countTopics();
+                        BigInteger localNumberOfTopics = BigInteger.valueOf(amount);
 
                         if (numberOfTopics.compareTo(localNumberOfTopics) > 0) {
                             for (BigInteger i = localNumberOfTopics; i.compareTo(numberOfTopics) < 0; i = i.add(BigInteger.ONE)) {
@@ -130,31 +155,29 @@ public class TopicListActivity extends AppCompatActivity {
                 }).subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
-                                topic -> {
-                                    Log.d("RF", "TopicId: " + (topic.getId()));
-                                    Realm.getDefaultInstance().executeTransaction(realm -> realm.copyToRealm(topic));
-                                },
-                                error -> {
-                                    Log.d("RF", "EXCEPTION");
-                                    error.printStackTrace();
-                                    Toast.show(this, error.getLocalizedMessage());
-                                },
+                                topic -> Realm.getDefaultInstance().executeTransaction(realm -> realm.copyToRealm(topic)),
+                                error -> Toast.show(this, error.getLocalizedMessage()),
                                 () -> {
-                                    Log.d("RF", "GONE");
-                                    if(!bySwipe) {
-                                        progressBar.setVisibility(View.GONE);
-                                        recyclerView.setVisibility(View.VISIBLE);
+                                    if(RefreshType.isByRequest(refreshType)) {
+                                        swipeRefreshLayout.setRefreshing(false);
+                                    }
+                                    else if(RefreshType.isAfterStart(refreshType)) {
+                                        topProgressBar.setVisibility(View.GONE);
                                     }
                                     else {
-                                        swipeRefreshLayout.setRefreshing(false);
+                                        progressBar.setVisibility(View.GONE);
+                                        recyclerView.setVisibility(View.VISIBLE);
                                     }
 
                                 },
                                 i -> {
                                     Log.d("RF", "VISIBLE");
-                                    if(!bySwipe) {
+                                    if(RefreshType.isFirst(refreshType)) {
                                         progressBar.setVisibility(View.VISIBLE);
                                         recyclerView.setVisibility(View.GONE);
+                                    }
+                                    else if(RefreshType.isAfterStart(refreshType)) {
+                                        topProgressBar.setVisibility(View.VISIBLE);
                                     }
                                 }
                         )
