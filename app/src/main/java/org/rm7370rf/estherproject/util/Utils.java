@@ -35,6 +35,6 @@ public class Utils {
     }
 
     public static String timestampToDate(BigInteger timestamp) {
-        return new SimpleDateFormat("MM/dd/yyyy HH:mm:ss", Locale.US).format(new Date (timestamp.longValue()*1000));
+        return new SimpleDateFormat("MM/dd/yy HH:mm", Locale.US).format(new Date (timestamp.longValue()*1000));
     }
 }
