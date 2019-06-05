@@ -77,7 +77,7 @@ public class TopicsAdapter extends RealmRecyclerViewAdapter<Topic, TopicsAdapter
         }
     }
 
-    interface OnItemClickListener {
+    public interface OnItemClickListener {
         void onClick(BigInteger topicId);
     }
 }
