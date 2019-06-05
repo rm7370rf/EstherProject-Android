@@ -19,10 +19,11 @@ import org.rm7370rf.estherproject.R;
 import org.rm7370rf.estherproject.contract.Contract;
 import org.rm7370rf.estherproject.model.Topic;
 import org.rm7370rf.estherproject.model.Account;
-import org.rm7370rf.estherproject.other.RefreshType;
 import org.rm7370rf.estherproject.ui.adapter.TopicsAdapter;
 import org.rm7370rf.estherproject.other.Config;
 import org.rm7370rf.estherproject.utils.FieldDialog;
+import org.rm7370rf.estherproject.utils.RefreshAnimationUtil;
+import org.rm7370rf.estherproject.utils.RefreshAnimationUtil.RefreshType;
 import org.rm7370rf.estherproject.utils.Utils;
 import org.rm7370rf.estherproject.utils.Toast;
 import org.rm7370rf.estherproject.utils.Verifier;
@@ -75,6 +76,12 @@ public class TopicListActivity extends AppCompatActivity {
     private TopicsAdapter adapter;
     private Realm realm = Realm.getDefaultInstance();
     private Account account;
+    private RefreshAnimationUtil refreshAnimationUtil = new RefreshAnimationUtil(
+            topProgressBar,
+            progressBar,
+            swipeRefreshLayout,
+            recyclerView
+    );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,29 +148,8 @@ public class TopicListActivity extends AppCompatActivity {
                         .subscribe(
                                 topic -> Realm.getDefaultInstance().executeTransaction(realm -> realm.copyToRealm(topic)),
                                 error -> Toast.show(this, error.getLocalizedMessage()),
-                                () -> {
-                                    if(RefreshType.isByRequest(refreshType)) {
-                                        swipeRefreshLayout.setRefreshing(false);
-                                    }
-                                    else if(RefreshType.isAfterStart(refreshType)) {
-                                        topProgressBar.setVisibility(View.GONE);
-                                    }
-                                    else {
-                                        progressBar.setVisibility(View.GONE);
-                                        recyclerView.setVisibility(View.VISIBLE);
-                                    }
-
-                                },
-                                i -> {
-                                    Log.d("RF", "VISIBLE");
-                                    if(RefreshType.isFirst(refreshType)) {
-                                        progressBar.setVisibility(View.VISIBLE);
-                                        recyclerView.setVisibility(View.GONE);
-                                    }
-                                    else if(RefreshType.isAfterStart(refreshType)) {
-                                        topProgressBar.setVisibility(View.VISIBLE);
-                                    }
-                                }
+                                () -> refreshAnimationUtil.stop(refreshType),
+                                i -> refreshAnimationUtil.start(refreshType)
                         )
         );
     }
