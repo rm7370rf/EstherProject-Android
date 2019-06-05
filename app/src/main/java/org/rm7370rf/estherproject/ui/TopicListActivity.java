@@ -106,7 +106,7 @@ public class TopicListActivity extends AppCompatActivity {
     }
 
     private long countTopics() {
-        return Realm.getDefaultInstance().where(Topic.class).count();
+        return realm.where(Topic.class).count();
     }
 
     private void setContract() throws VerifierException {
@@ -133,11 +133,11 @@ public class TopicListActivity extends AppCompatActivity {
     }
 
     private void updateDB(int refreshType) {
+        long amount = countTopics();
         disposables.add(
                 Observable.create((ObservableEmitter<Topic> emitter) -> {
                     try {
                         BigInteger numberOfTopics = contract.countTopics();
-                        long amount = countTopics();
                         BigInteger localNumberOfTopics = BigInteger.valueOf(amount);
 
                         if (numberOfTopics.compareTo(localNumberOfTopics) > 0) {
@@ -154,7 +154,7 @@ public class TopicListActivity extends AppCompatActivity {
                 }).subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
-                                topic -> Realm.getDefaultInstance().executeTransaction(realm -> realm.copyToRealm(topic)),
+                                topic -> realm.executeTransaction(r -> r.copyToRealm(topic)),
                                 error -> Toast.show(this, error.getLocalizedMessage()),
                                 () -> refreshAnimationUtil.stop(refreshType),
                                 i -> refreshAnimationUtil.start(refreshType)

@@ -159,11 +159,11 @@ public class TopicActivity extends AppCompatActivity {
     }
 
     private void updateDB(int refreshType) {
+        long amount = countPosts();
         disposables.add(
                 Observable.create((ObservableEmitter<Post> emitter) -> {
                     try {
                         BigInteger numberOfPosts = contract.countPostsAtTopic(topic.getId());
-                        long amount = countPosts();
 
                         BigInteger localNumberOfPosts = BigInteger.valueOf(amount);
 
