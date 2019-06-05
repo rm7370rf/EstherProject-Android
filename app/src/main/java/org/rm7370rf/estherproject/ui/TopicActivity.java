@@ -165,7 +165,7 @@ public class TopicActivity extends AppCompatActivity {
                     try {
                         BigInteger numberOfPosts = contract.countPostsAtTopic(topic.getId());
 
-                        BigInteger localNumberOfPosts = BigInteger.valueOf(amount);
+                        BigInteger localNumberOfPosts = BigInteger.valueOf(amount).subtract(BigInteger.ONE);
 
                         if (numberOfPosts.compareTo(localNumberOfPosts) > 0) {
                             for (BigInteger i = localNumberOfPosts; i.compareTo(numberOfPosts) < 0; i = i.add(BigInteger.ONE)) {
@@ -182,9 +182,7 @@ public class TopicActivity extends AppCompatActivity {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                    post -> {
-                        realm.executeTransaction(r -> r.copyToRealm(post));
-                    },
+                    post -> realm.executeTransaction(r -> r.copyToRealm(post)),
                     error -> {
                         error.printStackTrace();
                         Toast.show(this, error.getLocalizedMessage());
@@ -208,11 +206,6 @@ public class TopicActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_topic, menu);
         return true;
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
