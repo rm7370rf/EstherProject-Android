@@ -331,8 +331,8 @@ public class TopicListActivity extends AppCompatActivity {
         userNameLabel.setVisibility(userNameVisibility);
         userNameText.setVisibility(userNameVisibility);
 
-        if (!account.hasUsername()) {
-            userNameText.setText(address);
+        if (account.hasUsername()) {
+            userNameText.setText(account.getUserName());
         }
 
         userAddressText.setText(account.getWalletAddress());

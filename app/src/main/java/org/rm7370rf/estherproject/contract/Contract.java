@@ -62,7 +62,7 @@ public class Contract extends ContractManager {
         Function function = new Function(
                 "getUsername",
                 Collections.singletonList(
-                        new Utf8String(userAddress)
+                        new Address(userAddress)
                 ),
                 Collections.singletonList(
                         new TypeReference<Utf8String>() {}

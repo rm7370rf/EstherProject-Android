@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.rm7370rf.estherproject.R;
+import org.rm7370rf.estherproject.contract.Contract;
 import org.rm7370rf.estherproject.model.Account;
 import org.rm7370rf.estherproject.utils.FieldDialog;
 import org.rm7370rf.estherproject.utils.Toast;
@@ -131,10 +132,17 @@ public class LoginActivity extends AppCompatActivity {
 
                         String walletName = WalletUtils.generateWalletFile(password, credentials.getEcKeyPair(), file, false);
 
+                        String address = credentials.getAddress();
+
                         Account account = new Account();
                         account.setWalletName(walletName);
                         account.setWalletFolder(file.getPath());
-                        account.setWalletAddress(credentials.getAddress());
+                        account.setWalletAddress(address);
+                        Contract contract = new Contract(account);
+                        String userName = contract.getUsername(address);
+                        if(!userName.isEmpty()) {
+                            account.setUserName(userName);
+                        }
                         return account;
                     }).subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread());
