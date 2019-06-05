@@ -13,3 +13,4 @@ EstherProject is sample forum on Ethereum blockchain.
 - [x] Add Horizontal ProgressBar to TopicListActivity.
 - [ ] Fix numbering.
 - [x] Add Back button.
+- [ ] Autohide keyboard on success.
