@@ -1,6 +1,9 @@
 package org.rm7370rf.estherproject.util;
 
+import android.app.Activity;
 import android.content.Context;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import org.rm7370rf.estherproject.expception.VerifierException;
 import org.rm7370rf.estherproject.model.Account;
@@ -27,6 +30,7 @@ public class Verifier {
             throw new VerifierException(context, value_is_null);
         }
     }
+
     public static void verifyRealmObject(Context context, RealmObject object) throws VerifierException {
         if(object == null) {
             throw new VerifierException(context, object_is_null);

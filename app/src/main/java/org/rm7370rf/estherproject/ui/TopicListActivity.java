@@ -236,27 +236,27 @@ public class TopicListActivity extends AppCompatActivity {
                                 Verifier.verifyPassword(this, password);
                                 contract.addTopic(password, subject, message);
                             })
-                                    .subscribeOn(Schedulers.io())
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribeWith(new DisposableCompletableObserver() {
-                                        @Override
-                                        protected void onStart() {
-                                            button.collapse();
-                                        }
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribeWith(new DisposableCompletableObserver() {
+                                @Override
+                                protected void onStart() {
+                                    button.collapse();
+                                }
 
-                                        @Override
-                                        public void onComplete() {
-                                            Toast.show(dialog.getContext(), request_successfully_sent);
-                                            button.expand();
-                                        }
+                                @Override
+                                public void onComplete() {
+                                    Toast.show(dialog.getContext(), request_successfully_sent);
+                                    button.expand();
+                                }
 
-                                        @Override
-                                        public void onError(Throwable e) {
-                                            e.printStackTrace();
-                                            Toast.show(dialog.getContext(), e.getLocalizedMessage());
-                                            button.expand();
-                                        }
-                                    })
+                                @Override
+                                public void onError(Throwable e) {
+                                    e.printStackTrace();
+                                    Toast.show(dialog.getContext(), e.getLocalizedMessage());
+                                    button.expand();
+                                }
+                            })
                     );
                 }
         );
