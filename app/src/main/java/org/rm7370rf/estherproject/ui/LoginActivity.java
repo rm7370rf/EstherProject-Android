@@ -99,7 +99,6 @@ public class LoginActivity extends AppCompatActivity {
         List<EditText> editTextList = dialog.getEditTextList(resourceList);
 
         dialog.setOnClickListener(button -> {
-                    //TODO: Try AndroidObservable.bindActivity
                     Single<Account> single = Single.fromCallable(() -> createAccount(view.getId(), editTextList))
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread());
