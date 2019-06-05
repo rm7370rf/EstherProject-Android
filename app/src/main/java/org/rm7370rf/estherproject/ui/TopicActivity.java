@@ -67,12 +67,7 @@ public class TopicActivity extends AppCompatActivity {
     private Contract contract;
     private Realm realm = Realm.getDefaultInstance();
     private Topic topic;
-    private RefreshAnimationUtil refreshAnimationUtil = new RefreshAnimationUtil(
-            topProgressBar,
-            progressBar,
-            swipeRefreshLayout,
-            recyclerView
-    );
+    private RefreshAnimationUtil refreshAnimationUtil = new RefreshAnimationUtil();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +80,7 @@ public class TopicActivity extends AppCompatActivity {
             setContract();
             setSwipeRefreshLayout();
             setRecyclerAdapter();
+            setRefreshAnimationUtil();
             setFirstPost();
             updateDB((countPosts() == 0) ? RefreshType.FIRST : RefreshType.AFTER_START);
             setBackButton();
@@ -93,6 +89,13 @@ public class TopicActivity extends AppCompatActivity {
             Toast.show(this, e.getLocalizedMessage());
             finish();
         }
+    }
+
+    public void setRefreshAnimationUtil() {
+        refreshAnimationUtil.setTopProgressBar(topProgressBar);
+        refreshAnimationUtil.setProgressBar(progressBar);
+        refreshAnimationUtil.setSwipeRefreshLayout(swipeRefreshLayout);
+        refreshAnimationUtil.setRecyclerView(recyclerView);
     }
 
     private void setBackButton() {

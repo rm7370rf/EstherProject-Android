@@ -76,26 +76,26 @@ public class TopicListActivity extends AppCompatActivity {
     private TopicsAdapter adapter;
     private Realm realm = Realm.getDefaultInstance();
     private Account account;
-    private RefreshAnimationUtil refreshAnimationUtil = new RefreshAnimationUtil(
-            topProgressBar,
-            progressBar,
-            swipeRefreshLayout,
-            recyclerView
-    );
+    private RefreshAnimationUtil refreshAnimationUtil = new RefreshAnimationUtil();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_topic_list);
-
         ButterKnife.bind(this);
         setTitle(topics);
         setContract();
         setSwipeRefreshLayout();
         setRecyclerAdapter();
-
-
+        setRefreshAnimationUtil();
         updateDB((countTopics() == 0) ? RefreshType.FIRST : RefreshType.AFTER_START);
+    }
+
+    public void setRefreshAnimationUtil() {
+        refreshAnimationUtil.setTopProgressBar(topProgressBar);
+        refreshAnimationUtil.setProgressBar(progressBar);
+        refreshAnimationUtil.setSwipeRefreshLayout(swipeRefreshLayout);
+        refreshAnimationUtil.setRecyclerView(recyclerView);
     }
 
     private long countTopics() {

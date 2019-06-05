@@ -18,21 +18,36 @@ public class RefreshAnimationUtil {
         public static final int BY_REQUEST = 3;
     }
 
-    public RefreshAnimationUtil(ProgressBar topProgressBar, ProgressBar progressBar, SwipeRefreshLayout swipeRefreshLayout, RecyclerView recyclerView) {
+    public void setTopProgressBar(ProgressBar topProgressBar) {
         this.topProgressBar = topProgressBar;
+    }
+
+    public void setProgressBar(ProgressBar progressBar) {
         this.progressBar = progressBar;
+    }
+
+    public void setSwipeRefreshLayout(SwipeRefreshLayout swipeRefreshLayout) {
         this.swipeRefreshLayout = swipeRefreshLayout;
+    }
+
+    public void setRecyclerView(RecyclerView recyclerView) {
         this.recyclerView = recyclerView;
     }
 
     public void start(int refreshType) {
         switch (refreshType) {
             case RefreshType.FIRST:
-                progressBar.setVisibility(View.VISIBLE);
-                recyclerView.setVisibility(View.GONE);
+                if(progressBar != null) {
+                    progressBar.setVisibility(View.VISIBLE);
+                }
+                if(recyclerView != null) {
+                    recyclerView.setVisibility(View.GONE);
+                }
                 break;
             case RefreshType.AFTER_START:
-                topProgressBar.setVisibility(View.VISIBLE);
+                if(topProgressBar != null) {
+                    topProgressBar.setVisibility(View.VISIBLE);
+                }
                 break;
         }
     }
@@ -40,14 +55,22 @@ public class RefreshAnimationUtil {
     public void stop(int refreshType) {
         switch (refreshType) {
             case RefreshType.FIRST:
-                progressBar.setVisibility(View.GONE);
-                recyclerView.setVisibility(View.VISIBLE);
+                if(progressBar != null) {
+                    progressBar.setVisibility(View.GONE);
+                }
+                if(recyclerView != null) {
+                    recyclerView.setVisibility(View.VISIBLE);
+                }
                 break;
             case RefreshType.AFTER_START:
-                topProgressBar.setVisibility(View.GONE);
+                if (topProgressBar != null) {
+                    topProgressBar.setVisibility(View.GONE);
+                }
                 break;
             case RefreshType.BY_REQUEST:
-                swipeRefreshLayout.setRefreshing(false);
+                if(swipeRefreshLayout != null) {
+                    swipeRefreshLayout.setRefreshing(false);
+                }
                 break;
         }
     }
