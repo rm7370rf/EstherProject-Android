@@ -116,7 +116,9 @@ public class TopicListActivity extends AppCompatActivity {
     }
 
     private void setRecyclerAdapter() {
-        this.adapter = new TopicsAdapter(realm.where(Topic.class).findAll().sort("id", Sort.DESCENDING));
+        this.adapter = new TopicsAdapter(
+                realm.where(Topic.class).findAll().sort("id", Sort.DESCENDING)
+        );
         this.adapter.setListener(topicId -> {
             Intent intent = new Intent(this, TopicActivity.class);
             intent.putExtra(Config.TOPIC_ID_KEY, String.valueOf(topicId));
