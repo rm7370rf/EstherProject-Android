@@ -1,5 +1,6 @@
 package org.rm7370rf.estherproject.ui;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -77,6 +78,14 @@ public class TopicActivity extends AppCompatActivity {
         setRecyclerAdapter();
         setFirstPost();
         updateDB(false);
+        setBackButton();
+    }
+
+    private void setBackButton() {
+        ActionBar actionBar = getSupportActionBar();
+        if(actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     private long countTopicsAtDb() {
@@ -204,9 +213,13 @@ public class TopicActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == R.id.addPost) {
-            showAddPostDialog();
-            return true;
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            case R.id.addPost:
+                showAddPostDialog();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
