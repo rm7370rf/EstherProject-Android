@@ -8,4 +8,6 @@ EstherProject is sample forum on Ethereum blockchain.
 - [x] Add topic dialog.
 - [x] List of posts of topic.
 - [ ] Add post dialog.
-- [x] Backup dialog
+- [x] Backup dialog.
+- [ ] Add Horizontal ProgressBar to TopicActivity.
+- [ ] Add Horizontal ProgressBar to TopicListActivity.
