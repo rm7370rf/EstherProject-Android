@@ -3,7 +3,6 @@ package org.rm7370rf.estherproject.contract;
 import org.rm7370rf.estherproject.model.Account;
 import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.datatypes.Function;
-import org.web3j.abi.datatypes.Utf8String;
 import org.web3j.crypto.CipherException;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.RawTransaction;
@@ -16,25 +15,17 @@ import org.web3j.protocol.core.methods.response.EthCall;
 import org.web3j.protocol.core.methods.response.EthEstimateGas;
 import org.web3j.protocol.core.methods.response.EthGetBalance;
 import org.web3j.protocol.core.methods.response.EthGetTransactionCount;
-import org.web3j.protocol.core.methods.response.EthGetTransactionReceipt;
 import org.web3j.protocol.core.methods.response.EthSendTransaction;
-import org.web3j.protocol.core.methods.response.TransactionReceipt;
-import org.web3j.protocol.exceptions.TransactionException;
 import org.web3j.protocol.http.HttpService;
-import org.web3j.tx.response.TransactionReceiptProcessor;
 import org.web3j.utils.Convert;
 import org.web3j.utils.Numeric;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Collections;
 
-import java8.util.Optional;
-
-import static org.rm7370rf.estherproject.utils.Config.CONTRACT_ADDRESS;
-import static org.rm7370rf.estherproject.utils.Config.NODE;
-import static org.web3j.tx.gas.DefaultGasProvider.GAS_LIMIT;
+import static org.rm7370rf.estherproject.other.Config.CONTRACT_ADDRESS;
+import static org.rm7370rf.estherproject.other.Config.NODE;
 import static org.web3j.tx.gas.DefaultGasProvider.GAS_PRICE;
 
 public class ContractManager {

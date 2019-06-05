@@ -44,12 +44,10 @@ import io.realm.RealmQuery;
 import io.realm.RealmResults;
 import io.realm.Sort;
 
-import static org.rm7370rf.estherproject.R.string.invalid_topic_id;
 import static org.rm7370rf.estherproject.R.string.request_successfully_sent;
 import static org.rm7370rf.estherproject.R.string.send;
-import static org.rm7370rf.estherproject.R.string.object_is_null;
-import static org.rm7370rf.estherproject.utils.Config.MAX_LIST_ITEM_TEXT_LENGTH;
-import static org.rm7370rf.estherproject.utils.Config.TOPIC_ID_KEY;
+import static org.rm7370rf.estherproject.other.Config.MAX_LIST_ITEM_TEXT_LENGTH;
+import static org.rm7370rf.estherproject.other.Config.TOPIC_ID_KEY;
 
 public class TopicActivity extends AppCompatActivity {
     @BindView(R.id.swipeRefreshLayout)

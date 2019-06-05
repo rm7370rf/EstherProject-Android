@@ -19,8 +19,9 @@ import org.rm7370rf.estherproject.R;
 import org.rm7370rf.estherproject.contract.Contract;
 import org.rm7370rf.estherproject.model.Topic;
 import org.rm7370rf.estherproject.model.Account;
+import org.rm7370rf.estherproject.other.RefreshType;
 import org.rm7370rf.estherproject.ui.adapter.TopicsAdapter;
-import org.rm7370rf.estherproject.utils.Config;
+import org.rm7370rf.estherproject.other.Config;
 import org.rm7370rf.estherproject.utils.FieldDialog;
 import org.rm7370rf.estherproject.utils.Utils;
 import org.rm7370rf.estherproject.utils.Toast;
@@ -57,23 +58,6 @@ import static org.rm7370rf.estherproject.R.string.topics;
 import static org.rm7370rf.estherproject.R.string.username_already_exists;
 
 public class TopicListActivity extends AppCompatActivity {
-    static class RefreshType {
-        static final int FIRST = 1;
-        static final int AFTER_START = 2;
-        static final int BY_REQUEST = 3;
-
-        public static boolean isFirst(int refreshType) {
-            return (refreshType == FIRST);
-        }
-
-        public static boolean isAfterStart(int refreshType) {
-            return (refreshType == AFTER_START);
-        }
-
-        public static boolean isByRequest(int refreshType) {
-            return (refreshType == BY_REQUEST);
-        }
-    }
     @BindView(R.id.swipeRefreshLayout)
     SwipeRefreshLayout swipeRefreshLayout;
 
