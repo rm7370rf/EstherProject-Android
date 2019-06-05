@@ -19,6 +19,7 @@ import android.widget.ProgressBar;
 import org.apache.commons.lang3.StringUtils;
 import org.rm7370rf.estherproject.R;
 import org.rm7370rf.estherproject.contract.Contract;
+import org.rm7370rf.estherproject.expceptions.VerifierException;
 import org.rm7370rf.estherproject.model.Account;
 import org.rm7370rf.estherproject.model.Post;
 import org.rm7370rf.estherproject.model.Topic;
@@ -39,12 +40,14 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableCompletableObserver;
 import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
+import io.realm.RealmQuery;
 import io.realm.RealmResults;
 import io.realm.Sort;
 
 import static org.rm7370rf.estherproject.R.string.invalid_topic_id;
 import static org.rm7370rf.estherproject.R.string.request_successfully_sent;
 import static org.rm7370rf.estherproject.R.string.send;
+import static org.rm7370rf.estherproject.R.string.object_is_null;
 import static org.rm7370rf.estherproject.utils.Config.MAX_LIST_ITEM_TEXT_LENGTH;
 import static org.rm7370rf.estherproject.utils.Config.TOPIC_ID_KEY;
 
@@ -68,17 +71,20 @@ public class TopicActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_topic);
         ButterKnife.bind(this);
-
-        setTopicId();
-
-        setTitle(StringUtils.abbreviate(topic.getSubject(), MAX_LIST_ITEM_TEXT_LENGTH));
-
-        setContract();
-        setSwipeRefreshLayout();
-        setRecyclerAdapter();
-        setFirstPost();
-        updateDB(false);
-        setBackButton();
+        try {
+            setTopicId();
+            setTitle(StringUtils.abbreviate(topic.getSubject(), MAX_LIST_ITEM_TEXT_LENGTH));
+            setContract();
+            setSwipeRefreshLayout();
+            setRecyclerAdapter();
+            setFirstPost();
+            updateDB(false);
+            setBackButton();
+        }
+        catch (Exception e) {
+            Toast.show(this, e.getLocalizedMessage());
+            finish();
+        }
     }
 
     private void setBackButton() {
@@ -88,12 +94,16 @@ public class TopicActivity extends AppCompatActivity {
         }
     }
 
-    private long countTopicsAtDb() {
-        return Realm.getDefaultInstance().where(Post.class).equalTo("topicId", String.valueOf(topic.getId())).count();
+    private RealmQuery<Post> getPostsQuery() {
+        return realm.where(Post.class);
+    }
+
+    private long countPosts() {
+        return getPostsQuery().equalTo("topicId", String.valueOf(topic.getId())).count();
     }
 
     private void setFirstPost() {
-        if(countTopicsAtDb() == 0) {
+        if(countPosts() == 0) {
             Post firstPost = new Post();
             firstPost.setTopicId(topic.getId());
             firstPost.setId(BigInteger.ZERO);
@@ -106,25 +116,22 @@ public class TopicActivity extends AppCompatActivity {
         }
     }
 
-    private void setTopicId() {
+    private void setTopicId() throws VerifierException {
         String topicId = getIntent().getStringExtra(TOPIC_ID_KEY);
-        if(topicId == null) {
-            Toast.show(this, invalid_topic_id);
-            finish();
-        }
-        else {
-            Topic dbTopic = realm.where(Topic.class).equalTo("id", topicId).findFirst();
-            this.topic = realm.copyFromRealm(dbTopic);
-        }
+        Verifier.verifyIntentExtra(this, topicId);
+        Topic dbTopic = realm.where(Topic.class).equalTo("id", topicId).findFirst();
+        Verifier.verifyRealmObject(this, dbTopic);
+        this.topic = realm.copyFromRealm(dbTopic);
     }
 
-    private void setContract() {
+    private void setContract() throws VerifierException {
         Account account = realm.where(Account.class).findFirst();
+        Verifier.verifyRealmObject(this, account);
         this.contract = new Contract(realm.copyFromRealm(account));
     }
 
     private void setRecyclerAdapter() {
-        RealmResults<Post> posts = realm.where(Post.class)
+        RealmResults<Post> posts = getPostsQuery()
                 .equalTo("topicId", String.valueOf(topic.getId()))
                 .sort("timestamp", Sort.ASCENDING)
                 .findAll();
@@ -145,7 +152,7 @@ public class TopicActivity extends AppCompatActivity {
                 Observable.create((ObservableEmitter<Post> emitter) -> {
                     try {
                         BigInteger numberOfPosts = contract.countPostsAtTopic(topic.getId());
-                        long amount = countTopicsAtDb();
+                        long amount = countPosts();
 
                         BigInteger localNumberOfPosts = BigInteger.valueOf(amount);
 

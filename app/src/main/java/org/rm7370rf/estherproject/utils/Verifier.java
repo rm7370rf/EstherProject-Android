@@ -2,12 +2,12 @@ package org.rm7370rf.estherproject.utils;
 
 import android.content.Context;
 
-import org.rm7370rf.estherproject.R;
 import org.rm7370rf.estherproject.expceptions.VerifierException;
 import org.rm7370rf.estherproject.model.Account;
 import org.web3j.crypto.WalletUtils;
 
 import io.realm.Realm;
+import io.realm.RealmObject;
 
 import static org.rm7370rf.estherproject.R.string.invalid_private_key;
 import static org.rm7370rf.estherproject.R.string.message_required;
@@ -18,8 +18,21 @@ import static org.rm7370rf.estherproject.R.string.private_key_required;
 import static org.rm7370rf.estherproject.R.string.repeat_password_required;
 import static org.rm7370rf.estherproject.R.string.subject_required;
 import static org.rm7370rf.estherproject.R.string.username_required;
+import static org.rm7370rf.estherproject.R.string.object_is_null;
+import static org.rm7370rf.estherproject.R.string.value_is_null;
 
 public class Verifier {
+    public static void verifyIntentExtra(Context context, Object value) throws VerifierException {
+        if(value == null) {
+            throw new VerifierException(context, value_is_null);
+        }
+    }
+    public static void verifyRealmObject(Context context, RealmObject object) throws VerifierException {
+        if(object == null) {
+            throw new VerifierException(context, object_is_null);
+        }
+    }
+
     public static void verifySubject(Context context, String privateKey) throws VerifierException {
         if(privateKey == null || privateKey.isEmpty()) {
             throw new VerifierException(context, subject_required);
