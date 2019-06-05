@@ -1,5 +1,7 @@
 package org.rm7370rf.estherproject.contract;
 
+import android.util.Log;
+
 import org.rm7370rf.estherproject.model.Post;
 import org.rm7370rf.estherproject.model.Topic;
 import org.rm7370rf.estherproject.model.Account;
@@ -129,6 +131,7 @@ public class Contract extends ContractManager {
         post.setUserAddress((String) response.get(2).getValue());
         post.setUserName((String) response.get(3).getValue());
         post.setTimestamp((BigInteger) response.get(4).getValue());
+        post.createPrimaryKey();
         return post;
     }
 

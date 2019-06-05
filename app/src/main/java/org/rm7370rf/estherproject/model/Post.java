@@ -8,6 +8,9 @@ import io.realm.annotations.Required;
 
 public class Post extends RealmObject {
     @PrimaryKey
+    private String primaryKey;
+
+    @Required
     private String id;
     @Required
     private String topicId;
@@ -46,6 +49,10 @@ public class Post extends RealmObject {
         this.timestamp = String.valueOf(timestamp);
     }
 
+    public void createPrimaryKey() {
+        this.primaryKey = (id) + "_" + topicId;
+    }
+
     public BigInteger getId() {
         return new BigInteger(id);
     }
@@ -68,5 +75,9 @@ public class Post extends RealmObject {
 
     public BigInteger getTimestamp() {
         return new BigInteger(timestamp);
+    }
+
+    public String getPrimaryKey() {
+        return primaryKey;
     }
 }
