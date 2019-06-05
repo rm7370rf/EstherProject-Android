@@ -1,9 +1,6 @@
 package org.rm7370rf.estherproject.util;
 
-import android.app.Activity;
 import android.content.Context;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 
 import org.rm7370rf.estherproject.expception.VerifierException;
 import org.rm7370rf.estherproject.model.Account;
@@ -12,16 +9,16 @@ import org.web3j.crypto.WalletUtils;
 import io.realm.Realm;
 import io.realm.RealmObject;
 
+import static org.rm7370rf.estherproject.R.string.account_already_exists;
 import static org.rm7370rf.estherproject.R.string.invalid_private_key;
 import static org.rm7370rf.estherproject.R.string.message_required;
+import static org.rm7370rf.estherproject.R.string.object_is_null;
 import static org.rm7370rf.estherproject.R.string.password_required;
-import static org.rm7370rf.estherproject.R.string.account_already_exists;
 import static org.rm7370rf.estherproject.R.string.passwords_do_not_match;
 import static org.rm7370rf.estherproject.R.string.private_key_required;
 import static org.rm7370rf.estherproject.R.string.repeat_password_required;
 import static org.rm7370rf.estherproject.R.string.subject_required;
 import static org.rm7370rf.estherproject.R.string.username_required;
-import static org.rm7370rf.estherproject.R.string.object_is_null;
 import static org.rm7370rf.estherproject.R.string.value_is_null;
 
 public class Verifier {

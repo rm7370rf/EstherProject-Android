@@ -1,11 +1,7 @@
 package org.rm7370rf.estherproject.ui;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -15,19 +11,25 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import org.rm7370rf.estherproject.R;
 import org.rm7370rf.estherproject.contract.Contract;
 import org.rm7370rf.estherproject.expception.VerifierException;
-import org.rm7370rf.estherproject.model.Topic;
 import org.rm7370rf.estherproject.model.Account;
+import org.rm7370rf.estherproject.model.Topic;
 import org.rm7370rf.estherproject.other.Keys;
 import org.rm7370rf.estherproject.ui.adapter.TopicsAdapter;
-import org.rm7370rf.estherproject.other.Config;
 import org.rm7370rf.estherproject.util.FieldDialog;
 import org.rm7370rf.estherproject.util.RefreshAnimationUtil;
 import org.rm7370rf.estherproject.util.RefreshAnimationUtil.RefreshType;
-import org.rm7370rf.estherproject.util.Utils;
 import org.rm7370rf.estherproject.util.Toast;
+import org.rm7370rf.estherproject.util.Utils;
 import org.rm7370rf.estherproject.util.Verifier;
 import org.web3j.crypto.Credentials;
 
@@ -48,17 +50,13 @@ import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
 import io.realm.Sort;
 
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import static org.rm7370rf.estherproject.R.string.load;
 import static org.rm7370rf.estherproject.R.string.please_backup_private_key;
 import static org.rm7370rf.estherproject.R.string.request_successfully_sent;
 import static org.rm7370rf.estherproject.R.string.send;
 import static org.rm7370rf.estherproject.R.string.topics;
 import static org.rm7370rf.estherproject.R.string.username_already_exists;
+import static org.rm7370rf.estherproject.util.Utils.copyToClipboard;
 
 public class TopicListActivity extends AppCompatActivity {
     @BindView(R.id.swipeRefreshLayout)
@@ -99,21 +97,14 @@ public class TopicListActivity extends AppCompatActivity {
         }
     }
 
-    public void setRefreshAnimationUtil() {
-        refreshAnimationUtil.setTopProgressBar(topProgressBar);
-        refreshAnimationUtil.setProgressBar(progressBar);
-        refreshAnimationUtil.setSwipeRefreshLayout(swipeRefreshLayout);
-        refreshAnimationUtil.setRecyclerView(recyclerView);
-    }
-
-    private long countTopics() {
-        return realm.where(Topic.class).count();
-    }
-
     private void setContract() throws VerifierException {
         this.account = realm.where(Account.class).findFirst();
         Verifier.verifyRealmObject(this, account);
         this.contract = new Contract(realm.copyFromRealm(account));
+    }
+
+    private void setSwipeRefreshLayout() {
+        this.swipeRefreshLayout.setOnRefreshListener(() -> updateDB(RefreshType.BY_REQUEST));
     }
 
     private void setRecyclerAdapter() {
@@ -131,8 +122,15 @@ public class TopicListActivity extends AppCompatActivity {
         this.recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
     }
 
-    public void setSwipeRefreshLayout() {
-        this.swipeRefreshLayout.setOnRefreshListener(() -> updateDB(RefreshType.BY_REQUEST));
+    private void setRefreshAnimationUtil() {
+        refreshAnimationUtil.setTopProgressBar(topProgressBar);
+        refreshAnimationUtil.setProgressBar(progressBar);
+        refreshAnimationUtil.setSwipeRefreshLayout(swipeRefreshLayout);
+        refreshAnimationUtil.setRecyclerView(recyclerView);
+    }
+
+    private long countTopics() {
+        return realm.where(Topic.class).count();
     }
 
     private void updateDB(int refreshType) {
@@ -150,7 +148,8 @@ public class TopicListActivity extends AppCompatActivity {
                             }
                         }
                         emitter.onComplete();
-                    } catch (Exception e) {
+                    }
+                    catch (Exception e) {
                         e.printStackTrace();
                         emitter.onError(e);
                     }
@@ -186,11 +185,6 @@ public class TopicListActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        return super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.addTopic:
@@ -206,7 +200,7 @@ public class TopicListActivity extends AppCompatActivity {
                 showBackupDialog();
                 return true;
             case R.id.logout:
-                realm.delete(Account.class);
+                realm.executeTransaction(r -> r.delete(Account.class));
                 finish();
                 return true;
             default:
@@ -262,69 +256,23 @@ public class TopicListActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private void showBackupDialog() {
-        FieldDialog dialog = new FieldDialog(this);
-        dialog.setLayout(R.layout.dialog_backup);
-
-        TextView privateKeyText = dialog.getTextView(R.id.privateKeyText);
-        EditText passwordEdit = dialog.getEditText(R.id.passwordEdit);
-
-        dialog.setOnClickListener(
-                load,
-                button -> {
-                    String password = passwordEdit.getText().toString();
-                    disposables.add(
-                            Single.fromCallable(() -> {
-                                        Verifier.verifyPassword(this, password);
-                                        Credentials credentials = contract.getCredentials(password);
-                                        return credentials.getEcKeyPair().getPrivateKey().toString(16);
-                                    }
-                            )
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribeWith(new DisposableSingleObserver<String>() {
-                                @Override
-                                protected void onStart() {
-                                    button.collapse();
-                                }
-
-                                @Override
-                                public void onSuccess(String privateKey) {
-                                    privateKeyText.setText(privateKey);
-                                    privateKeyText.setVisibility(View.VISIBLE);
-                                    privateKeyText.setOnClickListener(v -> Utils.copyToClipboard(dialog.getContext(), privateKey));
-                                    Toast.show(dialog.getContext(), please_backup_private_key);
-                                    button.expand();
-                                }
-
-                                @Override
-                                public void onError(Throwable e) {
-                                    Toast.show(dialog.getContext(), e.getLocalizedMessage());
-                                    button.expand();
-                                }
-                            })
-                    );
-                }
-        );
-        dialog.show();
-    }
-
     private void showAccountDataDialog() {
         try {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             View view = getLayoutInflater().inflate(R.layout.dialog_account_data, null);
 
-            TextView userBalanceText = view.findViewById(R.id.userBalance);
-            TextView userNameLabel = view.findViewById(R.id.userNameLabel);
-            TextView userNameText = view.findViewById(R.id.userName);
-            TextView userAddressText = view.findViewById(R.id.userAddress);
+            TextView userBalanceText = view.findViewById(R.id.userBalance),
+                     userNameLabel = view.findViewById(R.id.userNameLabel),
+                     userNameText = view.findViewById(R.id.userName),
+                     userAddressText = view.findViewById(R.id.userAddress);
             ImageButton qrCode = view.findViewById(R.id.qrCodeImage);
 
-            userAddressText.setOnClickListener(v -> Utils.copyToClipboard(this, account.getWalletAddress()));
-            qrCode.setOnClickListener(v -> Utils.copyToClipboard(this, account.getWalletAddress()));
+            View.OnClickListener copyToClipboardListener = (v) -> copyToClipboard(this, account.getWalletAddress());
+            userAddressText.setOnClickListener(copyToClipboardListener);
+            qrCode.setOnClickListener(copyToClipboardListener);
+
 
             String address = account.getWalletAddress();
-
             int size = getResources().getDisplayMetrics().widthPixels / 2;
             qrCode.setImageBitmap(Utils.createQrCode(address, size, size));
 
@@ -415,8 +363,8 @@ public class TopicListActivity extends AppCompatActivity {
                                     Verifier.verifyPassword(this, password);
                                     contract.setUsername(password, userName);
                                 })
-                                .subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableCompletableObserver() {
+                                        .subscribeOn(Schedulers.io())
+                                        .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableCompletableObserver() {
                                     @Override
                                     protected void onStart() {
                                         super.onStart();
@@ -446,5 +394,52 @@ public class TopicListActivity extends AppCompatActivity {
         } else {
             Toast.show(this, username_already_exists);
         }
+    }
+
+    private void showBackupDialog() {
+        FieldDialog dialog = new FieldDialog(this);
+        dialog.setLayout(R.layout.dialog_backup);
+
+        TextView privateKeyText = dialog.getTextView(R.id.privateKeyText);
+        EditText passwordEdit = dialog.getEditText(R.id.passwordEdit);
+
+        dialog.setOnClickListener(
+                load,
+                button -> {
+                    String password = passwordEdit.getText().toString();
+                    disposables.add(
+                            Single.fromCallable(() -> {
+                                        Verifier.verifyPassword(this, password);
+                                        Credentials credentials = contract.getCredentials(password);
+                                        return credentials.getEcKeyPair().getPrivateKey().toString(16);
+                                    }
+                            )
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribeWith(new DisposableSingleObserver<String>() {
+                                @Override
+                                protected void onStart() {
+                                    button.collapse();
+                                }
+
+                                @Override
+                                public void onSuccess(String privateKey) {
+                                    privateKeyText.setText(privateKey);
+                                    privateKeyText.setVisibility(View.VISIBLE);
+                                    privateKeyText.setOnClickListener(v -> copyToClipboard(dialog.getContext(), privateKey));
+                                    Toast.show(dialog.getContext(), please_backup_private_key);
+                                    button.expand();
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+                                    Toast.show(dialog.getContext(), e.getLocalizedMessage());
+                                    button.expand();
+                                }
+                            })
+                    );
+                }
+        );
+        dialog.show();
     }
 }

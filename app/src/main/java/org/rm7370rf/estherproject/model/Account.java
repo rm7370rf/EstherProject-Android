@@ -1,11 +1,6 @@
 package org.rm7370rf.estherproject.model;
 
 
-import org.apache.commons.lang3.StringUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.Serializable;
 import java.math.BigInteger;
 
 import io.realm.RealmObject;

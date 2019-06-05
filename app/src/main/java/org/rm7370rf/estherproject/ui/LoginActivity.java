@@ -2,7 +2,6 @@ package org.rm7370rf.estherproject.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
@@ -77,7 +76,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void onClick(View view) {
-        System.out.println("Click");
         int dialogId;
         List<Integer> resourceList = new ArrayList<>();
         resourceList.add(R.id.passwordEdit);
@@ -102,49 +100,8 @@ public class LoginActivity extends AppCompatActivity {
 
         dialog.setOnClickListener(button -> {
                     //TODO: Try AndroidObservable.bindActivity
-                    Single<Account> single = Single.fromCallable(() -> {
-                        verifyAccountExistence(this);
-                        String password = editTextList.get(0).getText().toString(),
-                                repeatPassword = editTextList.get(1).getText().toString(),
-                                privateKey;
-
-                        Verifier.verifyPassword(this, password);
-                        Verifier.verifyRepeatPassword(this, repeatPassword);
-                        Verifier.verifyPasswords(this, password, repeatPassword);
-
-                        if (view.getId() == R.id.importAccountBtn) {
-                            privateKey = editTextList.get(2).getText().toString();
-                        } else {
-                            privateKey = Numeric.toHexStringWithPrefix(Keys.createEcKeyPair().getPrivateKey());
-                        }
-
-                        Verifier.verifyPrivateKey(this, privateKey);
-
-                        Thread.sleep(2000); //TODO: Remove
-
-                        Credentials credentials = Credentials.create(privateKey);
-
-                        File file = new File(getApplicationInfo().dataDir + "/keystore");
-
-                        if (!file.exists()) {
-                            file.mkdir();
-                        }
-
-                        String walletName = WalletUtils.generateWalletFile(password, credentials.getEcKeyPair(), file, false);
-
-                        String address = credentials.getAddress();
-
-                        Account account = new Account();
-                        account.setWalletName(walletName);
-                        account.setWalletFolder(file.getPath());
-                        account.setWalletAddress(address);
-                        Contract contract = new Contract(account);
-                        String userName = contract.getUsername(address);
-                        if(!userName.isEmpty()) {
-                            account.setUserName(userName);
-                        }
-                        return account;
-                    }).subscribeOn(Schedulers.io())
+                    Single<Account> single = Single.fromCallable(() -> createAccount(view.getId(), editTextList))
+                            .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread());
 
                     this.disposable = single.subscribeWith(new DisposableSingleObserver<Account>() {
@@ -172,6 +129,48 @@ public class LoginActivity extends AppCompatActivity {
 
 
         dialog.show();
+    }
+
+    private Account createAccount(int btnId, List<EditText> editTextList) throws Exception {
+        verifyAccountExistence(this);
+        String password = editTextList.get(0).getText().toString(),
+               repeatPassword = editTextList.get(1).getText().toString(),
+               privateKey;
+
+        Verifier.verifyPassword(this, password);
+        Verifier.verifyRepeatPassword(this, repeatPassword);
+        Verifier.verifyPasswords(this, password, repeatPassword);
+
+        if (btnId == R.id.importAccountBtn) {
+            privateKey = editTextList.get(2).getText().toString();
+        } else {
+            privateKey = Numeric.toHexStringWithPrefix(Keys.createEcKeyPair().getPrivateKey());
+        }
+
+        Verifier.verifyPrivateKey(this, privateKey);
+
+        Credentials credentials = Credentials.create(privateKey);
+
+        File file = new File(getApplicationInfo().dataDir + "/keystore");
+
+        if (!file.exists()) {
+            file.mkdir();
+        }
+
+        String walletName = WalletUtils.generateWalletFile(password, credentials.getEcKeyPair(), file, false);
+
+        String address = credentials.getAddress();
+
+        Account account = new Account();
+        account.setWalletName(walletName);
+        account.setWalletFolder(file.getPath());
+        account.setWalletAddress(address);
+        Contract contract = new Contract(account);
+        String userName = contract.getUsername(address);
+        if(!userName.isEmpty()) {
+            account.setUserName(userName);
+        }
+        return account;
     }
 
     @Override

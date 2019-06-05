@@ -1,10 +1,8 @@
 package org.rm7370rf.estherproject.contract;
 
-import android.util.Log;
-
+import org.rm7370rf.estherproject.model.Account;
 import org.rm7370rf.estherproject.model.Post;
 import org.rm7370rf.estherproject.model.Topic;
-import org.rm7370rf.estherproject.model.Account;
 import org.web3j.abi.FunctionReturnDecoder;
 import org.web3j.abi.TypeReference;
 import org.web3j.abi.datatypes.Address;

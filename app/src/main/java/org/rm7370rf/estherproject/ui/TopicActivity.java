@@ -1,19 +1,18 @@
 package org.rm7370rf.estherproject.ui;
 
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.widget.EditText;
+import android.widget.ProgressBar;
+
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
-import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.widget.EditText;
-import android.widget.ProgressBar;
 
 import org.apache.commons.lang3.StringUtils;
 import org.rm7370rf.estherproject.R;
@@ -235,7 +234,6 @@ public class TopicActivity extends AppCompatActivity {
                     String password = passwordEdit.getText().toString();
                     disposables.add(
                             Completable.fromAction(() -> {
-
                                 Verifier.verifyMessage(this, message);
                                 Verifier.verifyPassword(this, password);
                                 contract.addPostToTopic(password, topic.getId(), message);
