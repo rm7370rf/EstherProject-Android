@@ -145,9 +145,9 @@ public class TopicActivity extends AppCompatActivity {
                 Observable.create((ObservableEmitter<Post> emitter) -> {
                     try {
                         BigInteger numberOfPosts = contract.countPostsAtTopic(topic.getId());
-                        long count = countTopicsAtDb();
+                        long amount = countTopicsAtDb();
 
-                        BigInteger localNumberOfPosts = BigInteger.valueOf(count);
+                        BigInteger localNumberOfPosts = BigInteger.valueOf(amount);
 
                         if (numberOfPosts.compareTo(localNumberOfPosts) > 0) {
                             for (BigInteger i = localNumberOfPosts; i.compareTo(numberOfPosts) < 0; i = i.add(BigInteger.ONE)) {
