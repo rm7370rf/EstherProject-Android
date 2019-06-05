@@ -177,12 +177,6 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         this.disposable.dispose();
-        if(disposable.isDisposed()) {
-            Log.d("DISPOSABLE", "YES");
-        }
-        else {
-            Log.d("DISPOSABLE", "NO");
-        }
         super.onDestroy();
     }
 }

@@ -44,7 +44,6 @@ public class TopicsAdapter extends RealmRecyclerViewAdapter<Topic, TopicsAdapter
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Log.d("@position", String.valueOf(position));
         holder.bind(position);
         holder.itemView.setSelected(selectedPos == position);
     }

@@ -22,6 +22,7 @@ import org.rm7370rf.estherproject.expception.VerifierException;
 import org.rm7370rf.estherproject.model.Account;
 import org.rm7370rf.estherproject.model.Post;
 import org.rm7370rf.estherproject.model.Topic;
+import org.rm7370rf.estherproject.other.Keys;
 import org.rm7370rf.estherproject.ui.adapter.TopicAdapter;
 import org.rm7370rf.estherproject.util.FieldDialog;
 import org.rm7370rf.estherproject.util.RefreshAnimationUtil;
@@ -48,7 +49,6 @@ import io.realm.Sort;
 import static org.rm7370rf.estherproject.R.string.request_successfully_sent;
 import static org.rm7370rf.estherproject.R.string.send;
 import static org.rm7370rf.estherproject.other.Config.MAX_LIST_ITEM_TEXT_LENGTH;
-import static org.rm7370rf.estherproject.other.Config.TOPIC_ID_KEY;
 
 public class TopicActivity extends AppCompatActivity {
     @BindView(R.id.swipeRefreshLayout)
@@ -110,7 +110,7 @@ public class TopicActivity extends AppCompatActivity {
     }
 
     private long countPosts() {
-        return getPostsQuery().equalTo("topicId", String.valueOf(topic.getId())).count();
+        return getPostsQuery().equalTo(Keys.Db.TOPIC_ID, String.valueOf(topic.getId())).count();
     }
 
     private void setFirstPost() {
@@ -128,9 +128,9 @@ public class TopicActivity extends AppCompatActivity {
     }
 
     private void setTopicId() throws VerifierException {
-        String topicId = getIntent().getStringExtra(TOPIC_ID_KEY);
+        String topicId = getIntent().getStringExtra(Keys.Extra.TOPIC_ID);
         Verifier.verifyIntentExtra(this, topicId);
-        Topic dbTopic = realm.where(Topic.class).equalTo("id", topicId).findFirst();
+        Topic dbTopic = realm.where(Topic.class).equalTo(Keys.Db.ID, topicId).findFirst();
         Verifier.verifyRealmObject(this, dbTopic);
         this.topic = realm.copyFromRealm(dbTopic);
     }
@@ -143,8 +143,8 @@ public class TopicActivity extends AppCompatActivity {
 
     private void setRecyclerAdapter() {
         RealmResults<Post> posts = getPostsQuery()
-                .equalTo("topicId", String.valueOf(topic.getId()))
-                .sort("timestamp", Sort.ASCENDING)
+                .equalTo(Keys.Db.TOPIC_ID, String.valueOf(topic.getId()))
+                .sort(Keys.Db.TIMESTAMP, Sort.ASCENDING)
                 .findAll();
 
         TopicAdapter adapter = new TopicAdapter(posts);
@@ -183,7 +183,6 @@ public class TopicActivity extends AppCompatActivity {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     post -> {
-                        Log.d("NEW POST", String.valueOf(post.getId()));
                         realm.executeTransaction(r -> r.copyToRealm(post));
                     },
                     error -> {

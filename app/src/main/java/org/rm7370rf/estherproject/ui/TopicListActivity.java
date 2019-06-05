@@ -20,6 +20,7 @@ import org.rm7370rf.estherproject.contract.Contract;
 import org.rm7370rf.estherproject.expception.VerifierException;
 import org.rm7370rf.estherproject.model.Topic;
 import org.rm7370rf.estherproject.model.Account;
+import org.rm7370rf.estherproject.other.Keys;
 import org.rm7370rf.estherproject.ui.adapter.TopicsAdapter;
 import org.rm7370rf.estherproject.other.Config;
 import org.rm7370rf.estherproject.util.FieldDialog;
@@ -117,11 +118,11 @@ public class TopicListActivity extends AppCompatActivity {
 
     private void setRecyclerAdapter() {
         this.adapter = new TopicsAdapter(
-                realm.where(Topic.class).findAll().sort("id", Sort.DESCENDING)
+                realm.where(Topic.class).findAll().sort(Keys.Db.ID, Sort.DESCENDING)
         );
         this.adapter.setListener(topicId -> {
             Intent intent = new Intent(this, TopicActivity.class);
-            intent.putExtra(Config.TOPIC_ID_KEY, String.valueOf(topicId));
+            intent.putExtra(Keys.Extra.TOPIC_ID, String.valueOf(topicId));
             startActivity(intent);
         });
         this.recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -166,10 +167,10 @@ public class TopicListActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         if(!disposables.isDisposed()) {
             disposables.dispose();
         }
+        super.onDestroy();
     }
 
     @Override
@@ -196,11 +197,9 @@ public class TopicListActivity extends AppCompatActivity {
                 showAddTopicDialog();
                 return true;
             case R.id.accountData:
-                Log.d("MENU", "ACCOUNT_DATA");
                 showAccountDataDialog();
                 return true;
             case R.id.setUsername:
-                Log.d("MENU", "SET_USERNAME");
                 showSetUsernameDialog();
                 return true;
             case R.id.backup:
