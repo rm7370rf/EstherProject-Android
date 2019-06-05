@@ -12,7 +12,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 
@@ -25,6 +24,8 @@ import org.rm7370rf.estherproject.model.Post;
 import org.rm7370rf.estherproject.model.Topic;
 import org.rm7370rf.estherproject.ui.adapter.TopicAdapter;
 import org.rm7370rf.estherproject.utils.FieldDialog;
+import org.rm7370rf.estherproject.utils.RefreshAnimationUtil;
+import org.rm7370rf.estherproject.utils.RefreshAnimationUtil.RefreshType;
 import org.rm7370rf.estherproject.utils.Toast;
 import org.rm7370rf.estherproject.utils.Verifier;
 
@@ -56,6 +57,9 @@ public class TopicActivity extends AppCompatActivity {
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
 
+    @BindView(R.id.topProgressBar)
+    ProgressBar topProgressBar;
+
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
 
@@ -63,6 +67,12 @@ public class TopicActivity extends AppCompatActivity {
     private Contract contract;
     private Realm realm = Realm.getDefaultInstance();
     private Topic topic;
+    private RefreshAnimationUtil refreshAnimationUtil = new RefreshAnimationUtil(
+            topProgressBar,
+            progressBar,
+            swipeRefreshLayout,
+            recyclerView
+    );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +86,7 @@ public class TopicActivity extends AppCompatActivity {
             setSwipeRefreshLayout();
             setRecyclerAdapter();
             setFirstPost();
-            updateDB(false);
+            updateDB((countPosts() == 0) ? RefreshType.FIRST : RefreshType.AFTER_START);
             setBackButton();
         }
         catch (Exception e) {
@@ -142,10 +152,10 @@ public class TopicActivity extends AppCompatActivity {
     }
 
     public void setSwipeRefreshLayout() {
-        this.swipeRefreshLayout.setOnRefreshListener(() -> updateDB(true));
+        this.swipeRefreshLayout.setOnRefreshListener(() -> updateDB(RefreshType.BY_REQUEST));
     }
 
-    private void updateDB(boolean bySwipe) {
+    private void updateDB(int refreshType) {
         disposables.add(
                 Observable.create((ObservableEmitter<Post> emitter) -> {
                     try {
@@ -177,21 +187,8 @@ public class TopicActivity extends AppCompatActivity {
                         error.printStackTrace();
                         Toast.show(this, error.getLocalizedMessage());
                     },
-                    () -> {
-                        if (!bySwipe) {
-                            progressBar.setVisibility(View.GONE);
-                            recyclerView.setVisibility(View.VISIBLE);
-                        } else {
-                            swipeRefreshLayout.setRefreshing(false);
-                        }
-
-                    },
-                    i -> {
-                        if (!bySwipe) {
-                            progressBar.setVisibility(View.VISIBLE);
-                            recyclerView.setVisibility(View.GONE);
-                        }
-                    }
+                    () -> refreshAnimationUtil.stop(refreshType),
+                    i -> refreshAnimationUtil.start(refreshType)
                 )
         );
     }
