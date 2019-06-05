@@ -238,36 +238,39 @@ public class TopicActivity extends AppCompatActivity {
 
         dialog.setOnClickListener(
                 send,
-                button -> disposables.add(
-                        Completable.fromAction(() -> {
-                            String message = messageEdit.getText().toString();
-                            String password = passwordEdit.getText().toString();
-                            Verifier.verifyMessage(this, message);
-                            Verifier.verifyPassword(this, password);
-                            contract.addPostToTopic(password, topic.getId(), message);
-                        })
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeWith(new DisposableCompletableObserver() {
-                            @Override
-                            protected void onStart() {
-                                button.collapse();
-                            }
+                button -> {
+                    String message = messageEdit.getText().toString();
+                    String password = passwordEdit.getText().toString();
+                    disposables.add(
+                            Completable.fromAction(() -> {
 
-                            @Override
-                            public void onComplete() {
-                                Toast.show(dialog.getContext(), request_successfully_sent);
-                                button.expand();
-                            }
+                                Verifier.verifyMessage(this, message);
+                                Verifier.verifyPassword(this, password);
+                                contract.addPostToTopic(password, topic.getId(), message);
+                            })
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribeWith(new DisposableCompletableObserver() {
+                                @Override
+                                protected void onStart() {
+                                    button.collapse();
+                                }
 
-                            @Override
-                            public void onError(Throwable e) {
-                                e.printStackTrace();
-                                Toast.show(dialog.getContext(), e.getLocalizedMessage());
-                                button.expand();
-                            }
-                        })
-                )
+                                @Override
+                                public void onComplete() {
+                                    Toast.show(dialog.getContext(), request_successfully_sent);
+                                    button.expand();
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+                                    e.printStackTrace();
+                                    Toast.show(dialog.getContext(), e.getLocalizedMessage());
+                                    button.expand();
+                                }
+                            })
+                    );
+                }
         );
         dialog.show();
     }

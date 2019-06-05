@@ -223,38 +223,40 @@ public class TopicListActivity extends AppCompatActivity {
 
         dialog.setOnClickListener(
                 send,
-                button -> disposables.add(
-                        Completable.fromAction(() -> {
-                            String subject = subjectEdit.getText().toString();
-                            String message = messageEdit.getText().toString();
-                            String password = passwordEdit.getText().toString();
-                            Verifier.verifySubject(this, subject);
-                            Verifier.verifyMessage(this, message);
-                            Verifier.verifyPassword(this, password);
-                            contract.addTopic(password, subject, message);
-                        })
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeWith(new DisposableCompletableObserver() {
-                            @Override
-                            protected void onStart() {
-                                button.collapse();
-                            }
+                button -> {
+                    String subject = subjectEdit.getText().toString();
+                    String message = messageEdit.getText().toString();
+                    String password = passwordEdit.getText().toString();
+                    disposables.add(
+                            Completable.fromAction(() -> {
+                                Verifier.verifySubject(this, subject);
+                                Verifier.verifyMessage(this, message);
+                                Verifier.verifyPassword(this, password);
+                                contract.addTopic(password, subject, message);
+                            })
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribeWith(new DisposableCompletableObserver() {
+                                        @Override
+                                        protected void onStart() {
+                                            button.collapse();
+                                        }
 
-                            @Override
-                            public void onComplete() {
-                                Toast.show(dialog.getContext(), request_successfully_sent);
-                                button.expand();
-                            }
+                                        @Override
+                                        public void onComplete() {
+                                            Toast.show(dialog.getContext(), request_successfully_sent);
+                                            button.expand();
+                                        }
 
-                            @Override
-                            public void onError(Throwable e) {
-                                e.printStackTrace();
-                                Toast.show(dialog.getContext(), e.getLocalizedMessage());
-                                button.expand();
-                            }
-                        })
-                )
+                                        @Override
+                                        public void onError(Throwable e) {
+                                            e.printStackTrace();
+                                            Toast.show(dialog.getContext(), e.getLocalizedMessage());
+                                            button.expand();
+                                        }
+                                    })
+                    );
+                }
         );
         dialog.show();
     }
@@ -268,37 +270,40 @@ public class TopicListActivity extends AppCompatActivity {
 
         dialog.setOnClickListener(
                 load,
-                button -> disposables.add(
-                        Single.fromCallable(() -> {
-                            String password = passwordEdit.getText().toString();
-                            Verifier.verifyPassword(this, password);
-                            Credentials credentials = contract.getCredentials(password);
-                            return credentials.getEcKeyPair().getPrivateKey().toString(16);
-                        }
-                )
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new DisposableSingleObserver<String>() {
-                    @Override
-                    protected void onStart() {
-                        button.collapse();
-                    }
+                button -> {
+                    String password = passwordEdit.getText().toString();
+                    disposables.add(
+                            Single.fromCallable(() -> {
+                                        Verifier.verifyPassword(this, password);
+                                        Credentials credentials = contract.getCredentials(password);
+                                        return credentials.getEcKeyPair().getPrivateKey().toString(16);
+                                    }
+                            )
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribeWith(new DisposableSingleObserver<String>() {
+                                @Override
+                                protected void onStart() {
+                                    button.collapse();
+                                }
 
-                    @Override
-                    public void onSuccess(String privateKey) {
-                        privateKeyText.setText(privateKey);
-                        privateKeyText.setVisibility(View.VISIBLE);
-                        privateKeyText.setOnClickListener(v -> Utils.copyToClipboard(dialog.getContext(), privateKey));
-                        Toast.show(dialog.getContext(), please_backup_private_key);
-                        button.expand();
-                    }
+                                @Override
+                                public void onSuccess(String privateKey) {
+                                    privateKeyText.setText(privateKey);
+                                    privateKeyText.setVisibility(View.VISIBLE);
+                                    privateKeyText.setOnClickListener(v -> Utils.copyToClipboard(dialog.getContext(), privateKey));
+                                    Toast.show(dialog.getContext(), please_backup_private_key);
+                                    button.expand();
+                                }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        Toast.show(dialog.getContext(), e.getLocalizedMessage());
-                        button.expand();
-                    }
-                }))
+                                @Override
+                                public void onError(Throwable e) {
+                                    Toast.show(dialog.getContext(), e.getLocalizedMessage());
+                                    button.expand();
+                                }
+                            })
+                    );
+                }
         );
         dialog.show();
     }
