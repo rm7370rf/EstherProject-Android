@@ -158,7 +158,10 @@ public class TopicListActivity extends AppCompatActivity {
                         .subscribe(
                                 topic -> realm.executeTransaction(r -> r.copyToRealm(topic)),
                                 error -> Toast.show(this, error.getLocalizedMessage()),
-                                () -> refreshAnimationUtil.stop(refreshType),
+                                () -> {
+                                    refreshAnimationUtil.stop(refreshType);
+                                    findViewById(R.id.noDataText).setVisibility((countTopics() == 0) ? View.VISIBLE : View.GONE);
+                                },
                                 i -> refreshAnimationUtil.start(refreshType)
                         )
         );
@@ -200,7 +203,7 @@ public class TopicListActivity extends AppCompatActivity {
                 showBackupDialog();
                 return true;
             case R.id.logout:
-                realm.executeTransaction(r -> r.delete(Account.class));
+                realm.executeTransaction(r -> r.deleteAll());
                 finish();
                 return true;
             default:
