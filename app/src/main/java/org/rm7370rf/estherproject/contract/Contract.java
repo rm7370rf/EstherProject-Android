@@ -58,7 +58,7 @@ public class Contract extends ContractManager {
 
     public String getUsername(String userAddress) throws Exception {
         Function function = new Function(
-                "getUsername",
+                "getUserName",
                 Collections.singletonList(
                         new Address(userAddress)
                 ),
@@ -98,7 +98,7 @@ public class Contract extends ContractManager {
         topic.setUserAddress((String) response.get(3).getValue());
         topic.setUserName((String) response.get(4).getValue());
         topic.setTimestamp((BigInteger) response.get(5).getValue());
-        topic.setNumberOfPosts(BigInteger.ZERO); //TODO: Replace to (BigInteger) response.get(6).getValue()
+        topic.setNumberOfPosts((BigInteger) response.get(6).getValue());
 
         return topic;
     }
