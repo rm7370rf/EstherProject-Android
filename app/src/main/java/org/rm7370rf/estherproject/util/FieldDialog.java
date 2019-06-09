@@ -16,28 +16,19 @@ import org.rm7370rf.estherproject.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FieldDialog extends AlertDialog.Builder {
-    protected Activity activity;
-    protected View view;
-    protected List<EditText> editTextList = new ArrayList<>();
-    protected AlertDialog dialog;
+public class FieldDialog extends Dialog {
+    private List<EditText> editTextList = new ArrayList<>();
 
-    protected FieldDialog(@NonNull Context context) {
-        super(context);
-
-    }
-
-    public void setLayout(int resource) {
-        view = activity.getLayoutInflater().inflate(resource, null);
-        setView(view);
+    public FieldDialog(@NonNull Activity activity) {
+        super(activity);
     }
 
     public TextView getTextView(int resource) {
-        return view.findViewById(resource);
+        return getView().findViewById(resource);
     }
 
     public EditText getEditText(int resource) {
-        EditText editText = view.findViewById(resource);
+        EditText editText = getView().findViewById(resource);
         editTextList.add(editText);
         return editText;
     }
@@ -46,7 +37,7 @@ public class FieldDialog extends AlertDialog.Builder {
         List<EditText> list = new ArrayList<>();
 
         for (int resource : resourceList) {
-            EditText editText = view.findViewById(resource);
+            EditText editText = getView().findViewById(resource);
             list.add(editText);
             editTextList.add(editText);
         }
@@ -63,8 +54,8 @@ public class FieldDialog extends AlertDialog.Builder {
     }
 
     public void setOnClickListener(String name, FieldDialog.OnClickListener listener) {
-        FancyButton positiveBtn = view.findViewById(R.id.positiveBtn),
-                    negativeBtn = view.findViewById(R.id.negativeBtn);
+        FancyButton positiveBtn = getView().findViewById(R.id.positiveBtn),
+                    negativeBtn = getView().findViewById(R.id.negativeBtn);
 
         if(name != null) {
             positiveBtn.setText(name);
@@ -74,24 +65,13 @@ public class FieldDialog extends AlertDialog.Builder {
             hideKeyboard();
             listener.onClick(positiveBtn);
         });
-        negativeBtn.setOnClickListener(v-> dialog.cancel());
+        negativeBtn.setOnClickListener(v-> hide());
     }
 
     public void hideKeyboard() {
         for (EditText et : editTextList) {
             Utils.hideKeyboard(et);
         }
-
-    }
-
-    public void hide() {
-        dialog.hide();
-    }
-
-    @Override
-    public AlertDialog show() {
-        dialog = create();
-        return dialog;
     }
 
     public interface OnClickListener {
