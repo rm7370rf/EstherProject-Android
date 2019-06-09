@@ -71,9 +71,7 @@ public class Account extends RealmObject {
         return new BigInteger(balance);
     }
 
-    public static Account get(Context context) throws VerifierException {
-        Account account = Realm.getDefaultInstance().where(Account.class).findFirst();
-        Verifier.verifyRealmObject(context, account);
-        return account;
+    public static Account get() {
+        return Realm.getDefaultInstance().where(Account.class).findFirst();
     }
 }
