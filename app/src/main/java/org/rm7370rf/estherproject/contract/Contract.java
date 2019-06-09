@@ -17,8 +17,21 @@ import java.util.Collections;
 import java.util.List;
 
 public class Contract extends ContractManager {
-    public Contract(Account account) {
-        super(account);
+    private static Contract INSTANCE = new Contract();
+
+    private Contract() { }
+
+    public static Contract getInstance() {
+        if(INSTANCE == null) {
+            INSTANCE = new Contract();
+        }
+        return INSTANCE;
+    }
+
+    @Override
+    public Contract setAccount(Account account) {
+        super.setAccount(account);
+        return this;
     }
 
     public String setUsername(String password, String userName) throws Exception {

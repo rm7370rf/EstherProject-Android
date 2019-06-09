@@ -30,11 +30,17 @@ import static org.web3j.tx.gas.DefaultGasProvider.GAS_PRICE;
 
 public class ContractManager {
     private final Web3j web3j;
-    private final Account account;
+    private Account account;
 
-    public ContractManager(Account account) {
+    protected ContractManager() {
         this.web3j = Web3j.build(new HttpService(NODE));
-        this.account = account;
+    }
+
+    public ContractManager setAccount(Account account) {
+        if(this.account == null) {
+            this.account = account;
+        }
+        return this;
     }
 
     public BigDecimal getBalance() throws Exception {
