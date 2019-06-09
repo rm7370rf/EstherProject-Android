@@ -1,12 +1,9 @@
 package org.rm7370rf.estherproject.ui.dialog;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -22,8 +19,6 @@ import org.rm7370rf.estherproject.util.Utils;
 
 import java.math.BigDecimal;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;

@@ -13,8 +13,6 @@ import org.rm7370rf.estherproject.util.FieldDialog;
 import org.rm7370rf.estherproject.util.Toast;
 import org.rm7370rf.estherproject.util.Verifier;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;

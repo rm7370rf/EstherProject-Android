@@ -26,11 +26,9 @@ import org.rm7370rf.estherproject.ui.dialog.AddTopicDialog;
 import org.rm7370rf.estherproject.ui.dialog.BackupDialog;
 import org.rm7370rf.estherproject.ui.dialog.SetUsernameDialog;
 import org.rm7370rf.estherproject.util.Dialog;
-import org.rm7370rf.estherproject.util.FieldDialog;
 import org.rm7370rf.estherproject.util.RefreshAnimationUtil;
 import org.rm7370rf.estherproject.util.RefreshAnimationUtil.RefreshType;
 import org.rm7370rf.estherproject.util.Toast;
-import org.rm7370rf.estherproject.util.Verifier;
 
 import java.math.BigInteger;
 

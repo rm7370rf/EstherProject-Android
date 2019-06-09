@@ -15,8 +15,6 @@ import org.rm7370rf.estherproject.util.Toast;
 import org.rm7370rf.estherproject.util.Verifier;
 import org.web3j.crypto.Credentials;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -25,7 +23,6 @@ import io.reactivex.schedulers.Schedulers;
 
 import static org.rm7370rf.estherproject.R.string.load;
 import static org.rm7370rf.estherproject.R.string.please_backup_private_key;
-import static org.rm7370rf.estherproject.R.string.send;
 import static org.rm7370rf.estherproject.util.Utils.copyToClipboard;
 
 public class BackupDialog extends FieldDialog {
