@@ -64,7 +64,7 @@ public class AccountDialog extends Dialog {
 
     private void prepareView() {
         try {
-            Account account = Account.get(getContext());
+            Account account = Account.get();
             View.OnClickListener copyToClipboardListener = (v) -> copyToClipboard(getContext(), account.getWalletAddress());
             userAddressText.setOnClickListener(copyToClipboardListener);
             qrCode.setOnClickListener(copyToClipboardListener);

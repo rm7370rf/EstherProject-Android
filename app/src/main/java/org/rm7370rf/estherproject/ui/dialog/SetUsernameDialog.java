@@ -52,7 +52,7 @@ public class SetUsernameDialog extends FieldDialog {
 
     private void setUserName(FancyButton button) {
         try {
-            Account account = Account.get(getContext());
+            Account account = Account.get();
             if (!account.hasUsername()) {
                 String userName = userNameEdit.getText().toString();
                 String password = passwordEdit.getText().toString();
