@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
 import com.ekalips.fancybuttonproj.FancyButton;
@@ -15,25 +16,20 @@ import org.rm7370rf.estherproject.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FieldDialog {
-    private Activity activity;
-    private AlertDialog.Builder builder;
-    private AlertDialog alertDialog;
-    private View view;
-    private List<EditText> editTextList = new ArrayList<>();
+public class FieldDialog extends AlertDialog.Builder {
+    protected Activity activity;
+    protected View view;
+    protected List<EditText> editTextList = new ArrayList<>();
+    protected AlertDialog dialog;
 
-    public FieldDialog(Activity activity) {
-        this.activity = activity;
-        builder = new AlertDialog.Builder(activity);
+    protected FieldDialog(@NonNull Context context) {
+        super(context);
+
     }
 
     public void setLayout(int resource) {
         view = activity.getLayoutInflater().inflate(resource, null);
-        builder.setView(view);
-    }
-
-    public Context getContext() {
-        return activity;
+        setView(view);
     }
 
     public TextView getTextView(int resource) {
@@ -78,22 +74,24 @@ public class FieldDialog {
             hideKeyboard();
             listener.onClick(positiveBtn);
         });
-        negativeBtn.setOnClickListener(v-> alertDialog.cancel());
+        negativeBtn.setOnClickListener(v-> dialog.cancel());
     }
 
     public void hideKeyboard() {
         for (EditText et : editTextList) {
             Utils.hideKeyboard(et);
         }
+
     }
 
     public void hide() {
-        alertDialog.hide();
+        dialog.hide();
     }
 
-    public void show() {
-        alertDialog = builder.create();
-        alertDialog.show();
+    @Override
+    public AlertDialog show() {
+        dialog = create();
+        return dialog;
     }
 
     public interface OnClickListener {
