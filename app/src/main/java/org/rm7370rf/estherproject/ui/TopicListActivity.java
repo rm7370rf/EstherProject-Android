@@ -5,8 +5,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -15,36 +15,28 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import org.rm7370rf.estherproject.R;
-import org.rm7370rf.estherproject.contract.Contract;
-import org.rm7370rf.estherproject.expception.VerifierException;
-import org.rm7370rf.estherproject.model.Account;
-import org.rm7370rf.estherproject.model.Topic;
 import org.rm7370rf.estherproject.other.Keys;
 import org.rm7370rf.estherproject.ui.adapter.TopicsAdapter;
 import org.rm7370rf.estherproject.ui.dialog.AccountDialog;
 import org.rm7370rf.estherproject.ui.dialog.AddTopicDialog;
 import org.rm7370rf.estherproject.ui.dialog.BackupDialog;
 import org.rm7370rf.estherproject.ui.dialog.SetUsernameDialog;
+import org.rm7370rf.estherproject.ui.presenter.TopicListPresenter;
+import org.rm7370rf.estherproject.ui.view.TopicListView;
 import org.rm7370rf.estherproject.util.Dialog;
 import org.rm7370rf.estherproject.util.RefreshAnimationUtil;
 import org.rm7370rf.estherproject.util.RefreshAnimationUtil.RefreshType;
 import org.rm7370rf.estherproject.util.Toast;
 
-import java.math.BigInteger;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
-import io.realm.Realm;
-import io.realm.Sort;
+import moxy.MvpAppCompatActivity;
+import moxy.presenter.InjectPresenter;
+
 
 import static org.rm7370rf.estherproject.R.string.topics;
 
-public class TopicListActivity extends AppCompatActivity {
+public class TopicListActivity extends MvpAppCompatActivity implements TopicListView {
     @BindView(R.id.swipeRefreshLayout)
     SwipeRefreshLayout swipeRefreshLayout;
 
@@ -57,46 +49,40 @@ public class TopicListActivity extends AppCompatActivity {
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
 
-    private CompositeDisposable disposables = new CompositeDisposable();
-    private Contract contract;
+    @BindView(R.id.noDataText)
+    TextView noDataText;
+
+    private boolean hasUsername;
     private TopicsAdapter adapter;
-    private Realm realm = Realm.getDefaultInstance();
-    private Account account;
     private RefreshAnimationUtil refreshAnimationUtil = new RefreshAnimationUtil();
+
+    @InjectPresenter
+    TopicListPresenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_topic_list);
         ButterKnife.bind(this);
-        try {
-            setTitle(topics);
-            setContract();
-            setSwipeRefreshLayout();
-            setRecyclerAdapter();
-            setRefreshAnimationUtil();
-            updateDB((countTopics() == 0) ? RefreshType.FIRST : RefreshType.AFTER_START);
-        }
-        catch (Exception e) {
-            Toast.show(this, e.getLocalizedMessage());
-            finish();
-        }
+
+        setTitle(topics);
+        setSwipeRefreshLayout();
+        setRecyclerAdapter();
+        setRefreshAnimationUtil();
+        presenter.updateDatabase();
     }
 
-    private void setContract() throws VerifierException {
-        this.account = Account.get(this);
-        this.contract = Contract.getInstance()
-                                .setAccount(realm.copyFromRealm(account));
+    @Override
+    public void setHasUsername(boolean hasUsername) {
+        this.hasUsername = hasUsername;
     }
 
     private void setSwipeRefreshLayout() {
-        this.swipeRefreshLayout.setOnRefreshListener(() -> updateDB(RefreshType.BY_REQUEST));
+        this.swipeRefreshLayout.setOnRefreshListener(() -> presenter.updateDatabase(RefreshType.BY_REQUEST)); //HOW??????
     }
 
     private void setRecyclerAdapter() {
-        this.adapter = new TopicsAdapter(
-                realm.where(Topic.class).findAll().sort(Keys.Db.ID, Sort.DESCENDING)
-        );
+        this.adapter = new TopicsAdapter();
         this.adapter.setListener(topicId -> {
             Intent intent = new Intent(this, TopicActivity.class);
             intent.putExtra(Keys.Extra.TOPIC_ID, String.valueOf(topicId));
@@ -115,59 +101,10 @@ public class TopicListActivity extends AppCompatActivity {
         refreshAnimationUtil.setRecyclerView(recyclerView);
     }
 
-    private long countTopics() {
-        return realm.where(Topic.class).count();
-    }
-
-    private void updateDB(int refreshType) {
-        long amount = countTopics();
-        disposables.add(
-                Observable.create((ObservableEmitter<Topic> emitter) -> {
-                    try {
-                        BigInteger numberOfTopics = contract.countTopics();
-                        BigInteger localNumberOfTopics = BigInteger.valueOf(amount);
-
-                        if (numberOfTopics.compareTo(localNumberOfTopics) > 0) {
-                            for (BigInteger i = localNumberOfTopics; i.compareTo(numberOfTopics) < 0; i = i.add(BigInteger.ONE)) {
-                                Topic topic = contract.getTopic(i);
-                                emitter.onNext(topic);
-                            }
-                        }
-                        emitter.onComplete();
-                    }
-                    catch (Exception e) {
-                        e.printStackTrace();
-                        emitter.onError(e);
-                    }
-                }).subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                                topic -> realm.executeTransaction(r -> r.copyToRealm(topic)),
-                                error -> Toast.show(this, error.getLocalizedMessage()),
-                                () -> {
-                                    refreshAnimationUtil.stop(refreshType);
-                                    findViewById(R.id.noDataText).setVisibility((countTopics() == 0) ? View.VISIBLE : View.GONE);
-                                },
-                                i -> refreshAnimationUtil.start(refreshType)
-                        )
-        );
-    }
-
-    @Override
-    protected void onDestroy() {
-        if(!disposables.isDisposed()) {
-            disposables.dispose();
-        }
-        super.onDestroy();
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_topic_list, menu);
-
-        boolean hasUsername = account.hasUsername();
-
         MenuItem setUsernameItem = menu.findItem(R.id.setUsername);
         setUsernameItem.setVisible(!hasUsername);
         return true;
@@ -193,8 +130,9 @@ public class TopicListActivity extends AppCompatActivity {
                 dialog = new BackupDialog(this);
                 break;
             case R.id.logout:
-                realm.executeTransaction(r -> r.deleteAll());
-                finish();
+//                realm.executeTransaction(r -> r.deleteAll());
+//                finish();
+                Toast.show(this, "NOT WORK");
                 break;
         }
 
@@ -203,5 +141,30 @@ public class TopicListActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void showToast(int resource) {
+        showToast(getString(resource));
+    }
+
+    @Override
+    public void showToast(String message) {
+        Toast.show(this, message);
+    }
+
+    @Override
+    public void enableLoading(int refreshType) {
+        refreshAnimationUtil.start(refreshType);
+    }
+
+    @Override
+    public void disableLoading(int refreshType) {
+        refreshAnimationUtil.stop(refreshType);
+    }
+
+    @Override
+    public void setNoDataVisibility(int visibility) {
+        noDataText.setVisibility(visibility);
     }
 }
