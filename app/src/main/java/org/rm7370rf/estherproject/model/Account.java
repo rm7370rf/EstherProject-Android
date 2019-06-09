@@ -1,8 +1,14 @@
 package org.rm7370rf.estherproject.model;
 
 
+import android.content.Context;
+
+import org.rm7370rf.estherproject.expception.VerifierException;
+import org.rm7370rf.estherproject.util.Verifier;
+
 import java.math.BigInteger;
 
+import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.Required;
@@ -63,5 +69,11 @@ public class Account extends RealmObject {
 
     public BigInteger getBalance() {
         return new BigInteger(balance);
+    }
+
+    public static Account get(Context context) throws VerifierException {
+        Account account = Realm.getDefaultInstance().where(Account.class).findFirst();
+        Verifier.verifyRealmObject(context, account);
+        return account;
     }
 }
