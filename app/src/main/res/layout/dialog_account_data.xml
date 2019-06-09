@@ -55,7 +55,7 @@
 
             <TextView
                 android:id="@+id/userAddressLabel"
-                android:labelFor="@id/userAddress"
+                android:labelFor="@id/userAddressText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAlignment="center"
@@ -63,7 +63,7 @@
                 android:text="@string/address_label" />
 
             <TextView
-                android:id="@+id/userAddress"
+                android:id="@+id/userAddressText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/userAddressLabel"
@@ -74,7 +74,7 @@
                 android:background="@color/zxing_transparent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/userAddress"
+                android:layout_below="@id/userAddressText"
                 android:layout_centerInParent="true"
                 android:contentDescription="@string/qr_code_description" />
         </RelativeLayout>
