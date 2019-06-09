@@ -63,7 +63,7 @@ public class TopicActivity extends AppCompatActivity {
     RecyclerView recyclerView;
 
     private CompositeDisposable disposables = new CompositeDisposable();
-    private Contract contract;
+    private Contract contract = Contract.getInstance();
     private Realm realm = Realm.getDefaultInstance();
     private Topic topic;
     private RefreshAnimationUtil refreshAnimationUtil = new RefreshAnimationUtil();
@@ -137,7 +137,6 @@ public class TopicActivity extends AppCompatActivity {
     private void setContract() throws VerifierException {
         Account account = realm.where(Account.class).findFirst();
         Verifier.verifyRealmObject(this, account);
-        this.contract = new Contract(realm.copyFromRealm(account));
     }
 
     private void setRecyclerAdapter() {

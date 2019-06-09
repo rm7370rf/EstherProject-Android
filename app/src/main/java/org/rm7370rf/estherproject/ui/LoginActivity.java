@@ -164,7 +164,8 @@ public class LoginActivity extends AppCompatActivity {
         account.setWalletName(walletName);
         account.setWalletFolder(file.getPath());
         account.setWalletAddress(address);
-        Contract contract = new Contract(account);
+        Contract contract = Contract.getInstance()
+                                    .setAccount(account);
         String userName = contract.getUsername(address);
         if(!userName.isEmpty()) {
             account.setUserName(userName);
