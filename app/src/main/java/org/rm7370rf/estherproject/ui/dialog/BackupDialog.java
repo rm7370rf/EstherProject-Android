@@ -1,6 +1,7 @@
 package org.rm7370rf.estherproject.ui.dialog;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -76,5 +77,10 @@ public class BackupDialog extends FieldDialog {
                 button.expand();
             }
         });
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        disposable.dispose();
     }
 }

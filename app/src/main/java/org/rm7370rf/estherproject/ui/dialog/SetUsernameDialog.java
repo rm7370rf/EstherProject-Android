@@ -1,6 +1,7 @@
 package org.rm7370rf.estherproject.ui.dialog;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.widget.EditText;
 
 import com.ekalips.fancybuttonproj.FancyButton;
@@ -99,6 +100,11 @@ public class SetUsernameDialog extends FieldDialog {
         catch (Exception e) {
             Toast.show(getContext(), e.getLocalizedMessage());
         }
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        disposable.dispose();
     }
 
     public interface OnCompleteListener {

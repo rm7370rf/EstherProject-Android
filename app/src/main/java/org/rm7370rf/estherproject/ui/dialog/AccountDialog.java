@@ -2,9 +2,11 @@ package org.rm7370rf.estherproject.ui.dialog;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -65,7 +67,6 @@ public class AccountDialog extends Dialog {
         return super.show();
     }
 
-
     private void prepareView() {
         try {
             Account account = Account.get(getContext());
@@ -98,39 +99,46 @@ public class AccountDialog extends Dialog {
             Toast.show(getActivity(), e.getLocalizedMessage());
         }
     }
+
     private void refreshUserData(boolean bySwipe) {
         Single<BigDecimal> single = Single.fromCallable(() -> contract.getBalance())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
 
         this.disposable = single.subscribeWith(new DisposableSingleObserver<BigDecimal>() {
-                    @Override
-                    protected void onStart() {
-                        super.onStart();
-                        if(!bySwipe) {
-                            progressBar.setVisibility(View.VISIBLE);
-                        }
-                    }
-                    @Override
-                    public void onSuccess(BigDecimal balance) {
-                        userBalanceText.setText(String.valueOf(balance));
-                        onComplete();
-                    }
+            @Override
+            protected void onStart() {
+                super.onStart();
+                if (!bySwipe) {
+                    progressBar.setVisibility(View.VISIBLE);
+                }
+            }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        Toast.show(getView().getContext(), e.getLocalizedMessage());
-                        onComplete();
-                    }
+            @Override
+            public void onSuccess(BigDecimal balance) {
+                userBalanceText.setText(String.valueOf(balance));
+                onComplete();
+            }
 
-                    private void onComplete() {
-                        if(!bySwipe) {
-                            progressBar.setVisibility(View.GONE);
-                        }
-                        else {
-                            swipeRefreshLayout.setRefreshing(false);
-                        }
-                    }
-                });
+            @Override
+            public void onError(Throwable e) {
+                Toast.show(getView().getContext(), e.getLocalizedMessage());
+                onComplete();
+            }
+
+            private void onComplete() {
+                if (!bySwipe) {
+                    progressBar.setVisibility(View.GONE);
+
+                } else {
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        disposable.dispose();
     }
 }
