@@ -11,12 +11,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import org.apache.commons.lang3.StringUtils;
 import org.rm7370rf.estherproject.R;
 import org.rm7370rf.estherproject.model.Topic;
+import org.rm7370rf.estherproject.other.Keys;
 import org.rm7370rf.estherproject.util.Utils;
 
 import java.math.BigInteger;
 
 import io.realm.OrderedRealmCollection;
+import io.realm.Realm;
 import io.realm.RealmRecyclerViewAdapter;
+import io.realm.Sort;
 
 import static org.rm7370rf.estherproject.other.Config.MAX_LIST_ITEM_TEXT_LENGTH;
 
@@ -24,8 +27,11 @@ public class TopicsAdapter extends RealmRecyclerViewAdapter<Topic, TopicsAdapter
     private OnItemClickListener listener;
     private int selectedPos = RecyclerView.NO_POSITION;
 
-    public TopicsAdapter(OrderedRealmCollection<Topic> data) {
-        super(data, true);
+    public TopicsAdapter() {
+        super(
+                Realm.getDefaultInstance().where(Topic.class).findAll().sort(Keys.Db.ID, Sort.DESCENDING),
+                true
+        );
         setHasStableIds(true);
     }
 
