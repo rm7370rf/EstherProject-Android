@@ -25,7 +25,10 @@ public class CreateAccountActivity extends MvpAppCompatActivity {
     }
 
     private void startTopicListActivity() {
-        startActivity(new Intent(this, TopicListActivity.class));
+        Intent intent = new Intent(this, TopicListActivity.class)
+               .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+        startActivity(intent);
     }
 
     public void onClick(View view) {
