@@ -26,12 +26,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:labelFor="@id/userBalance"
+                android:labelFor="@id/userBalanceText"
                 android:text="@string/balance_label"
                 android:textAlignment="center" />
 
             <TextView
-                android:id="@+id/userBalance"
+                android:id="@+id/userBalanceText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/userBalanceLabel"
@@ -41,13 +41,13 @@
                 android:id="@+id/userNameLabel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/userBalance"
-                android:labelFor="@id/userName"
+                android:layout_below="@id/userBalanceText"
+                android:labelFor="@id/userNameText"
                 android:text="@string/username_label"
                 android:textAlignment="center" />
 
             <TextView
-                android:id="@+id/userName"
+                android:id="@+id/userNameText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/userNameLabel"
@@ -59,7 +59,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAlignment="center"
-                android:layout_below="@id/userName"
+                android:layout_below="@id/userNameText"
                 android:text="@string/address_label" />
 
             <TextView
