@@ -70,7 +70,9 @@ public abstract class FieldDialog extends Dialog {
 
         positiveBtn.setOnClickListener(button -> {
             hideKeyboard();
-            listener.onClick(button.getId(), Utils.listOfEditTextToString(editTextList));
+            if(listener != null) {
+                listener.onClick(button.getId(), Utils.listOfEditTextToString(editTextList));
+            }
 
         });
         negativeBtn.setOnClickListener(v-> dismiss());
