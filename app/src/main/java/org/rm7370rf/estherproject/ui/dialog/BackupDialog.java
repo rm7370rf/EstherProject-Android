@@ -14,6 +14,7 @@ import org.rm7370rf.estherproject.util.Toast;
 
 import java.util.List;
 
+import butterknife.BindView;
 import moxy.presenter.InjectPresenter;
 
 import static org.rm7370rf.estherproject.R.string.send;
@@ -22,6 +23,9 @@ import static org.rm7370rf.estherproject.util.Utils.copyToClipboard;
 public class BackupDialog extends FieldDialog implements BackupView, FieldDialog.OnClickListener {
     @InjectPresenter
     BackupPresenter presenter;
+
+    @BindView(R.id.privateKeyText)
+    TextView privateKeyText;
 
     public BackupDialog() {
         setLayout(R.layout.dialog_backup);
@@ -66,7 +70,6 @@ public class BackupDialog extends FieldDialog implements BackupView, FieldDialog
 
     @Override
     public void setPrivateKey(String privateKey) {
-        TextView privateKeyText = getView().findViewById(R.id.privateKeyText);
         privateKeyText.setText(privateKey);
         privateKeyText.setVisibility(View.VISIBLE);
         privateKeyText.setOnClickListener(v -> copyToClipboard(getContext(), privateKey));

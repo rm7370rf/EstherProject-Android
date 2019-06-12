@@ -18,6 +18,8 @@ import org.rm7370rf.estherproject.util.RefreshAnimationUtil;
 import org.rm7370rf.estherproject.util.Toast;
 import org.rm7370rf.estherproject.util.Utils;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import moxy.presenter.InjectPresenter;
 
 import static org.rm7370rf.estherproject.util.Utils.copyToClipboard;
@@ -26,15 +28,20 @@ public class AccountDataDialog extends Dialog implements AccountDataView {
     @InjectPresenter
     AccountDataPresenter presenter;
 
-    private TextView userBalanceText,
-                     userNameLabel,
-                     userNameText,
-                     userAddressText;
-
-    private ImageButton qrCode;
-    private SwipeRefreshLayout swipeRefreshLayout;
-    private ProgressBar progressBar;
-
+    @BindView(R.id.userBalanceText)
+    TextView userBalanceText;
+    @BindView(R.id.userNameLabel)
+    TextView userNameLabel;
+    @BindView(R.id.userNameText)
+    TextView userNameText;
+    @BindView(R.id.userAddressText)
+    TextView userAddressText;
+    @BindView(R.id.qrCodeImage)
+    ImageButton qrCode;
+    @BindView(R.id.swipeRefreshLayout)
+    SwipeRefreshLayout swipeRefreshLayout;
+    @BindView(R.id.progressBar)
+    ProgressBar progressBar;
 
     private RefreshAnimationUtil refreshAnimationUtil = new RefreshAnimationUtil();
 
@@ -45,18 +52,11 @@ public class AccountDataDialog extends Dialog implements AccountDataView {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setUI();
+        setOnRefreshListener();
         setRefreshAnimationUtil();
     }
 
-    private void setUI() {
-        progressBar = getView().findViewById(R.id.progressBar);
-        userBalanceText = getView().findViewById(R.id.userBalance);
-        userNameLabel = getView().findViewById(R.id.userNameLabel);
-        userNameText = getView().findViewById(R.id.userName);
-        userAddressText = getView().findViewById(R.id.userAddressText);
-        qrCode = getView().findViewById(R.id.qrCodeImage);
-        swipeRefreshLayout = getView().findViewById(R.id.swipeRefreshLayout);
+    private void setOnRefreshListener() {
         swipeRefreshLayout.setOnRefreshListener(() -> presenter.refreshUserData(true));
     }
 

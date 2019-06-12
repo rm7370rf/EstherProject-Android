@@ -9,6 +9,7 @@ import android.widget.RelativeLayout;
 
 import androidx.fragment.app.FragmentManager;
 
+import butterknife.ButterKnife;
 import moxy.MvpAppCompatDialogFragment;
 
 public class Dialog extends MvpAppCompatDialogFragment {
@@ -21,7 +22,9 @@ public class Dialog extends MvpAppCompatDialogFragment {
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(layoutId, null);
+        View v = inflater.inflate(layoutId, null);
+        ButterKnife.bind(this, v);
+        return v;
     }
 
     @Override
