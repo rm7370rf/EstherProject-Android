@@ -71,6 +71,10 @@ public class TopicListPresenter extends MvpPresenter<TopicListView> {
         );
     }
 
+    public void logout() {
+        realm.executeTransaction(r -> r.deleteAll());
+    }
+
     @Override
     public void onDestroy() {
         if(disposable != null && !disposable.isDisposed()) {
