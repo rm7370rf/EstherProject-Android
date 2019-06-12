@@ -2,11 +2,13 @@ package org.rm7370rf.estherproject.ui.dialog;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -49,8 +51,12 @@ public class AccountDataDialog extends Dialog implements AccountDataView {
     private RefreshAnimationUtil refreshAnimationUtil = new RefreshAnimationUtil();
 
     public AccountDataDialog() {
-        super();
         setLayout(R.layout.dialog_account_data);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         setUI();
         setRefreshAnimationUtil();
     }

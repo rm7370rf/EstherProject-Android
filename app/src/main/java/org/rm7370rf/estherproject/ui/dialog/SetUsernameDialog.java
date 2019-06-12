@@ -1,5 +1,9 @@
 package org.rm7370rf.estherproject.ui.dialog;
 
+import android.os.Bundle;
+
+import androidx.annotation.Nullable;
+
 import org.rm7370rf.estherproject.R;
 import org.rm7370rf.estherproject.ui.presenter.SetUsernamePresenter;
 import org.rm7370rf.estherproject.ui.view.SetUsernameView;
@@ -21,6 +25,12 @@ public class SetUsernameDialog extends FieldDialog implements SetUsernameView, C
     public SetUsernameDialog() {
         setLayout(R.layout.dialog_set_username);
         setOnClickListener(send, this);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        fillEditText();
     }
 
     public void setOnCompleteListener(OnCompleteListener listener) {

@@ -1,5 +1,9 @@
 package org.rm7370rf.estherproject.ui.dialog;
 
+import android.os.Bundle;
+
+import androidx.annotation.Nullable;
+
 import org.rm7370rf.estherproject.R;
 import org.rm7370rf.estherproject.ui.presenter.AddTopicPresenter;
 import org.rm7370rf.estherproject.ui.view.DialogView;
@@ -18,6 +22,11 @@ public class AddTopicDialog extends FieldDialog implements DialogView, CreateAcc
         setLayout(R.layout.dialog_add_topic);
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        fillEditText();
+    }
 
     @Override
     protected void fillEditText() {

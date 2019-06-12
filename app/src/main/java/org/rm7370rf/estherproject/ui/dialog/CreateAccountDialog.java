@@ -1,5 +1,9 @@
 package org.rm7370rf.estherproject.ui.dialog;
 
+import android.os.Bundle;
+
+import androidx.annotation.Nullable;
+
 import org.rm7370rf.estherproject.R;
 import org.rm7370rf.estherproject.ui.presenter.CreateAccountPresenter;
 import org.rm7370rf.estherproject.ui.view.CreateAccountView;
@@ -11,11 +15,16 @@ import java.util.List;
 import moxy.presenter.InjectPresenter;
 
 public class CreateAccountDialog extends FieldDialog implements CreateAccountView, FieldDialog.OnClickListener {
-    @InjectPresenter
     CreateAccountPresenter presenter;
 
-    public CreateAccountDialog() {
+    public CreateAccountDialog(CreateAccountPresenter presenter) {
+        this.presenter = presenter;
         setOnClickListener(this);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         fillEditText();
     }
 
@@ -50,7 +59,7 @@ public class CreateAccountDialog extends FieldDialog implements CreateAccountVie
 
     @Override
     public void onClick(int buttonId, List<String> valueList) {
-        presenter.onClick(
+       presenter.onClick(
                 buttonId,
                 valueList,
                 getContext().getApplicationInfo().dataDir

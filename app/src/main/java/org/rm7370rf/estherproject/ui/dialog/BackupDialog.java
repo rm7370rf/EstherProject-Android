@@ -1,7 +1,10 @@
 package org.rm7370rf.estherproject.ui.dialog;
 
+import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
 
 import org.rm7370rf.estherproject.R;
 import org.rm7370rf.estherproject.ui.presenter.BackupPresenter;
@@ -21,6 +24,12 @@ public class BackupDialog extends FieldDialog implements BackupView, FieldDialog
 
     public BackupDialog() {
         setLayout(R.layout.dialog_backup);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        fillEditText();
     }
 
     @Override
