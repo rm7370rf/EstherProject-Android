@@ -47,7 +47,7 @@ public class BackupDialog extends FieldDialog {
     private void showBackup(FancyButton button) {
         String password = passwordEdit.getText().toString();
         disposable = Single.fromCallable(() -> {
-            Verifier.verifyPassword(getContext(), password);
+            Verifier.verifyPassword(password);
             Credentials credentials = contract.getCredentials(password);
             return credentials.getEcKeyPair().getPrivateKey().toString(16);
         })

@@ -128,15 +128,15 @@ public class TopicActivity extends AppCompatActivity {
 
     private void setTopicId() throws VerifierException {
         String topicId = getIntent().getStringExtra(Keys.Extra.TOPIC_ID);
-        Verifier.verifyIntentExtra(this, topicId);
+        Verifier.verifyIntentExtra(topicId);
         Topic dbTopic = realm.where(Topic.class).equalTo(Keys.Db.ID, topicId).findFirst();
-        Verifier.verifyRealmObject(this, dbTopic);
+        Verifier.verifyRealmObject(dbTopic);
         this.topic = realm.copyFromRealm(dbTopic);
     }
 
     private void setContract() throws VerifierException {
         Account account = realm.where(Account.class).findFirst();
-        Verifier.verifyRealmObject(this, account);
+        Verifier.verifyRealmObject(account);
     }
 
     private void setRecyclerAdapter() {
@@ -233,8 +233,8 @@ public class TopicActivity extends AppCompatActivity {
                     String password = passwordEdit.getText().toString();
                     disposables.add(
                             Completable.fromAction(() -> {
-                                Verifier.verifyMessage(this, message);
-                                Verifier.verifyPassword(this, password);
+                                Verifier.verifyMessage(message);
+                                Verifier.verifyPassword(password);
                                 contract.addPostToTopic(password, topic.getId(), message);
                             })
                             .subscribeOn(Schedulers.io())

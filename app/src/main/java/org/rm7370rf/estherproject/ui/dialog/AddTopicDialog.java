@@ -47,9 +47,9 @@ public class AddTopicDialog extends FieldDialog {
         String password = passwordEdit.getText().toString();
 
         disposable = Completable.fromAction(() -> {
-            Verifier.verifySubject(getContext(), subject);
-            Verifier.verifyMessage(getContext(), message);
-            Verifier.verifyPassword(getContext(), password);
+            Verifier.verifySubject(subject);
+            Verifier.verifyMessage(message);
+            Verifier.verifyPassword(password);
             contract.addTopic(password, subject, message);
         })
         .subscribeOn(Schedulers.io())
@@ -78,5 +78,10 @@ public class AddTopicDialog extends FieldDialog {
     @Override
     public void onDismiss(DialogInterface dialog) {
         disposable.dispose();
+    }
+
+    @Override
+    protected void fillEditText() {
+
     }
 }

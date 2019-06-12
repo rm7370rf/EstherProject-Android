@@ -58,8 +58,8 @@ public class SetUsernameDialog extends FieldDialog {
                 String password = passwordEdit.getText().toString();
 
                 disposable = Completable.fromAction(() -> {
-                    Verifier.verifyUserName(getContext(), userName);
-                    Verifier.verifyPassword(getContext(), password);
+                    Verifier.verifyUserName(userName);
+                    Verifier.verifyPassword(password);
                     contract.setUsername(password, userName);
                 })
                 .subscribeOn(Schedulers.io())
