@@ -21,6 +21,10 @@ public class Dialog extends MvpAppCompatDialogFragment {
         this.layoutId = layoutId;
     }
 
+    public int getLayoutId() {
+        return layoutId;
+    }
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(layoutId, null);
         ButterKnife.bind(this, v);
