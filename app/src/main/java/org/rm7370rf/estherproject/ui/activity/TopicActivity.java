@@ -42,7 +42,8 @@ public class TopicActivity extends MvpAppCompatActivity implements TopicView {
         try {
             String topicId = getIntent().getStringExtra(Keys.Extra.TOPIC_ID);
             Verifier.verifyIntentExtra(topicId);
-            return new TopicPresenter(new BigInteger(topicId));
+            this.topicId = new BigInteger(topicId);
+            return new TopicPresenter(this.topicId);
         }
         catch (Exception e) {
             finish();
