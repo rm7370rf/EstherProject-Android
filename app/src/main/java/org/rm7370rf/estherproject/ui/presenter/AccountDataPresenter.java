@@ -24,6 +24,8 @@ public class AccountDataPresenter extends MvpPresenter<AccountDataView> {
     private Disposable disposable;
     private Contract contract = Contract.getInstance();
     private Account account = Account.get();
+    private Realm realm = Realm.getDefaultInstance();
+
     @Override
     protected void onFirstViewAttach() {
         super.onFirstViewAttach();
@@ -44,7 +46,8 @@ public class AccountDataPresenter extends MvpPresenter<AccountDataView> {
                     @Override
                     public void onSuccess(BigDecimal balance) {
                         getViewState().setBalance(String.valueOf(balance));
-                        account.setBalance(balance);
+                        realm.executeTransaction(r -> account.setBalance(balance));
+
                         onComplete();
                     }
 
@@ -62,7 +65,7 @@ public class AccountDataPresenter extends MvpPresenter<AccountDataView> {
 
     @Override
     public void onDestroy() {
-        if(!disposable.isDisposed()) {
+        if(disposable != null && !disposable.isDisposed()) {
             disposable.dispose();
         }
         super.onDestroy();
