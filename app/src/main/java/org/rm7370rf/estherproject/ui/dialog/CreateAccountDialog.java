@@ -16,6 +16,7 @@ import java.util.List;
 import moxy.presenter.InjectPresenter;
 
 import static org.rm7370rf.estherproject.R.string.backup;
+import static org.rm7370rf.estherproject.R.string.save;
 
 public class CreateAccountDialog extends FieldDialog implements CreateAccountView, FieldDialog.OnClickListener {
     @InjectPresenter
@@ -23,7 +24,7 @@ public class CreateAccountDialog extends FieldDialog implements CreateAccountVie
     private OnCompleteListener listener;
 
     public CreateAccountDialog() {
-        setOnClickListener(backup, this);
+        setOnClickListener(save, this);
     }
 
     public void setOnCompleteListener(Dialog.OnCompleteListener listener) {
