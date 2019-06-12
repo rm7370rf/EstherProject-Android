@@ -47,12 +47,12 @@ public class CreateAccountDialog extends FieldDialog implements CreateAccountVie
 
     @Override
     public void showToast(int resource) {
-        showToast(getString(resource));
+        Toast.show(getContext(), resource);
     }
 
     @Override
-    public void showToast(String message) {
-        Toast.show(getContext(), message);
+    public void showToast(Throwable e) {
+        Toast.show(getContext(), e);
     }
 
     @Override

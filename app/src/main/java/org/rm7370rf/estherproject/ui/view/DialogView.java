@@ -7,7 +7,7 @@ import moxy.viewstate.strategy.StateStrategyType;
 @StateStrategyType(value = AddToEndSingleStrategy.class)
 public interface DialogView extends MvpView {
     void showToast(int resource);
-    void showToast(String message);
+    void showToast(Throwable e);
     void collapsePositiveButton();
     void expandPositiveButton();
 }

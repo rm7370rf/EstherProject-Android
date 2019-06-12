@@ -14,7 +14,7 @@ public interface TopicView extends MvpView {
     void setRecyclerAdapter(OrderedRealmCollection<Post> posts);
     void setTitle(String title);
     void showToast(int resource);
-    void showToast(String message);
+    void showToast(Throwable e);
     void enableLoading(RefreshType refreshType);
     void disableLoading(RefreshType refreshType);
     void finish();

@@ -9,7 +9,7 @@ import moxy.viewstate.strategy.StateStrategyType;
 @StateStrategyType(value = AddToEndSingleStrategy.class)
 public interface AccountDataView extends MvpView {
     void setBalance(String balance);
-    void showToast(String message);
+    void showToast(Throwable e);
     void enabledLoading(boolean bySwipe);
     void disableLoading(boolean bySwipe);
     void prepareView(Account account);

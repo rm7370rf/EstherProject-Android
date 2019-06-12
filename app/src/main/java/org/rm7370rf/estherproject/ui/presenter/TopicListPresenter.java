@@ -83,7 +83,7 @@ public class TopicListPresenter extends MvpPresenter<TopicListView> {
                                 getViewState().setHasUsername(account.hasUsername());
                             }
                         },
-                        error -> getViewState().showToast(error.getLocalizedMessage()),
+                        error -> getViewState().showToast(error),
                         () -> {
                             getViewState().disableLoading(refreshType);
                             getViewState().setNoDataVisibility((countTopics() == 0) ? View.VISIBLE : View.GONE);

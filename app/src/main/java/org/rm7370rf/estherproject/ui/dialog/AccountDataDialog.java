@@ -92,8 +92,8 @@ public class AccountDataDialog extends Dialog implements AccountDataView {
     }
 
     @Override
-    public void showToast(String message) {
-        Toast.show(getContext(), message);
+    public void showToast(Throwable e) {
+        Toast.show(getContext(), e);
     }
 
     @Override

@@ -57,7 +57,7 @@ public class AddTopicPresenter extends MvpPresenter<DialogView> {
             @Override
             public void onError(Throwable e) {
                 e.printStackTrace();
-                getViewState().showToast(e.getLocalizedMessage());
+                getViewState().showToast(e);
                 getViewState().expandPositiveButton();
             }
         });

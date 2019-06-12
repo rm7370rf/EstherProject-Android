@@ -83,7 +83,7 @@ public class CreateAccountPresenter extends MvpPresenter<CreateAccountView> {
                     getViewState().showToast(((VerifierException) e).getResource());
                 }
                 else {
-                    getViewState().showToast(e.getMessage());
+                    getViewState().showToast(e);
                 }
                 e.printStackTrace();
                 getViewState().expandPositiveButton();

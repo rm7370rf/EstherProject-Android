@@ -66,7 +66,7 @@ public class SetUsernamePresenter extends MvpPresenter<SetUsernameView> {
                     public void onError(Throwable e) {
                         getViewState().expandPositiveButton();
                         e.printStackTrace();
-                        getViewState().showToast(e.getLocalizedMessage());
+                        getViewState().showToast(e);
                     }
                 });
             }
@@ -75,7 +75,7 @@ public class SetUsernamePresenter extends MvpPresenter<SetUsernameView> {
             }
         }
         catch (Exception e) {
-            getViewState().showToast(e.getLocalizedMessage());
+            getViewState().showToast(e);
         }
     }
 

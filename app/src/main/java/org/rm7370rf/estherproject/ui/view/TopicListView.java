@@ -9,7 +9,7 @@ import static org.rm7370rf.estherproject.util.RefreshAnimationUtil.RefreshType;
 @StateStrategyType(value = AddToEndSingleStrategy.class)
 public interface TopicListView extends MvpView {
     void showToast(int resource);
-    void showToast(String message);
+    void showToast(Throwable e);
     void enableLoading(RefreshType refreshType);
     void disableLoading(RefreshType refreshType);
     void setNoDataVisibility(int visibility);

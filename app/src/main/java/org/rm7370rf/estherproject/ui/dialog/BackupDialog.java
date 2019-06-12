@@ -44,8 +44,8 @@ public class BackupDialog extends FieldDialog implements BackupView, FieldDialog
     }
 
     @Override
-    public void showToast(String message) {
-        Toast.show(getContext(), message);
+    public void showToast(Throwable e) {
+        Toast.show(getContext(), e);
     }
 
     @Override

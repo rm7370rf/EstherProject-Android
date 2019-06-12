@@ -42,8 +42,8 @@ public class AddTopicDialog extends FieldDialog implements DialogView, CreateAcc
     }
 
     @Override
-    public void showToast(String message) {
-        Toast.show(getContext(), message);
+    public void showToast(Throwable e) {
+        Toast.show(getContext(), e);
     }
 
     @Override

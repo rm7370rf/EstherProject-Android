@@ -147,12 +147,12 @@ public class TopicListActivity extends MvpAppCompatActivity implements TopicList
 
     @Override
     public void showToast(int resource) {
-        showToast(getString(resource));
+        Toast.show(this, resource);
     }
 
     @Override
-    public void showToast(String message) {
-        Toast.show(this, message);
+    public void showToast(Throwable e) {
+        Toast.show(this, e);
     }
 
     @Override

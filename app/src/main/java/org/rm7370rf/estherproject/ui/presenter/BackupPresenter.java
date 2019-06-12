@@ -51,7 +51,7 @@ public class BackupPresenter extends MvpPresenter<BackupView> {
 
             @Override
             public void onError(Throwable e) {
-                getViewState().showToast(e.getLocalizedMessage());
+                getViewState().showToast(e);
                 getViewState().expandPositiveButton();
             }
         });

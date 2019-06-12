@@ -119,7 +119,7 @@ public class TopicPresenter extends MvpPresenter<TopicView> {
             post -> realm.executeTransaction(r -> r.copyToRealm(post)),
             error -> {
                 error.printStackTrace();
-                getViewState().showToast(error.getLocalizedMessage());
+                getViewState().showToast(error);
             },
             () -> getViewState().disableLoading(refreshType),
             i -> getViewState().enableLoading(refreshType)

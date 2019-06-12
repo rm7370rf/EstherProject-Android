@@ -57,7 +57,7 @@ public class AccountDataPresenter extends MvpPresenter<AccountDataView> {
 
                     @Override
                     public void onError(Throwable e) {
-                        getViewState().showToast(e.getLocalizedMessage());
+                        getViewState().showToast(e);
                         onComplete();
                     }
 
