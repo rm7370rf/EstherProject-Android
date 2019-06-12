@@ -3,50 +3,49 @@ package org.rm7370rf.estherproject.util;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.EditText;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.DialogFragment;
 
-public class Dialog extends AlertDialog.Builder implements DialogInterface.OnDismissListener {
-    private Activity activity;
-    private AlertDialog dialog;
-    private View view;
+import com.ekalips.fancybuttonproj.FancyButton;
 
-    public Dialog(@NonNull Activity activity) {
-        super(activity);
-        setOnDismissListener(this);
-        this.activity = activity;
+import org.rm7370rf.estherproject.R;
+import org.rm7370rf.estherproject.ui.presenter.CreateAccountPresenter;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import moxy.presenter.InjectPresenter;
+
+public class Dialog extends DialogFragment {
+    protected int layoutId;
+
+    public Dialog() {
+
     }
 
-    public Activity getActivity() {
-        return activity;
+    public void setLayout(int layoutId) {
+        this.layoutId = layoutId;
     }
 
-    public Context getContext() {
-        return activity;
-    }
-
-    public View getView() {
-        return view;
-    }
-
-    public void setLayout(int resource) {
-        view = activity.getLayoutInflater().inflate(resource, null);
-        setView(view);
-    }
-
-    public void hide() {
-        dialog.hide();
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(layoutId, null);
     }
 
     @Override
-    public AlertDialog show() {
-        dialog = create();
-        dialog.show();
-        return dialog;
+    public void onResume() {
+        super.onResume();
+        ViewGroup.LayoutParams params = getDialog().getWindow().getAttributes();
+        params.width = WindowManager.LayoutParams.MATCH_PARENT;
+        params.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        getDialog().getWindow().setAttributes((WindowManager.LayoutParams) params);
     }
-
-    @Override
-    public void onDismiss(DialogInterface dialog) { }
 }
