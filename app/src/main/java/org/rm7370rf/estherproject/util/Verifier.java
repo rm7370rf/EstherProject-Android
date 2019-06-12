@@ -22,66 +22,66 @@ import static org.rm7370rf.estherproject.R.string.username_required;
 import static org.rm7370rf.estherproject.R.string.value_is_null;
 
 public class Verifier {
-    public static void verifyIntentExtra(Context context, Object value) throws VerifierException {
+    public static void verifyIntentExtra(Object value) throws VerifierException {
         if(value == null) {
-            throw new VerifierException(context, value_is_null);
+            throw new VerifierException(value_is_null);
         }
     }
 
-    public static void verifyRealmObject(Context context, RealmObject object) throws VerifierException {
+    public static void verifyRealmObject(RealmObject object) throws VerifierException {
         if(object == null) {
-            throw new VerifierException(context, object_is_null);
+            throw new VerifierException(object_is_null);
         }
     }
 
-    public static void verifySubject(Context context, String privateKey) throws VerifierException {
+    public static void verifySubject(String privateKey) throws VerifierException {
         if(privateKey == null || privateKey.isEmpty()) {
-            throw new VerifierException(context, subject_required);
+            throw new VerifierException(subject_required);
         }
     }
 
-    public static void verifyMessage(Context context, String privateKey) throws VerifierException {
+    public static void verifyMessage(String privateKey) throws VerifierException {
         if(privateKey == null || privateKey.isEmpty()) {
-            throw new VerifierException(context, message_required);
+            throw new VerifierException(message_required);
         }
     }
 
-    public static void verifyPrivateKey(Context context, String privateKey) throws VerifierException {
+    public static void verifyPrivateKey(String privateKey) throws VerifierException {
         if(privateKey == null || privateKey.isEmpty()) {
-            throw new VerifierException(context, private_key_required);
+            throw new VerifierException(private_key_required);
         }
         if(!WalletUtils.isValidPrivateKey(privateKey)) {
-            throw new VerifierException(context, invalid_private_key);
+            throw new VerifierException(invalid_private_key);
         }
     }
 
-    public static void verifyUserName(Context context, String userName) throws VerifierException {
+    public static void verifyUserName(String userName) throws VerifierException {
         if(userName.isEmpty()) {
-            throw new VerifierException(context, username_required);
+            throw new VerifierException(username_required);
         }
     }
 
-    public static void verifyPassword(Context context, String password) throws VerifierException {
+    public static void verifyPassword(String password) throws VerifierException {
         if(password.isEmpty()) {
-            throw new VerifierException(context, password_required);
+            throw new VerifierException(password_required);
         }
     }
 
-    public static void verifyRepeatPassword(Context context, String repeatPassword) throws VerifierException {
+    public static void verifyRepeatPassword(String repeatPassword) throws VerifierException {
         if(repeatPassword.isEmpty()) {
-            throw new VerifierException(context, repeat_password_required);
+            throw new VerifierException(repeat_password_required);
         }
     }
 
-    public static void verifyPasswords(Context context, String password, String repeatPassword) throws VerifierException {
+    public static void verifyPasswords(String password, String repeatPassword) throws VerifierException {
         if(!password.equals(repeatPassword)) {
-            throw new VerifierException(context, passwords_do_not_match);
+            throw new VerifierException(passwords_do_not_match);
         }
     }
 
-    public static void verifyAccountExistence(Context context) throws VerifierException {
+    public static void verifyAccountExistence() throws VerifierException {
         if(isAccountExists()) {
-            throw new VerifierException(context, account_already_exists);
+            throw new VerifierException(account_already_exists);
         }
     }
 
