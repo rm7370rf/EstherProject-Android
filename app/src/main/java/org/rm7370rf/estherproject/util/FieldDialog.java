@@ -62,7 +62,7 @@ public abstract class FieldDialog extends Dialog {
     }
 
     protected void expandPositiveButton() {
-        negativeBtn.expand();
+        positiveBtn.expand();
     }
 
     private void prepareOnClickListener() {
