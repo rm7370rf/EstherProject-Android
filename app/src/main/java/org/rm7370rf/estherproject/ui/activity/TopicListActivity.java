@@ -16,7 +16,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import org.rm7370rf.estherproject.R;
 import org.rm7370rf.estherproject.other.Keys;
 import org.rm7370rf.estherproject.ui.adapter.TopicsAdapter;
-import org.rm7370rf.estherproject.ui.dialog.AccountDialog;
+import org.rm7370rf.estherproject.ui.dialog.AccountDataDialog;
 import org.rm7370rf.estherproject.ui.dialog.AddTopicDialog;
 import org.rm7370rf.estherproject.ui.dialog.BackupDialog;
 import org.rm7370rf.estherproject.ui.dialog.SetUsernameDialog;
@@ -117,8 +117,7 @@ public class TopicListActivity extends MvpAppCompatActivity implements TopicList
                 dialog = new AddTopicDialog();
                 break;
             case R.id.accountData:
-                AccountDialog d = new AccountDialog(this);
-                d.show();
+                dialog = new AccountDataDialog();
                 break;
             case R.id.setUsername:
                 dialog = new SetUsernameDialog();
