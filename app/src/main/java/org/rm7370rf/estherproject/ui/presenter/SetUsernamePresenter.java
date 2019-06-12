@@ -13,11 +13,13 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableCompletableObserver;
 import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
+import moxy.InjectViewState;
 import moxy.MvpPresenter;
 
 import static org.rm7370rf.estherproject.R.string.request_successfully_sent;
 import static org.rm7370rf.estherproject.R.string.username_already_exists;
 
+@InjectViewState
 public class SetUsernamePresenter extends MvpPresenter<SetUsernameView> {
     private Disposable disposable;
     private Contract contract = Contract.getInstance();

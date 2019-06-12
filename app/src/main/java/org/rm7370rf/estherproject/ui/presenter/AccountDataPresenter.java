@@ -16,8 +16,10 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
+import moxy.InjectViewState;
 import moxy.MvpPresenter;
 
+@InjectViewState
 public class AccountDataPresenter extends MvpPresenter<AccountDataView> {
     private Disposable disposable;
     private Contract contract = Contract.getInstance();

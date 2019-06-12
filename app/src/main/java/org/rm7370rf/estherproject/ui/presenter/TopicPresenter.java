@@ -21,10 +21,12 @@ import io.realm.Realm;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
 import io.realm.Sort;
+import moxy.InjectViewState;
 import moxy.MvpPresenter;
 
 import static org.rm7370rf.estherproject.other.Config.MAX_LIST_ITEM_TEXT_LENGTH;
 
+@InjectViewState
 public class TopicPresenter extends MvpPresenter<TopicView> {
     private Disposable disposable;
     private Realm realm = Realm.getDefaultInstance();

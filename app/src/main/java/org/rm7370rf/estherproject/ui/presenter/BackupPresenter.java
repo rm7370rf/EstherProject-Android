@@ -10,10 +10,12 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
+import moxy.InjectViewState;
 import moxy.MvpPresenter;
 
 import static org.rm7370rf.estherproject.R.string.please_backup_private_key;
 
+@InjectViewState
 public class BackupPresenter extends MvpPresenter<BackupView> {
     private Disposable disposable;
     private Contract contract = Contract.getInstance();

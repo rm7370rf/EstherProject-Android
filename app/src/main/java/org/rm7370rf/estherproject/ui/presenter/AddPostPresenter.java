@@ -12,10 +12,12 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableCompletableObserver;
 import io.reactivex.schedulers.Schedulers;
+import moxy.InjectViewState;
 import moxy.MvpPresenter;
 
 import static org.rm7370rf.estherproject.R.string.request_successfully_sent;
 
+@InjectViewState
 public class AddPostPresenter extends MvpPresenter<DialogView> {
     private Disposable disposable;
     private Contract contract = Contract.getInstance();
