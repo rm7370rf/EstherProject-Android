@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.RelativeLayout;
 
 import androidx.fragment.app.FragmentManager;
@@ -21,12 +20,9 @@ public class Dialog extends MvpAppCompatDialogFragment {
         this.layoutId = layoutId;
     }
 
-
-
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(layoutId, null);
     }
-
 
     @Override
     public android.app.Dialog onCreateDialog(final Bundle savedInstanceState) {

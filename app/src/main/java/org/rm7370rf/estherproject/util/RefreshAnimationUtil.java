@@ -12,10 +12,10 @@ public class RefreshAnimationUtil {
     private RecyclerView recyclerView;
     private SwipeRefreshLayout swipeRefreshLayout;
 
-    public class RefreshType {
-        public static final int FIRST = 1;
-        public static final int AFTER_START = 2;
-        public static final int BY_REQUEST = 3;
+    public enum RefreshType {
+        FIRST,
+        AFTER_START,
+        BY_REQUEST
     }
 
     public void setTopProgressBar(ProgressBar topProgressBar) {
@@ -34,9 +34,9 @@ public class RefreshAnimationUtil {
         this.recyclerView = recyclerView;
     }
 
-    public void start(int refreshType) {
+    public void start(RefreshType refreshType) {
         switch (refreshType) {
-            case RefreshType.FIRST:
+            case FIRST:
                 if(progressBar != null) {
                     progressBar.setVisibility(View.VISIBLE);
                 }
@@ -44,7 +44,7 @@ public class RefreshAnimationUtil {
                     recyclerView.setVisibility(View.GONE);
                 }
                 break;
-            case RefreshType.AFTER_START:
+            case AFTER_START:
                 if(topProgressBar != null) {
                     topProgressBar.setVisibility(View.VISIBLE);
                 }
@@ -52,9 +52,9 @@ public class RefreshAnimationUtil {
         }
     }
 
-    public void stop(int refreshType) {
+    public void stop(RefreshType refreshType) {
         switch (refreshType) {
-            case RefreshType.FIRST:
+            case FIRST:
                 if(progressBar != null) {
                     progressBar.setVisibility(View.GONE);
                 }
@@ -62,12 +62,12 @@ public class RefreshAnimationUtil {
                     recyclerView.setVisibility(View.VISIBLE);
                 }
                 break;
-            case RefreshType.AFTER_START:
+            case AFTER_START:
                 if (topProgressBar != null) {
                     topProgressBar.setVisibility(View.GONE);
                 }
                 break;
-            case RefreshType.BY_REQUEST:
+            case BY_REQUEST:
                 if(swipeRefreshLayout != null) {
                     swipeRefreshLayout.setRefreshing(false);
                 }

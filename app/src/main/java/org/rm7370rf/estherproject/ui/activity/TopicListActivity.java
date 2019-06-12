@@ -151,12 +151,12 @@ public class TopicListActivity extends MvpAppCompatActivity implements TopicList
     }
 
     @Override
-    public void enableLoading(int refreshType) {
+    public void enableLoading(RefreshType refreshType) {
         refreshAnimationUtil.start(refreshType);
     }
 
     @Override
-    public void disableLoading(int refreshType) {
+    public void disableLoading(RefreshType refreshType) {
         refreshAnimationUtil.stop(refreshType);
     }
 

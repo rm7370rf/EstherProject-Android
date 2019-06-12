@@ -7,13 +7,15 @@ import moxy.MvpView;
 import moxy.viewstate.strategy.AddToEndSingleStrategy;
 import moxy.viewstate.strategy.StateStrategyType;
 
+import static org.rm7370rf.estherproject.util.RefreshAnimationUtil.RefreshType;
+
 @StateStrategyType(value = AddToEndSingleStrategy.class)
 public interface TopicView extends MvpView {
     void setRecyclerAdapter(OrderedRealmCollection<Post> posts);
     void setTitle(String title);
     void showToast(int resource);
     void showToast(String message);
-    void enableLoading(int refreshType);
-    void disableLoading(int refreshType);
+    void enableLoading(RefreshType refreshType);
+    void disableLoading(RefreshType refreshType);
     void finish();
 }

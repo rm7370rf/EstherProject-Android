@@ -4,15 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import org.rm7370rf.estherproject.R;
 import org.rm7370rf.estherproject.ui.dialog.CreateAccountDialog;
-import org.rm7370rf.estherproject.ui.presenter.CreateAccountPresenter;
 
 import butterknife.ButterKnife;
 import moxy.MvpAppCompatActivity;
-import moxy.presenter.InjectPresenter;
 
 import static org.rm7370rf.estherproject.util.Verifier.isAccountExists;
 

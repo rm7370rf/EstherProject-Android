@@ -13,7 +13,6 @@ import java.math.BigInteger;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
@@ -40,7 +39,7 @@ public class TopicListPresenter extends MvpPresenter<TopicListView> {
         updateDatabase(countTopics() == 0 ? RefreshType.FIRST : RefreshType.AFTER_START);
     }
 
-    public void updateDatabase(int refreshType) {
+    public void updateDatabase(RefreshType refreshType) {
         long amount = countTopics();
         disposable = Observable.create((ObservableEmitter<Topic> emitter) -> {
             try {

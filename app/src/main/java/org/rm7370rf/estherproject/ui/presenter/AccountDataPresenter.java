@@ -1,12 +1,8 @@
 package org.rm7370rf.estherproject.ui.presenter;
 
-import android.view.View;
-
 import org.rm7370rf.estherproject.contract.Contract;
 import org.rm7370rf.estherproject.model.Account;
 import org.rm7370rf.estherproject.ui.view.AccountDataView;
-import org.rm7370rf.estherproject.ui.view.DialogView;
-import org.rm7370rf.estherproject.util.Toast;
 
 import java.math.BigDecimal;
 

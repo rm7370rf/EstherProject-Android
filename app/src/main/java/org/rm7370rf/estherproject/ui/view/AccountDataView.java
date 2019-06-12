@@ -2,8 +2,6 @@ package org.rm7370rf.estherproject.ui.view;
 
 import org.rm7370rf.estherproject.model.Account;
 
-import java.math.BigDecimal;
-
 import moxy.MvpView;
 import moxy.viewstate.strategy.AddToEndSingleStrategy;
 import moxy.viewstate.strategy.StateStrategyType;

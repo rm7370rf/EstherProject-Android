@@ -6,8 +6,6 @@ import org.rm7370rf.estherproject.contract.Contract;
 import org.rm7370rf.estherproject.expception.VerifierException;
 import org.rm7370rf.estherproject.model.Account;
 import org.rm7370rf.estherproject.ui.view.CreateAccountView;
-import org.rm7370rf.estherproject.ui.view.DialogView;
-import org.rm7370rf.estherproject.util.Dialog;
 import org.rm7370rf.estherproject.util.Verifier;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.Keys;
@@ -15,7 +13,6 @@ import org.web3j.crypto.WalletUtils;
 import org.web3j.utils.Numeric;
 
 import java.io.File;
-import java.security.NoSuchAlgorithmException;
 import java.security.Provider;
 import java.security.Security;
 import java.util.List;

@@ -24,11 +24,11 @@ public abstract class FieldDialog extends Dialog {
 
     public FieldDialog() { }
 
-    public void setOnClickListener(OnClickListener listener) {
+    protected void setOnClickListener(OnClickListener listener) {
         this.listener = listener;
     }
 
-    public void setOnClickListener(int buttonNameResId, OnClickListener listener) {
+    protected void setOnClickListener(int buttonNameResId, OnClickListener listener) {
         this.buttonNameResId = buttonNameResId;
         setOnClickListener(listener);
     }

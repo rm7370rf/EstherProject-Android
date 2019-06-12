@@ -85,7 +85,7 @@ public class TopicPresenter extends MvpPresenter<TopicView> {
         }
     }
 
-    public void updateDatabase(int refreshType) {
+    public void updateDatabase(RefreshAnimationUtil.RefreshType refreshType) {
         long amount = countPosts();
 
         disposable = Observable.create((ObservableEmitter<Post> emitter) -> {
