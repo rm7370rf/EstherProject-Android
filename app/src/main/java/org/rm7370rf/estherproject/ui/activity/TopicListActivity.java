@@ -33,6 +33,7 @@ import moxy.MvpAppCompatActivity;
 import moxy.presenter.InjectPresenter;
 
 import static org.rm7370rf.estherproject.R.string.topics;
+import static org.rm7370rf.estherproject.util.Utils.createIntentWithoutHistory;
 
 public class TopicListActivity extends MvpAppCompatActivity implements TopicListView {
     @BindView(R.id.swipeRefreshLayout)
@@ -129,7 +130,7 @@ public class TopicListActivity extends MvpAppCompatActivity implements TopicList
                 break;
             case R.id.logout:
                 presenter.logout();
-                finish();
+                startActivity(createIntentWithoutHistory(this, CreateAccountActivity.class));
                 break;
         }
 
