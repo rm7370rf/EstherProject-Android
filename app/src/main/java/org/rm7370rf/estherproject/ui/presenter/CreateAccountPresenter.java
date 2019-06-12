@@ -3,8 +3,11 @@ package org.rm7370rf.estherproject.ui.presenter;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.rm7370rf.estherproject.R;
 import org.rm7370rf.estherproject.contract.Contract;
+import org.rm7370rf.estherproject.expception.VerifierException;
 import org.rm7370rf.estherproject.model.Account;
+import org.rm7370rf.estherproject.ui.view.CreateAccountView;
 import org.rm7370rf.estherproject.ui.view.DialogView;
+import org.rm7370rf.estherproject.util.Dialog;
 import org.rm7370rf.estherproject.util.Verifier;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.Keys;
@@ -29,7 +32,7 @@ import static org.rm7370rf.estherproject.R.string.account_saved;
 import static org.rm7370rf.estherproject.util.Verifier.verifyAccountExistence;
 
 @InjectViewState
-public class CreateAccountPresenter extends MvpPresenter<DialogView> {
+public class CreateAccountPresenter extends MvpPresenter<CreateAccountView> {
     private Disposable disposable;
 
     public CreateAccountPresenter() {
@@ -68,10 +71,13 @@ public class CreateAccountPresenter extends MvpPresenter<DialogView> {
 
             @Override
             public void onSuccess(Account account) {
-                Realm.getDefaultInstance().executeTransaction(realm -> realm.copyToRealm(account));
-                getViewState().showToast(account_saved);
-                getViewState().expandPositiveButton();
-//                startTopicListActivity();
+                if(account != null) {
+                    Realm.getDefaultInstance().executeTransaction(realm -> realm.copyToRealm(account));
+                    getViewState().showToast(account_saved);
+                    getViewState().expandPositiveButton();
+                    getViewState().onComplete();
+                }
+
             }
 
             @Override
@@ -83,47 +89,56 @@ public class CreateAccountPresenter extends MvpPresenter<DialogView> {
         });
     }
 
-    private Account createAccount(int btnId, List<String> valueList, String path) throws Exception {
-        verifyAccountExistence();
-        String password = valueList.get(0),
-               repeatPassword = valueList.get(1),
-               privateKey;
+    private Account createAccount(int btnId, List<String> valueList, String path) {
+        try {
+            verifyAccountExistence();
+            String password = valueList.get(0),
+                    repeatPassword = valueList.get(1),
+                    privateKey;
 
-        Verifier.verifyPassword(password);
-        Verifier.verifyRepeatPassword(repeatPassword);
-        Verifier.verifyPasswords(password, repeatPassword);
+            Verifier.verifyPassword(password);
+            Verifier.verifyRepeatPassword(repeatPassword);
+            Verifier.verifyPasswords(password, repeatPassword);
 
-        if (btnId == R.id.importAccountBtn) {
-            privateKey = valueList.get(2);
-        } else {
-            privateKey = Numeric.toHexStringWithPrefix(Keys.createEcKeyPair().getPrivateKey());
+            if (btnId == R.id.importAccountBtn) {
+                privateKey = valueList.get(2);
+            } else {
+                privateKey = Numeric.toHexStringWithPrefix(Keys.createEcKeyPair().getPrivateKey());
+            }
+
+            Verifier.verifyPrivateKey(privateKey);
+
+            Credentials credentials = Credentials.create(privateKey);
+
+            File file = new File(path + "/keystore");
+
+            if (!file.exists()) {
+                file.mkdir();
+            }
+
+            String walletName = WalletUtils.generateWalletFile(password, credentials.getEcKeyPair(), file, false);
+
+            String address = credentials.getAddress();
+
+            Account account = new Account();
+            account.setWalletName(walletName);
+            account.setWalletFolder(file.getPath());
+            account.setWalletAddress(address);
+            Contract contract = Contract.getInstance()
+                    .setAccount(account);
+            String userName = contract.getUsername(address);
+            if (!userName.isEmpty()) {
+                account.setUserName(userName);
+            }
+            return account;
         }
-
-        Verifier.verifyPrivateKey(privateKey);
-
-        Credentials credentials = Credentials.create(privateKey);
-
-        File file = new File(path + "/keystore");
-
-        if (!file.exists()) {
-            file.mkdir();
+        catch (VerifierException e) {
+            getViewState().showToast(e.getResource());
         }
-
-        String walletName = WalletUtils.generateWalletFile(password, credentials.getEcKeyPair(), file, false);
-
-        String address = credentials.getAddress();
-
-        Account account = new Account();
-        account.setWalletName(walletName);
-        account.setWalletFolder(file.getPath());
-        account.setWalletAddress(address);
-        Contract contract = Contract.getInstance()
-                .setAccount(account);
-        String userName = contract.getUsername(address);
-        if(!userName.isEmpty()) {
-            account.setUserName(userName);
+        catch (Exception e) {
+            getViewState().showToast(e.getMessage());
         }
-        return account;
+        return null;
     }
 
     @Override
@@ -131,4 +146,5 @@ public class CreateAccountPresenter extends MvpPresenter<DialogView> {
         this.disposable.dispose();
         super.onDestroy();
     }
+
 }

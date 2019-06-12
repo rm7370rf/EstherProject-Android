@@ -10,4 +10,5 @@ public interface CreateAccountView extends MvpView {
     void showToast(String message);
     void collapsePositiveButton();
     void expandPositiveButton();
+    void onComplete();
 }

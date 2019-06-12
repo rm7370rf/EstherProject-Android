@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import org.rm7370rf.estherproject.R;
 import org.rm7370rf.estherproject.ui.presenter.CreateAccountPresenter;
 import org.rm7370rf.estherproject.ui.view.CreateAccountView;
+import org.rm7370rf.estherproject.util.Dialog;
 import org.rm7370rf.estherproject.util.FieldDialog;
 import org.rm7370rf.estherproject.util.Toast;
 
@@ -15,12 +16,16 @@ import java.util.List;
 import moxy.presenter.InjectPresenter;
 
 public class CreateAccountDialog extends FieldDialog implements CreateAccountView, FieldDialog.OnClickListener {
-    CreateAccountPresenter presenter;
+    private CreateAccountPresenter presenter;
+    private OnCompleteListener listener;
 
     public CreateAccountDialog(CreateAccountPresenter presenter) {
         this.presenter = presenter;
         setOnClickListener(this);
+    }
 
+    public void setOnCompleteListener(Dialog.OnCompleteListener listener) {
+        this.listener = listener;
     }
 
     @Override
@@ -56,6 +61,11 @@ public class CreateAccountDialog extends FieldDialog implements CreateAccountVie
     @Override
     public void expandPositiveButton() {
         super.expandPositiveButton();
+    }
+
+    @Override
+    public void onComplete() {
+        listener.onComplete();
     }
 
     @Override
