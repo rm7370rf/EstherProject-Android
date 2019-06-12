@@ -15,6 +15,7 @@ import org.web3j.crypto.WalletUtils;
 import org.web3j.utils.Numeric;
 
 import java.io.File;
+import java.security.NoSuchAlgorithmException;
 import java.security.Provider;
 import java.security.Security;
 import java.util.List;
@@ -59,11 +60,10 @@ public class CreateAccountPresenter extends MvpPresenter<CreateAccountView> {
     }
 
     public void onClick(int btnId, List<String> valueList, String path) {
-        Single<Account> single = Single.fromCallable(() -> createAccount(btnId, valueList, path))
+        this.disposable = Single.fromCallable(() -> createAccount(btnId, valueList, path))
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
-
-        this.disposable = single.subscribeWith(new DisposableSingleObserver<Account>() {
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableSingleObserver<Account>() {
             @Override
             protected void onStart() {
                 getViewState().collapsePositiveButton();
@@ -82,63 +82,59 @@ public class CreateAccountPresenter extends MvpPresenter<CreateAccountView> {
 
             @Override
             public void onError(Throwable e) {
-                getViewState().showToast(e.getLocalizedMessage());
+                if(e instanceof VerifierException) {
+                    getViewState().showToast(((VerifierException) e).getResource());
+                }
+                else {
+                    getViewState().showToast(e.getMessage());
+                }
                 e.printStackTrace();
                 getViewState().expandPositiveButton();
             }
         });
     }
 
-    private Account createAccount(int btnId, List<String> valueList, String path) {
-        try {
-            verifyAccountExistence();
-            String password = valueList.get(0),
-                    repeatPassword = valueList.get(1),
-                    privateKey;
+    private Account createAccount(int btnId, List<String> valueList, String path) throws Exception {
+        verifyAccountExistence();
+        String password = valueList.get(0),
+                repeatPassword = valueList.get(1),
+                privateKey;
 
-            Verifier.verifyPassword(password);
-            Verifier.verifyRepeatPassword(repeatPassword);
-            Verifier.verifyPasswords(password, repeatPassword);
+        Verifier.verifyPassword(password);
+        Verifier.verifyRepeatPassword(repeatPassword);
+        Verifier.verifyPasswords(password, repeatPassword);
 
-            if (btnId == R.id.importAccountBtn) {
-                privateKey = valueList.get(2);
-            } else {
-                privateKey = Numeric.toHexStringWithPrefix(Keys.createEcKeyPair().getPrivateKey());
-            }
-
-            Verifier.verifyPrivateKey(privateKey);
-
-            Credentials credentials = Credentials.create(privateKey);
-
-            File file = new File(path + "/keystore");
-
-            if (!file.exists()) {
-                file.mkdir();
-            }
-
-            String walletName = WalletUtils.generateWalletFile(password, credentials.getEcKeyPair(), file, false);
-
-            String address = credentials.getAddress();
-
-            Account account = new Account();
-            account.setWalletName(walletName);
-            account.setWalletFolder(file.getPath());
-            account.setWalletAddress(address);
-            Contract contract = Contract.getInstance()
-                    .setAccount(account);
-            String userName = contract.getUsername(address);
-            if (!userName.isEmpty()) {
-                account.setUserName(userName);
-            }
-            return account;
+        if (btnId == R.id.importAccountBtn) {
+            privateKey = valueList.get(2);
+        } else {
+            privateKey = Numeric.toHexStringWithPrefix(Keys.createEcKeyPair().getPrivateKey());
         }
-        catch (VerifierException e) {
-            getViewState().showToast(e.getResource());
+
+        Verifier.verifyPrivateKey(privateKey);
+
+        Credentials credentials = Credentials.create(privateKey);
+
+        File file = new File(path + "/keystore");
+
+        if (!file.exists()) {
+            file.mkdir();
         }
-        catch (Exception e) {
-            getViewState().showToast(e.getMessage());
+
+        String walletName = WalletUtils.generateWalletFile(password, credentials.getEcKeyPair(), file, false);
+
+        String address = credentials.getAddress();
+
+        Account account = new Account();
+        account.setWalletName(walletName);
+        account.setWalletFolder(file.getPath());
+        account.setWalletAddress(address);
+        Contract contract = Contract.getInstance()
+                .setAccount(account);
+        String userName = contract.getUsername(address);
+        if (!userName.isEmpty()) {
+            account.setUserName(userName);
         }
-        return null;
+        return account;
     }
 
     @Override
