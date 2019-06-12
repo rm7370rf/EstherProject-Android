@@ -58,8 +58,8 @@ public class CreateAccountPresenter extends MvpPresenter<CreateAccountView> {
         Security.insertProviderAt(new BouncyCastleProvider(), 1);
     }
 
-    public void onClick(int btnId, List<String> valueList, String path) {
-        this.disposable = Single.fromCallable(() -> createAccount(btnId, valueList, path))
+    public void onClick(int layoutId, List<String> valueList, String path) {
+        this.disposable = Single.fromCallable(() -> createAccount(layoutId, valueList, path))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new DisposableSingleObserver<Account>() {
@@ -93,7 +93,7 @@ public class CreateAccountPresenter extends MvpPresenter<CreateAccountView> {
         });
     }
 
-    private Account createAccount(int btnId, List<String> valueList, String path) throws Exception {
+    private Account createAccount(int layoutId, List<String> valueList, String path) throws Exception {
         verifyAccountExistence();
         String password = valueList.get(0),
                 repeatPassword = valueList.get(1),
@@ -103,19 +103,16 @@ public class CreateAccountPresenter extends MvpPresenter<CreateAccountView> {
         Verifier.verifyRepeatPassword(repeatPassword);
         Verifier.verifyPasswords(password, repeatPassword);
 
-        if (btnId == R.id.importAccountBtn) {
-            System.out.println("Get from array");
+        if (layoutId == R.layout.dialog_import_account) {
             privateKey = valueList.get(2);
         } else {
-            System.out.println("Generate new pk");
             privateKey = Numeric.toHexStringWithPrefix(Keys.createEcKeyPair().getPrivateKey());
         }
 
         Verifier.verifyPrivateKey(privateKey);
 
         Credentials credentials = Credentials.create(privateKey);
-        Log.d("@privateKey", privateKey);
-        Log.d("@address", credentials.getAddress());
+
         File file = new File(path + "/keystore");
 
         if (!file.exists()) {

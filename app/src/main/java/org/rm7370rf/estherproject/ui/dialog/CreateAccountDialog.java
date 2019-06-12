@@ -74,7 +74,7 @@ public class CreateAccountDialog extends FieldDialog implements CreateAccountVie
     @Override
     public void onClick(List<String> valueList) {
        presenter.onClick(
-                buttonId,
+                getLayoutId(),
                 valueList,
                 getContext().getApplicationInfo().dataDir
         );
