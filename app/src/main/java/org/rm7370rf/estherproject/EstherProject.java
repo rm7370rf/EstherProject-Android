@@ -7,6 +7,7 @@ import org.rm7370rf.estherproject.di.AppComponent;
 import org.rm7370rf.estherproject.di.ContractModule;
 import org.rm7370rf.estherproject.di.DaggerAppComponent;
 import org.rm7370rf.estherproject.di.RefreshAnimationUtilModule;
+import org.rm7370rf.estherproject.model.Account;
 import org.rm7370rf.estherproject.service.BalanceService;
 
 import io.realm.Realm;
@@ -19,7 +20,9 @@ public class EstherProject extends Application {
         super.onCreate();
         Realm.init(this);
         component = buildComponent();
-        startService(new Intent(this, BalanceService.class));
+        if(Account.get() != null) {
+            startService(new Intent(this, BalanceService.class));
+        }
     }
 
     public static AppComponent getComponent() {
