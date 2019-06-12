@@ -28,6 +28,8 @@ import org.rm7370rf.estherproject.util.RefreshAnimationUtil;
 import org.rm7370rf.estherproject.util.RefreshAnimationUtil.RefreshType;
 import org.rm7370rf.estherproject.util.Toast;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import moxy.MvpAppCompatActivity;
@@ -54,7 +56,8 @@ public class TopicListActivity extends MvpAppCompatActivity implements TopicList
 
     private boolean hasUsername;
     private TopicsAdapter adapter;
-    private RefreshAnimationUtil refreshAnimationUtil = new RefreshAnimationUtil();
+    @Inject
+    RefreshAnimationUtil refreshAnimationUtil;
 
     @InjectPresenter
     TopicListPresenter presenter;

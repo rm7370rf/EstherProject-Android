@@ -27,6 +27,8 @@ import org.rm7370rf.estherproject.util.Verifier;
 
 import java.math.BigInteger;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.OrderedRealmCollection;
@@ -64,7 +66,8 @@ public class TopicActivity extends MvpAppCompatActivity implements TopicView {
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
 
-    private RefreshAnimationUtil refreshAnimationUtil = new RefreshAnimationUtil();
+    @Inject
+    RefreshAnimationUtil refreshAnimationUtil;
     private BigInteger topicId;
 
     @Override

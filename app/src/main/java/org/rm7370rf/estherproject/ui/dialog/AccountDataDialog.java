@@ -43,7 +43,7 @@ public class AccountDataDialog extends Dialog implements AccountDataView {
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
 
-    private RefreshAnimationUtil refreshAnimationUtil = new RefreshAnimationUtil();
+//    private RefreshAnimationUtil refreshAnimationUtil = new RefreshAnimationUtil(getActivity());
 
     public AccountDataDialog() {
         setLayout(R.layout.dialog_account_data);
@@ -53,16 +53,10 @@ public class AccountDataDialog extends Dialog implements AccountDataView {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setOnRefreshListener();
-        setRefreshAnimationUtil();
     }
 
     private void setOnRefreshListener() {
         swipeRefreshLayout.setOnRefreshListener(() -> presenter.refreshUserData(true));
-    }
-
-    private void setRefreshAnimationUtil() {
-        refreshAnimationUtil.setTopProgressBar(progressBar);
-        refreshAnimationUtil.setSwipeRefreshLayout(swipeRefreshLayout);
     }
 
     public void prepareView(Account account) {

@@ -4,7 +4,9 @@ import android.app.Application;
 
 import org.rm7370rf.estherproject.di.AppComponent;
 import org.rm7370rf.estherproject.di.ContractModule;
+
 import org.rm7370rf.estherproject.di.DaggerAppComponent;
+import org.rm7370rf.estherproject.di.RefreshAnimationUtilModule;
 import org.rm7370rf.estherproject.model.Account;
 
 import io.realm.Realm;
@@ -27,6 +29,7 @@ public class EstherProject extends Application {
         return DaggerAppComponent
                 .builder()
                 .contractModule(new ContractModule())
+                .refreshAnimationUtilModule(new RefreshAnimationUtilModule())
                 .build();
     }
 }
