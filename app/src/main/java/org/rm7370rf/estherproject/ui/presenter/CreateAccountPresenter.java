@@ -7,6 +7,7 @@ import org.rm7370rf.estherproject.R;
 import org.rm7370rf.estherproject.contract.Contract;
 import org.rm7370rf.estherproject.model.Account;
 import org.rm7370rf.estherproject.ui.view.CreateAccountView;
+import org.rm7370rf.estherproject.ui.view.DialogView;
 import org.rm7370rf.estherproject.util.Verifier;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.Keys;
@@ -32,10 +33,7 @@ import static org.rm7370rf.estherproject.R.string.account_saved;
 import static org.rm7370rf.estherproject.util.Verifier.verifyAccountExistence;
 
 @InjectViewState
-public class CreateAccountPresenter extends MvpPresenter<CreateAccountView> {
-    private CompositeDisposable disposables = new CompositeDisposable();
-    private Realm realm = Realm.getDefaultInstance();
-
+public class CreateAccountPresenter extends MvpPresenter<DialogView> {
     private Disposable disposable;
 
     public CreateAccountPresenter() {
