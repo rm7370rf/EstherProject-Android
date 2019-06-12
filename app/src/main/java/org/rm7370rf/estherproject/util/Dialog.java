@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.ekalips.fancybuttonproj.FancyButton;
 
@@ -28,9 +29,7 @@ import moxy.presenter.InjectPresenter;
 public class Dialog extends DialogFragment {
     protected int layoutId;
 
-    public Dialog() {
-
-    }
+    public Dialog() { }
 
     public void setLayout(int layoutId) {
         this.layoutId = layoutId;
@@ -47,5 +46,9 @@ public class Dialog extends DialogFragment {
         params.width = WindowManager.LayoutParams.MATCH_PARENT;
         params.height = WindowManager.LayoutParams.WRAP_CONTENT;
         getDialog().getWindow().setAttributes((WindowManager.LayoutParams) params);
+    }
+
+    public void show(FragmentManager manager) {
+        super.show(manager, String.valueOf(layoutId));
     }
 }
