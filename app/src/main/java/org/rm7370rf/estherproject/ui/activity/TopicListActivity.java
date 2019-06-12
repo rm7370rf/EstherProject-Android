@@ -105,7 +105,7 @@ public class TopicListActivity extends MvpAppCompatActivity implements TopicList
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_topic_list, menu);
         MenuItem setUsernameItem = menu.findItem(R.id.setUsername);
-        setUsernameItem.setVisible(hasUsername);
+        setUsernameItem.setVisible(!hasUsername);
         return true;
     }
 

@@ -63,7 +63,7 @@ public class AddPostDialog extends FieldDialog implements DialogView, CreateAcco
     }
 
     @Override
-    public void onClick(int buttonId, List<String> valueList) {
+    public void onClick(List<String> valueList) {
         presenter.onClick(topicId, valueList);
     }
 }

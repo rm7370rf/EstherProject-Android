@@ -70,7 +70,7 @@ public class SetUsernameDialog extends FieldDialog implements SetUsernameView, C
     }
 
     @Override
-    public void onClick(int buttonId, List<String> valueList) {
+    public void onClick(List<String> valueList) {
         presenter.onClick(valueList);
     }
 }

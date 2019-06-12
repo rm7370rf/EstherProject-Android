@@ -64,7 +64,7 @@ public class BackupDialog extends FieldDialog implements BackupView, FieldDialog
     }
 
     @Override
-    public void onClick(int buttonId, List<String> valueList) {
+    public void onClick(List<String> valueList) {
         presenter.onClick(valueList.get(0));
     }
 

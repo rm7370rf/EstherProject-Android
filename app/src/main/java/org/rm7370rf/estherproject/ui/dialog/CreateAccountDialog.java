@@ -41,7 +41,7 @@ public class CreateAccountDialog extends FieldDialog implements CreateAccountVie
     protected void fillEditText() {
         addToEditTextList(R.id.passwordEdit, R.id.repeatPasswordEdit);
 
-        if(layoutId == R.id.importAccountBtn) {
+        if(layoutId == R.layout.dialog_import_account) {
             addToEditTextList(R.id.privateKeyEdit);
         }
     }
@@ -72,7 +72,7 @@ public class CreateAccountDialog extends FieldDialog implements CreateAccountVie
     }
 
     @Override
-    public void onClick(int buttonId, List<String> valueList) {
+    public void onClick(List<String> valueList) {
        presenter.onClick(
                 buttonId,
                 valueList,

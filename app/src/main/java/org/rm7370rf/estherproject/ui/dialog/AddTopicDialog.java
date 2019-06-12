@@ -57,7 +57,7 @@ public class AddTopicDialog extends FieldDialog implements DialogView, CreateAcc
     }
 
     @Override
-    public void onClick(int buttonId, List<String> valueList) {
+    public void onClick(List<String> valueList) {
         presenter.onClick(valueList);
     }
 }

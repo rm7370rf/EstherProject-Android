@@ -1,5 +1,7 @@
 package org.rm7370rf.estherproject.ui.presenter;
 
+import android.util.Log;
+
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.rm7370rf.estherproject.R;
 import org.rm7370rf.estherproject.contract.Contract;
@@ -102,15 +104,18 @@ public class CreateAccountPresenter extends MvpPresenter<CreateAccountView> {
         Verifier.verifyPasswords(password, repeatPassword);
 
         if (btnId == R.id.importAccountBtn) {
+            System.out.println("Get from array");
             privateKey = valueList.get(2);
         } else {
+            System.out.println("Generate new pk");
             privateKey = Numeric.toHexStringWithPrefix(Keys.createEcKeyPair().getPrivateKey());
         }
 
         Verifier.verifyPrivateKey(privateKey);
 
         Credentials credentials = Credentials.create(privateKey);
-
+        Log.d("@privateKey", privateKey);
+        Log.d("@address", credentials.getAddress());
         File file = new File(path + "/keystore");
 
         if (!file.exists()) {
