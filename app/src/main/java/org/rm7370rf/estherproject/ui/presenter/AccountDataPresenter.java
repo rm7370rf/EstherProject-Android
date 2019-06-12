@@ -31,34 +31,33 @@ public class AccountDataPresenter extends MvpPresenter<AccountDataView> {
     }
 
     public void refreshUserData(boolean bySwipe) {
-        Single<BigDecimal> single = Single.fromCallable(() -> contract.getBalance())
+        disposable = Single.fromCallable(() -> contract.getBalance())
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableSingleObserver<BigDecimal>() {
+                    @Override
+                    protected void onStart() {
+                        super.onStart();
+                        getViewState().enabledLoading(bySwipe);
+                    }
 
-        this.disposable = single.subscribeWith(new DisposableSingleObserver<BigDecimal>() {
-            @Override
-            protected void onStart() {
-                super.onStart();
-                getViewState().enabledLoading(bySwipe);
-            }
+                    @Override
+                    public void onSuccess(BigDecimal balance) {
+                        getViewState().setBalance(String.valueOf(balance));
+                        account.setBalance(balance);
+                        onComplete();
+                    }
 
-            @Override
-            public void onSuccess(BigDecimal balance) {
-                getViewState().setBalance(String.valueOf(balance));
-                account.setBalance(balance);
-                onComplete();
-            }
+                    @Override
+                    public void onError(Throwable e) {
+                        getViewState().showToast(e.getLocalizedMessage());
+                        onComplete();
+                    }
 
-            @Override
-            public void onError(Throwable e) {
-                getViewState().showToast(e.getLocalizedMessage());
-                onComplete();
-            }
-
-            private void onComplete() {
-                getViewState().disableLoading(bySwipe);
-            }
-        });
+                    private void onComplete() {
+                        getViewState().disableLoading(bySwipe);
+                    }
+                });
     }
 
     @Override

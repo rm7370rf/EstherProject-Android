@@ -73,7 +73,9 @@ public class SetUsernamePresenter extends MvpPresenter<SetUsernameView> {
 
     @Override
     public void onDestroy() {
-        this.disposable.dispose();
+        if(!disposable.isDisposed()) {
+            disposable.dispose();
+        }
         super.onDestroy();
     }
 }

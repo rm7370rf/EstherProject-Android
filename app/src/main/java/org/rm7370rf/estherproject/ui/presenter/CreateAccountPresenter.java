@@ -139,8 +139,9 @@ public class CreateAccountPresenter extends MvpPresenter<CreateAccountView> {
 
     @Override
     public void onDestroy() {
-        this.disposable.dispose();
+        if(!disposable.isDisposed()) {
+            disposable.dispose();
+        }
         super.onDestroy();
     }
-
 }

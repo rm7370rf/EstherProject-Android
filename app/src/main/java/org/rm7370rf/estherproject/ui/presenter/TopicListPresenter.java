@@ -14,6 +14,7 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
 import moxy.InjectViewState;
@@ -21,7 +22,7 @@ import moxy.MvpPresenter;
 
 @InjectViewState
 public class TopicListPresenter extends MvpPresenter<TopicListView> {
-    private CompositeDisposable disposables = new CompositeDisposable();
+    private Disposable disposable;
     private Realm realm = Realm.getDefaultInstance();
     private Account account = Account.get();
     private Contract contract;
@@ -41,41 +42,41 @@ public class TopicListPresenter extends MvpPresenter<TopicListView> {
 
     public void updateDatabase(int refreshType) {
         long amount = countTopics();
-        disposables.add(
-                Observable.create((ObservableEmitter<Topic> emitter) -> {
-                    try {
-                        BigInteger numberOfTopics = contract.countTopics();
-                        BigInteger localNumberOfTopics = BigInteger.valueOf(amount);
+        disposable = Observable.create((ObservableEmitter<Topic> emitter) -> {
+            try {
+                BigInteger numberOfTopics = contract.countTopics();
+                BigInteger localNumberOfTopics = BigInteger.valueOf(amount);
 
-                        if (numberOfTopics.compareTo(localNumberOfTopics) > 0) {
-                            for (BigInteger i = localNumberOfTopics; i.compareTo(numberOfTopics) < 0; i = i.add(BigInteger.ONE)) {
-                                Topic topic = contract.getTopic(i);
-                                emitter.onNext(topic);
-                            }
-                        }
-                        emitter.onComplete();
+                if (numberOfTopics.compareTo(localNumberOfTopics) > 0) {
+                    for (BigInteger i = localNumberOfTopics; i.compareTo(numberOfTopics) < 0; i = i.add(BigInteger.ONE)) {
+                        Topic topic = contract.getTopic(i);
+                        emitter.onNext(topic);
                     }
-                    catch (Exception e) {
-                        e.printStackTrace();
-                        emitter.onError(e);
-                    }
-                }).subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                                topic -> realm.executeTransaction(r -> r.copyToRealm(topic)),
-                                error -> getViewState().showToast(error.getLocalizedMessage()),
-                                () -> {
-                                    getViewState().disableLoading(refreshType);
-                                    getViewState().setNoDataVisibility((countTopics() == 0) ? View.VISIBLE : View.GONE);
-                                },
-                                i -> getViewState().enableLoading(refreshType)
-                        )
+                }
+                emitter.onComplete();
+            } catch (Exception e) {
+                e.printStackTrace();
+                emitter.onError(e);
+            }
+        })
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(
+            topic -> realm.executeTransaction(r -> r.copyToRealm(topic)),
+            error -> getViewState().showToast(error.getLocalizedMessage()),
+            () -> {
+                getViewState().disableLoading(refreshType);
+                getViewState().setNoDataVisibility((countTopics() == 0) ? View.VISIBLE : View.GONE);
+            },
+            i -> getViewState().enableLoading(refreshType)
         );
     }
 
     @Override
     public void onDestroy() {
-        disposables.dispose();
+        if(!disposable.isDisposed()) {
+            disposable.dispose();
+        }
         super.onDestroy();
     }
 }

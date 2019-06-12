@@ -121,9 +121,9 @@ public class TopicPresenter extends MvpPresenter<TopicView> {
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         if(!disposable.isDisposed()) {
             disposable.dispose();
         }
+        super.onDestroy();
     }
 }

@@ -56,7 +56,9 @@ public class AddPostPresenter extends MvpPresenter<DialogView> {
 
     @Override
     public void onDestroy() {
-        disposable.dispose();
+        if(!disposable.isDisposed()) {
+            disposable.dispose();
+        }
         super.onDestroy();
     }
 }
