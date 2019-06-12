@@ -41,4 +41,6 @@
     <string name="object_is_null">Object is null :(</string>
     <string name="value_is_null">Value is null :(</string>
     <string name="no_data">No data</string>
+    <string name="changed_balance">Changed balance</string>
+    <string name="notification">Notification</string>
 </resources>
