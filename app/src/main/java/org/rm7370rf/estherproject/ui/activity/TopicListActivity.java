@@ -127,9 +127,8 @@ public class TopicListActivity extends MvpAppCompatActivity implements TopicList
                 dialog = new BackupDialog();
                 break;
             case R.id.logout:
-//                realm.executeTransaction(r -> r.deleteAll());
-//                finish();
-                Toast.show(this, "NOT WORK");
+                presenter.logout();
+                finish();
                 break;
         }
 
