@@ -15,9 +15,15 @@ import org.rm7370rf.estherproject.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindInt;
+import butterknife.BindView;
+
 public abstract class FieldDialog extends Dialog {
-    private FancyButton positiveBtn;
-    private FancyButton negativeBtn;
+    @BindView(R.id.positiveBtn)
+    FancyButton positiveBtn;
+    @BindView(R.id.negativeBtn)
+    FancyButton negativeBtn;
+
     private OnClickListener listener;
     private List<EditText> editTextList = new ArrayList<>();
     private int buttonNameResId = R.string.save;
@@ -31,14 +37,6 @@ public abstract class FieldDialog extends Dialog {
     protected void setOnClickListener(int buttonNameResId, OnClickListener listener) {
         this.buttonNameResId = buttonNameResId;
         setOnClickListener(listener);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(layoutId, null);
-        positiveBtn = v.findViewById(R.id.positiveBtn);
-        negativeBtn = v.findViewById(R.id.negativeBtn);
-        return v;
     }
 
     @Override
