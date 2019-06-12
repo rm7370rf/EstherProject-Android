@@ -15,13 +15,16 @@ import java.util.List;
 
 import moxy.presenter.InjectPresenter;
 
+import static org.rm7370rf.estherproject.R.string.backup;
+import static org.rm7370rf.estherproject.R.string.send;
+
 public class CreateAccountDialog extends FieldDialog implements CreateAccountView, FieldDialog.OnClickListener {
     @InjectPresenter
     CreateAccountPresenter presenter;
     private OnCompleteListener listener;
 
     public CreateAccountDialog() {
-        setOnClickListener(this);
+        setOnClickListener(backup, this);
     }
 
     public void setOnCompleteListener(Dialog.OnCompleteListener listener) {
