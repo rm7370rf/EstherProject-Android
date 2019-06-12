@@ -15,8 +15,6 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
-import org.rm7370rf.estherproject.ui.activity.TopicListActivity;
-
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

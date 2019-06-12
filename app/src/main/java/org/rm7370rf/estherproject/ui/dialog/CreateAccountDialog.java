@@ -15,7 +15,6 @@ import java.util.List;
 
 import moxy.presenter.InjectPresenter;
 
-import static org.rm7370rf.estherproject.R.string.backup;
 import static org.rm7370rf.estherproject.R.string.save;
 
 public class CreateAccountDialog extends FieldDialog implements CreateAccountView, FieldDialog.OnClickListener {

@@ -1,6 +1,5 @@
 package org.rm7370rf.estherproject.ui.presenter;
 
-import android.util.Pair;
 import android.view.View;
 
 import org.rm7370rf.estherproject.EstherProject;
@@ -18,9 +17,6 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.BiFunction;
-import io.reactivex.functions.Consumer;
-import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
 import moxy.InjectViewState;

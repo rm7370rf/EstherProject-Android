@@ -1,9 +1,6 @@
 package org.rm7370rf.estherproject.util;
 
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
 
 import androidx.annotation.Nullable;
@@ -15,7 +12,6 @@ import org.rm7370rf.estherproject.R;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindInt;
 import butterknife.BindView;
 
 public abstract class FieldDialog extends Dialog {

@@ -1,7 +1,5 @@
 package org.rm7370rf.estherproject.ui.presenter;
 
-import android.util.Log;
-
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.rm7370rf.estherproject.R;
 import org.rm7370rf.estherproject.contract.Contract;
@@ -18,8 +16,6 @@ import java.io.File;
 import java.security.Provider;
 import java.security.Security;
 import java.util.List;
-
-import javax.inject.Inject;
 
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;

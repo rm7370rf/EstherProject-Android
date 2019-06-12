@@ -9,7 +9,6 @@ import org.rm7370rf.estherproject.ui.presenter.BackupPresenter;
 import org.rm7370rf.estherproject.ui.presenter.SetUsernamePresenter;
 import org.rm7370rf.estherproject.ui.presenter.TopicListPresenter;
 import org.rm7370rf.estherproject.ui.presenter.TopicPresenter;
-import org.rm7370rf.estherproject.util.RefreshAnimationUtil;
 
 import javax.inject.Singleton;
 

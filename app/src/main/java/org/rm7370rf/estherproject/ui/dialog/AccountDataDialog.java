@@ -14,12 +14,10 @@ import org.rm7370rf.estherproject.model.Account;
 import org.rm7370rf.estherproject.ui.presenter.AccountDataPresenter;
 import org.rm7370rf.estherproject.ui.view.AccountDataView;
 import org.rm7370rf.estherproject.util.Dialog;
-import org.rm7370rf.estherproject.util.RefreshAnimationUtil;
 import org.rm7370rf.estherproject.util.Toast;
 import org.rm7370rf.estherproject.util.Utils;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import moxy.presenter.InjectPresenter;
 
 import static org.rm7370rf.estherproject.util.Utils.copyToClipboard;
