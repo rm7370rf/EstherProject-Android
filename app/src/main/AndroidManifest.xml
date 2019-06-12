@@ -25,11 +25,7 @@
         </activity>
         <service
             android:name=".service.BalanceService"
-            android:label="@string/changed_balance"
-            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
-            <intent-filter>
-                <action android:name="android.service.quicksettings.action.QS_TILE"/>
-            </intent-filter>
+            android:label="@string/changed_balance">
         </service>
     </application>
 
