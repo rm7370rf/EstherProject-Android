@@ -3,6 +3,7 @@ package org.rm7370rf.estherproject.ui.presenter;
 import android.util.Pair;
 import android.view.View;
 
+import org.rm7370rf.estherproject.EstherProject;
 import org.rm7370rf.estherproject.contract.Contract;
 import org.rm7370rf.estherproject.model.Account;
 import org.rm7370rf.estherproject.model.Topic;
@@ -10,6 +11,8 @@ import org.rm7370rf.estherproject.ui.view.TopicListView;
 import org.rm7370rf.estherproject.util.RefreshAnimationUtil.RefreshType;
 
 import java.math.BigInteger;
+
+import javax.inject.Inject;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -28,10 +31,12 @@ public class TopicListPresenter extends MvpPresenter<TopicListView> {
     private Disposable disposable;
     private Realm realm = Realm.getDefaultInstance();
     private Account account = Account.get();
-    private Contract contract;
+
+    @Inject
+    Contract contract;
 
     public TopicListPresenter() {
-        this.contract = Contract.getInstance().setAccount(realm.copyFromRealm(account));
+        EstherProject.getComponent().inject(this);
     }
 
     private long countTopics() {

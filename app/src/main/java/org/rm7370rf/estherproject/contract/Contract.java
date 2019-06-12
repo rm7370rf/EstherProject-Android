@@ -16,17 +16,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 public class Contract extends ContractManager {
-    private static Contract INSTANCE = new Contract();
-
-    private Contract() { }
-
-    public static Contract getInstance() {
-        if(INSTANCE == null) {
-            INSTANCE = new Contract();
-        }
-        return INSTANCE;
-    }
+    @Inject
+    public Contract() { }
 
     @Override
     public Contract setAccount(Account account) {

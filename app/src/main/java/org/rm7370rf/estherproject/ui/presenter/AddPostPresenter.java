@@ -1,11 +1,14 @@
 package org.rm7370rf.estherproject.ui.presenter;
 
+import org.rm7370rf.estherproject.EstherProject;
 import org.rm7370rf.estherproject.contract.Contract;
 import org.rm7370rf.estherproject.ui.view.DialogView;
 import org.rm7370rf.estherproject.util.Verifier;
 
 import java.math.BigInteger;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -20,7 +23,12 @@ import static org.rm7370rf.estherproject.R.string.request_successfully_sent;
 @InjectViewState
 public class AddPostPresenter extends MvpPresenter<DialogView> {
     private Disposable disposable;
-    private Contract contract = Contract.getInstance();
+    @Inject
+    Contract contract;
+
+    public AddPostPresenter() {
+        EstherProject.getComponent().inject(this);
+    }
 
     public void onClick(BigInteger topicId, List<String> valueList) {
         String message = valueList.get(0);

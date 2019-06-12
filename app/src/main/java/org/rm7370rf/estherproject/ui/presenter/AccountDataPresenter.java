@@ -1,10 +1,13 @@
 package org.rm7370rf.estherproject.ui.presenter;
 
+import org.rm7370rf.estherproject.EstherProject;
 import org.rm7370rf.estherproject.contract.Contract;
 import org.rm7370rf.estherproject.model.Account;
 import org.rm7370rf.estherproject.ui.view.AccountDataView;
 
 import java.math.BigDecimal;
+
+import javax.inject.Inject;
 
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -18,9 +21,14 @@ import moxy.MvpPresenter;
 @InjectViewState
 public class AccountDataPresenter extends MvpPresenter<AccountDataView> {
     private Disposable disposable;
-    private Contract contract = Contract.getInstance();
+    @Inject
+    Contract contract;
     private Account account = Account.get();
     private Realm realm = Realm.getDefaultInstance();
+
+    public AccountDataPresenter() {
+        EstherProject.getComponent().inject(this);
+    }
 
     @Override
     protected void onFirstViewAttach() {

@@ -19,6 +19,8 @@ import java.security.Provider;
 import java.security.Security;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -127,8 +129,8 @@ public class CreateAccountPresenter extends MvpPresenter<CreateAccountView> {
         account.setWalletName(walletName);
         account.setWalletFolder(file.getPath());
         account.setWalletAddress(address);
-        Contract contract = Contract.getInstance()
-                .setAccount(account);
+        Contract contract = new Contract();
+        contract.setAccount(account);
         String userName = contract.getUsername(address);
         if (!userName.isEmpty()) {
             account.setUserName(userName);

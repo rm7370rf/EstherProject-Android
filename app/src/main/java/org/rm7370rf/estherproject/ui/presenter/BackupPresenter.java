@@ -1,9 +1,12 @@
 package org.rm7370rf.estherproject.ui.presenter;
 
+import org.rm7370rf.estherproject.EstherProject;
 import org.rm7370rf.estherproject.contract.Contract;
 import org.rm7370rf.estherproject.ui.view.BackupView;
 import org.rm7370rf.estherproject.util.Verifier;
 import org.web3j.crypto.Credentials;
+
+import javax.inject.Inject;
 
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -18,7 +21,12 @@ import static org.rm7370rf.estherproject.R.string.please_backup_private_key;
 @InjectViewState
 public class BackupPresenter extends MvpPresenter<BackupView> {
     private Disposable disposable;
-    private Contract contract = Contract.getInstance();
+    @Inject
+    Contract contract;
+
+    public BackupPresenter() {
+        EstherProject.getComponent().inject(this);
+    }
 
     public void onClick(String password) {
         disposable = Single.fromCallable(() -> {

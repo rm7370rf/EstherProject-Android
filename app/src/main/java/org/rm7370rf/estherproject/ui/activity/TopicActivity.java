@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import org.rm7370rf.estherproject.EstherProject;
 import org.rm7370rf.estherproject.R;
 import org.rm7370rf.estherproject.model.Post;
 import org.rm7370rf.estherproject.other.Keys;
@@ -71,6 +72,7 @@ public class TopicActivity extends MvpAppCompatActivity implements TopicView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_topic);
         ButterKnife.bind(this);
+        EstherProject.getComponent().inject(this);
         setSwipeRefreshLayout();
         setRefreshAnimationUtil();
         setBackButton();

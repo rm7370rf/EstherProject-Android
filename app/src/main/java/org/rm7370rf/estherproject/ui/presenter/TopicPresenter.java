@@ -1,6 +1,7 @@
 package org.rm7370rf.estherproject.ui.presenter;
 
 import org.apache.commons.lang3.StringUtils;
+import org.rm7370rf.estherproject.EstherProject;
 import org.rm7370rf.estherproject.contract.Contract;
 import org.rm7370rf.estherproject.expception.VerifierException;
 import org.rm7370rf.estherproject.model.Post;
@@ -11,6 +12,8 @@ import org.rm7370rf.estherproject.util.RefreshAnimationUtil;
 import org.rm7370rf.estherproject.util.Verifier;
 
 import java.math.BigInteger;
+
+import javax.inject.Inject;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -30,11 +33,15 @@ import static org.rm7370rf.estherproject.other.Config.MAX_LIST_ITEM_TEXT_LENGTH;
 public class TopicPresenter extends MvpPresenter<TopicView> {
     private Disposable disposable;
     private Realm realm = Realm.getDefaultInstance();
-    private Contract contract = Contract.getInstance();
+
+    @Inject
+    Contract contract;
+
     private BigInteger topicId;
     private Topic topic;
 
     public TopicPresenter(BigInteger topicId) {
+        EstherProject.getComponent().inject(this);
         this.topicId = topicId;
         try {
             setTopic();
