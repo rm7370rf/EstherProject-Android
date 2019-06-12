@@ -44,4 +44,8 @@ public class Dialog extends MvpAppCompatDialogFragment {
     public void show(FragmentManager manager) {
         super.show(manager, String.valueOf(layoutId));
     }
+
+    public interface OnCompleteListener {
+        void onComplete();
+    }
 }

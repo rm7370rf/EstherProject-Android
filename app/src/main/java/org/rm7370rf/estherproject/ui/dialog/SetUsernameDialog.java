@@ -73,8 +73,4 @@ public class SetUsernameDialog extends FieldDialog implements SetUsernameView, C
     public void onClick(int buttonId, List<String> valueList) {
         presenter.onClick(valueList);
     }
-
-    public interface OnCompleteListener {
-        void onComplete();
-    }
 }
