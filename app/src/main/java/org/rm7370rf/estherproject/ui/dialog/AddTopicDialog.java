@@ -8,80 +8,62 @@ import com.ekalips.fancybuttonproj.FancyButton;
 
 import org.rm7370rf.estherproject.R;
 import org.rm7370rf.estherproject.contract.Contract;
+import org.rm7370rf.estherproject.ui.presenter.AddTopicPresenter;
+import org.rm7370rf.estherproject.ui.view.CreateAccountView;
+import org.rm7370rf.estherproject.ui.view.DialogView;
 import org.rm7370rf.estherproject.util.FieldDialog;
 import org.rm7370rf.estherproject.util.Toast;
 import org.rm7370rf.estherproject.util.Verifier;
+
+import java.util.List;
 
 import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableCompletableObserver;
 import io.reactivex.schedulers.Schedulers;
+import moxy.presenter.InjectPresenter;
 
 import static org.rm7370rf.estherproject.R.string.request_successfully_sent;
 import static org.rm7370rf.estherproject.R.string.send;
+import static org.rm7370rf.estherproject.R.string.subject;
 
-public class AddTopicDialog extends FieldDialog {
-    private EditText subjectEdit;
-    private EditText messageEdit;
-    private EditText passwordEdit;
-    private Contract contract = Contract.getInstance();
-    private Disposable disposable;
+public class AddTopicDialog extends FieldDialog implements DialogView, CreateAccountDialog.OnClickListener {
+    @InjectPresenter
+    AddTopicPresenter presenter;
 
-    public AddTopicDialog(Activity activity) {
-        super(activity);
+    public AddTopicDialog() {
         setLayout(R.layout.dialog_add_topic);
-        setUI();
-        setOnClickListener(send, this::addTopic);
     }
 
-    private void setUI() {
-        subjectEdit = getView().findViewById(R.id.subjectEdit);
-        messageEdit = getView().findViewById(R.id.messageEdit);
-        passwordEdit = getView().findViewById(R.id.passwordEdit);
-    }
-
-    private void addTopic(FancyButton button) {
-        String subject = subjectEdit.getText().toString();
-        String message = messageEdit.getText().toString();
-        String password = passwordEdit.getText().toString();
-
-        disposable = Completable.fromAction(() -> {
-            Verifier.verifySubject(subject);
-            Verifier.verifyMessage(message);
-            Verifier.verifyPassword(password);
-            contract.addTopic(password, subject, message);
-        })
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribeWith(new DisposableCompletableObserver() {
-            @Override
-            protected void onStart() {
-                button.collapse();
-            }
-
-            @Override
-            public void onComplete() {
-                Toast.show(getContext(), request_successfully_sent);
-                button.expand();
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                e.printStackTrace();
-                Toast.show(getContext(), e.getLocalizedMessage());
-                button.expand();
-            }
-        });
-    }
-
-    @Override
-    public void onDismiss(DialogInterface dialog) {
-        disposable.dispose();
-    }
 
     @Override
     protected void fillEditText() {
+        addToEditTextList(R.id.subjectEdit, R.id.messageEdit, R.id.passwordEdit);
+    }
 
+    @Override
+    public void showToast(int resource) {
+        Toast.show(getContext(), resource);
+    }
+
+    @Override
+    public void showToast(String message) {
+        Toast.show(getContext(), message);
+    }
+
+    @Override
+    public void collapsePositiveButton() {
+        super.collapsePositiveButton();
+    }
+
+    @Override
+    public void expandPositiveButton() {
+        super.expandPositiveButton();
+    }
+
+    @Override
+    public void onClick(int buttonId, List<String> valueList) {
+        presenter.onClick(valueList);
     }
 }
