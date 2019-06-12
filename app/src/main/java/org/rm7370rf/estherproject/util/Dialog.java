@@ -24,9 +24,10 @@ import org.rm7370rf.estherproject.ui.presenter.CreateAccountPresenter;
 import java.util.ArrayList;
 import java.util.List;
 
+import moxy.MvpDialogFragment;
 import moxy.presenter.InjectPresenter;
 
-public class Dialog extends DialogFragment {
+public class Dialog extends MvpDialogFragment {
     protected int layoutId;
 
     public Dialog() { }
