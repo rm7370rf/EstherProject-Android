@@ -1,24 +1,15 @@
-package org.rm7370rf.estherproject.ui;
+package org.rm7370rf.estherproject.ui.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import org.rm7370rf.estherproject.R;
 import org.rm7370rf.estherproject.ui.dialog.CreateAccountDialog;
-import org.rm7370rf.estherproject.ui.presenter.CreateAccountPresenter;
-import org.rm7370rf.estherproject.ui.view.CreateAccountView;
-import org.rm7370rf.estherproject.util.FieldDialog;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.ButterKnife;
-import moxy.MvpAppCompatActivity;
-import moxy.presenter.InjectPresenter;
 
 import static org.rm7370rf.estherproject.util.Verifier.isAccountExists;
 

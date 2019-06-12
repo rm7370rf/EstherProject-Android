@@ -1,4 +1,4 @@
-package org.rm7370rf.estherproject.ui;
+package org.rm7370rf.estherproject.ui.activity;
 
 import android.os.Bundle;
 import android.view.Menu;
