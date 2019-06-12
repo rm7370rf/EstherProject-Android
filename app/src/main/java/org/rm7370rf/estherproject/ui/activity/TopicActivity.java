@@ -23,6 +23,9 @@ import org.rm7370rf.estherproject.model.Post;
 import org.rm7370rf.estherproject.model.Topic;
 import org.rm7370rf.estherproject.other.Keys;
 import org.rm7370rf.estherproject.ui.adapter.TopicAdapter;
+import org.rm7370rf.estherproject.ui.dialog.AddPostDialog;
+import org.rm7370rf.estherproject.ui.presenter.TopicPresenter;
+import org.rm7370rf.estherproject.ui.view.TopicView;
 import org.rm7370rf.estherproject.util.FieldDialog;
 import org.rm7370rf.estherproject.util.RefreshAnimationUtil;
 import org.rm7370rf.estherproject.util.RefreshAnimationUtil.RefreshType;
@@ -40,16 +43,36 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableCompletableObserver;
 import io.reactivex.schedulers.Schedulers;
+import io.realm.OrderedRealmCollection;
 import io.realm.Realm;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
 import io.realm.Sort;
+import moxy.MvpAppCompatActivity;
+import moxy.presenter.InjectPresenter;
+import moxy.presenter.ProvidePresenter;
 
 import static org.rm7370rf.estherproject.R.string.request_successfully_sent;
 import static org.rm7370rf.estherproject.R.string.send;
 import static org.rm7370rf.estherproject.other.Config.MAX_LIST_ITEM_TEXT_LENGTH;
 
-public class TopicActivity extends AppCompatActivity {
+public class TopicActivity extends MvpAppCompatActivity implements TopicView {
+    @InjectPresenter
+    TopicPresenter presenter;
+
+    @ProvidePresenter
+    TopicPresenter provideDetailsPresenter() {
+        try {
+            String topicId = getIntent().getStringExtra(Keys.Extra.TOPIC_ID);
+            Verifier.verifyIntentExtra(topicId);
+            return new TopicPresenter(new BigInteger(topicId));
+        }
+        catch (Exception e) {
+            finish();
+        }
+        return null;
+    }
+
     @BindView(R.id.swipeRefreshLayout)
     SwipeRefreshLayout swipeRefreshLayout;
 
@@ -62,32 +85,22 @@ public class TopicActivity extends AppCompatActivity {
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
 
-    private CompositeDisposable disposables = new CompositeDisposable();
-    private Contract contract = Contract.getInstance();
-    private Realm realm = Realm.getDefaultInstance();
-    private Topic topic;
     private RefreshAnimationUtil refreshAnimationUtil = new RefreshAnimationUtil();
+    private BigInteger topicId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_topic);
         ButterKnife.bind(this);
-        try {
-            setTopicId();
-            setTitle(StringUtils.abbreviate(topic.getSubject(), MAX_LIST_ITEM_TEXT_LENGTH));
-            setContract();
-            setSwipeRefreshLayout();
-            setRecyclerAdapter();
-            setRefreshAnimationUtil();
-            setFirstPost();
-            updateDB((countPosts() == 0) ? RefreshType.FIRST : RefreshType.AFTER_START);
-            setBackButton();
-        }
-        catch (Exception e) {
-            Toast.show(this, e.getLocalizedMessage());
-            finish();
-        }
+        setSwipeRefreshLayout();
+        setRefreshAnimationUtil();
+        setBackButton();
+    }
+
+    @Override
+    public void setTitle(String title) {
+        super.setTitle(title);
     }
 
     public void setRefreshAnimationUtil() {
@@ -104,47 +117,8 @@ public class TopicActivity extends AppCompatActivity {
         }
     }
 
-    private RealmQuery<Post> getPostsQuery() {
-        return realm.where(Post.class);
-    }
-
-    private long countPosts() {
-        return getPostsQuery().equalTo(Keys.Db.TOPIC_ID, String.valueOf(topic.getId())).count();
-    }
-
-    private void setFirstPost() {
-        if(countPosts() == 0) {
-            Post firstPost = new Post();
-            firstPost.setTopicId(topic.getId());
-            firstPost.setId(BigInteger.ZERO);
-            firstPost.setMessage(topic.getMessage());
-            firstPost.setUserAddress(topic.getUserAddress());
-            firstPost.setUserName(topic.getUserName());
-            firstPost.setTimestamp(topic.getTimestamp());
-            firstPost.createPrimaryKey();
-            realm.executeTransaction(r -> r.copyToRealm(firstPost));
-        }
-    }
-
-    private void setTopicId() throws VerifierException {
-        String topicId = getIntent().getStringExtra(Keys.Extra.TOPIC_ID);
-        Verifier.verifyIntentExtra(topicId);
-        Topic dbTopic = realm.where(Topic.class).equalTo(Keys.Db.ID, topicId).findFirst();
-        Verifier.verifyRealmObject(dbTopic);
-        this.topic = realm.copyFromRealm(dbTopic);
-    }
-
-    private void setContract() throws VerifierException {
-        Account account = realm.where(Account.class).findFirst();
-        Verifier.verifyRealmObject(account);
-    }
-
-    private void setRecyclerAdapter() {
-        RealmResults<Post> posts = getPostsQuery()
-                .equalTo(Keys.Db.TOPIC_ID, String.valueOf(topic.getId()))
-                .sort(Keys.Db.TIMESTAMP, Sort.ASCENDING)
-                .findAll();
-
+    @Override
+    public void setRecyclerAdapter(OrderedRealmCollection<Post> posts) {
         TopicAdapter adapter = new TopicAdapter(posts);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
@@ -153,50 +127,7 @@ public class TopicActivity extends AppCompatActivity {
     }
 
     public void setSwipeRefreshLayout() {
-        this.swipeRefreshLayout.setOnRefreshListener(() -> updateDB(RefreshType.BY_REQUEST));
-    }
-
-    private void updateDB(int refreshType) {
-        long amount = countPosts();
-        disposables.add(
-                Observable.create((ObservableEmitter<Post> emitter) -> {
-                    try {
-                        BigInteger numberOfPosts = contract.countPostsAtTopic(topic.getId());
-
-                        BigInteger localNumberOfPosts = BigInteger.valueOf(amount).subtract(BigInteger.ONE);
-
-                        if (numberOfPosts.compareTo(localNumberOfPosts) > 0) {
-                            for (BigInteger i = localNumberOfPosts; i.compareTo(numberOfPosts) < 0; i = i.add(BigInteger.ONE)) {
-                                Post post = contract.getPostAtTopic(topic.getId(), i);
-                                emitter.onNext(post);
-                            }
-                        }
-                        emitter.onComplete();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        emitter.onError(e);
-                    }
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    post -> realm.executeTransaction(r -> r.copyToRealm(post)),
-                    error -> {
-                        error.printStackTrace();
-                        Toast.show(this, error.getLocalizedMessage());
-                    },
-                    () -> refreshAnimationUtil.stop(refreshType),
-                    i -> refreshAnimationUtil.start(refreshType)
-                )
-        );
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if(!disposables.isDisposed()) {
-            disposables.dispose();
-        }
+        this.swipeRefreshLayout.setOnRefreshListener(() -> presenter.updateDatabase(RefreshType.BY_REQUEST));
     }
 
     @Override
@@ -213,54 +144,36 @@ public class TopicActivity extends AppCompatActivity {
                 finish();
                 return true;
             case R.id.addPost:
-                showAddPostDialog();
+                AddPostDialog dialog = new AddPostDialog();
+                dialog.setTopicId(topicId);
+                dialog.show(getSupportFragmentManager());
                 return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void showAddPostDialog() {
-        FieldDialog dialog = new FieldDialog(this);
-        dialog.setLayout(R.layout.dialog_add_post);
+    @Override
+    public void showToast(int resource) {
+        showToast(getString(resource));
+    }
 
-        EditText messageEdit = dialog.getEditText(R.id.messageEdit);
-        EditText passwordEdit = dialog.getEditText(R.id.passwordEdit);
+    @Override
+    public void showToast(String message) {
+        Toast.show(this, message);
+    }
 
-        dialog.setOnClickListener(
-                send,
-                button -> {
-                    String message = messageEdit.getText().toString();
-                    String password = passwordEdit.getText().toString();
-                    disposables.add(
-                            Completable.fromAction(() -> {
-                                Verifier.verifyMessage(message);
-                                Verifier.verifyPassword(password);
-                                contract.addPostToTopic(password, topic.getId(), message);
-                            })
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribeWith(new DisposableCompletableObserver() {
-                                @Override
-                                protected void onStart() {
-                                    button.collapse();
-                                }
+    @Override
+    public void enableLoading(int refreshType) {
+        refreshAnimationUtil.start(refreshType);
+    }
 
-                                @Override
-                                public void onComplete() {
-                                    Toast.show(dialog.getContext(), request_successfully_sent);
-                                    button.expand();
-                                }
+    @Override
+    public void disableLoading(int refreshType) {
+        refreshAnimationUtil.stop(refreshType);
+    }
 
-                                @Override
-                                public void onError(Throwable e) {
-                                    e.printStackTrace();
-                                    Toast.show(dialog.getContext(), e.getLocalizedMessage());
-                                    button.expand();
-                                }
-                            })
-                    );
-                }
-        );
-        dialog.show();
+    @Override
+    public void finish() {
+        super.finish();
     }
 }
