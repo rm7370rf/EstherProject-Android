@@ -16,6 +16,7 @@ import java.util.List;
 
 import moxy.presenter.InjectPresenter;
 
+import static org.rm7370rf.estherproject.R.string.send;
 import static org.rm7370rf.estherproject.util.Utils.copyToClipboard;
 
 public class BackupDialog extends FieldDialog implements BackupView, FieldDialog.OnClickListener {
@@ -24,6 +25,7 @@ public class BackupDialog extends FieldDialog implements BackupView, FieldDialog
 
     public BackupDialog() {
         setLayout(R.layout.dialog_backup);
+        setOnClickListener(send, this);
     }
 
     @Override

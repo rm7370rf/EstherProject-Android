@@ -14,12 +14,15 @@ import java.util.List;
 
 import moxy.presenter.InjectPresenter;
 
+import static org.rm7370rf.estherproject.R.string.send;
+
 public class AddTopicDialog extends FieldDialog implements DialogView, CreateAccountDialog.OnClickListener {
     @InjectPresenter
     AddTopicPresenter presenter;
 
     public AddTopicDialog() {
         setLayout(R.layout.dialog_add_topic);
+        setOnClickListener(send, this);
     }
 
     @Override
