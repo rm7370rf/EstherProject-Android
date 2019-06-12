@@ -32,7 +32,7 @@ import moxy.presenter.InjectPresenter;
 
 import static org.rm7370rf.estherproject.util.Utils.copyToClipboard;
 
-public class AccountDialog extends Dialog implements AccountDataView {
+public class AccountDataDialog extends Dialog implements AccountDataView {
     @InjectPresenter
     AccountDataPresenter presenter;
 
@@ -48,7 +48,7 @@ public class AccountDialog extends Dialog implements AccountDataView {
 
     private RefreshAnimationUtil refreshAnimationUtil = new RefreshAnimationUtil();
 
-    public AccountDialog() {
+    public AccountDataDialog() {
         super();
         setLayout(R.layout.dialog_account_data);
         setUI();
