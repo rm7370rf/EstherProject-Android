@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -13,6 +14,8 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
+
+import org.rm7370rf.estherproject.ui.activity.TopicListActivity;
 
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
@@ -25,6 +28,9 @@ import static android.content.Context.CLIPBOARD_SERVICE;
 import static org.rm7370rf.estherproject.R.string.copied_to_clipboard;
 
 public class Utils {
+    public static Intent createIntentWithoutHistory(Activity from, Class to) {
+        return new Intent(from, to).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+    }
     public static Bitmap createQrCode(String text, int width, int height) throws WriterException {
         MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
         BitMatrix bitMatrix = multiFormatWriter.encode(text, BarcodeFormat.QR_CODE, width, height);
