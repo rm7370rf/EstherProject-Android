@@ -3,6 +3,7 @@ package org.rm7370rf.estherproject.ui.presenter;
 import android.view.View;
 
 import org.rm7370rf.estherproject.contract.Contract;
+import org.rm7370rf.estherproject.model.Account;
 import org.rm7370rf.estherproject.ui.view.AccountDataView;
 import org.rm7370rf.estherproject.ui.view.DialogView;
 import org.rm7370rf.estherproject.util.Toast;
@@ -14,11 +15,18 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
+import io.realm.Realm;
 import moxy.MvpPresenter;
 
 public class AccountDataPresenter extends MvpPresenter<AccountDataView> {
     private Disposable disposable;
     private Contract contract = Contract.getInstance();
+    private Account account = Account.get();
+    @Override
+    protected void onFirstViewAttach() {
+        super.onFirstViewAttach();
+        getViewState().prepareView(Account.get());
+    }
 
     public void refreshUserData(boolean bySwipe) {
         Single<BigDecimal> single = Single.fromCallable(() -> contract.getBalance())
@@ -35,6 +43,7 @@ public class AccountDataPresenter extends MvpPresenter<AccountDataView> {
             @Override
             public void onSuccess(BigDecimal balance) {
                 getViewState().setBalance(String.valueOf(balance));
+                account.setBalance(balance);
                 onComplete();
             }
 
