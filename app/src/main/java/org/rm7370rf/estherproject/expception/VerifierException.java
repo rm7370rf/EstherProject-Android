@@ -1,7 +1,5 @@
 package org.rm7370rf.estherproject.expception;
 
-import android.content.Context;
-
 public class VerifierException extends Exception {
     private int resource;
 

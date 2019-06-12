@@ -16,7 +16,6 @@ import org.rm7370rf.estherproject.util.Utils;
 
 import java.math.BigInteger;
 
-import io.realm.OrderedRealmCollection;
 import io.realm.Realm;
 import io.realm.RealmRecyclerViewAdapter;
 import io.realm.Sort;

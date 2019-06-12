@@ -2,8 +2,6 @@ package org.rm7370rf.estherproject.ui.presenter;
 
 import org.rm7370rf.estherproject.contract.Contract;
 import org.rm7370rf.estherproject.ui.view.DialogView;
-import org.rm7370rf.estherproject.util.FieldDialog;
-import org.rm7370rf.estherproject.util.Toast;
 import org.rm7370rf.estherproject.util.Verifier;
 
 import java.math.BigInteger;

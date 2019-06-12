@@ -1,12 +1,7 @@
 package org.rm7370rf.estherproject.ui.presenter;
 
-import android.content.DialogInterface;
-
-import com.ekalips.fancybuttonproj.FancyButton;
-
 import org.rm7370rf.estherproject.contract.Contract;
 import org.rm7370rf.estherproject.ui.view.DialogView;
-import org.rm7370rf.estherproject.util.Toast;
 import org.rm7370rf.estherproject.util.Verifier;
 
 import java.util.List;

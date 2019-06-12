@@ -1,12 +1,9 @@
 package org.rm7370rf.estherproject.ui.presenter;
 
-import android.widget.EditText;
-
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.rm7370rf.estherproject.R;
 import org.rm7370rf.estherproject.contract.Contract;
 import org.rm7370rf.estherproject.model.Account;
-import org.rm7370rf.estherproject.ui.view.CreateAccountView;
 import org.rm7370rf.estherproject.ui.view.DialogView;
 import org.rm7370rf.estherproject.util.Verifier;
 import org.web3j.crypto.Credentials;
@@ -21,7 +18,6 @@ import java.util.List;
 
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;

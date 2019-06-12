@@ -2,8 +2,6 @@ package org.rm7370rf.estherproject.ui.view;
 
 import org.rm7370rf.estherproject.model.Post;
 
-import java.math.BigInteger;
-
 import io.realm.OrderedRealmCollection;
 import moxy.MvpView;
 import moxy.viewstate.strategy.AddToEndSingleStrategy;

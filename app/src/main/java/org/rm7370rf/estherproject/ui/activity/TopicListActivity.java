@@ -32,7 +32,6 @@ import butterknife.ButterKnife;
 import moxy.MvpAppCompatActivity;
 import moxy.presenter.InjectPresenter;
 
-
 import static org.rm7370rf.estherproject.R.string.topics;
 
 public class TopicListActivity extends MvpAppCompatActivity implements TopicListView {

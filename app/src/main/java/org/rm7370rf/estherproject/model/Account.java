@@ -1,11 +1,6 @@
 package org.rm7370rf.estherproject.model;
 
 
-import android.content.Context;
-
-import org.rm7370rf.estherproject.expception.VerifierException;
-import org.rm7370rf.estherproject.util.Verifier;
-
 import java.math.BigInteger;
 
 import io.realm.Realm;

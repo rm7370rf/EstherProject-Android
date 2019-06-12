@@ -1,34 +1,16 @@
 package org.rm7370rf.estherproject.ui.dialog;
 
-import android.app.Activity;
-import android.content.DialogInterface;
-import android.widget.EditText;
-
-import com.ekalips.fancybuttonproj.FancyButton;
-
 import org.rm7370rf.estherproject.R;
-import org.rm7370rf.estherproject.contract.Contract;
-import org.rm7370rf.estherproject.model.Account;
 import org.rm7370rf.estherproject.ui.presenter.SetUsernamePresenter;
-import org.rm7370rf.estherproject.ui.view.CreateAccountView;
 import org.rm7370rf.estherproject.ui.view.SetUsernameView;
 import org.rm7370rf.estherproject.util.FieldDialog;
 import org.rm7370rf.estherproject.util.Toast;
-import org.rm7370rf.estherproject.util.Verifier;
 
 import java.util.List;
 
-import io.reactivex.Completable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.observers.DisposableCompletableObserver;
-import io.reactivex.schedulers.Schedulers;
-import io.realm.Realm;
 import moxy.presenter.InjectPresenter;
 
-import static org.rm7370rf.estherproject.R.string.request_successfully_sent;
 import static org.rm7370rf.estherproject.R.string.send;
-import static org.rm7370rf.estherproject.R.string.username_already_exists;
 
 public class SetUsernameDialog extends FieldDialog implements SetUsernameView, CreateAccountDialog.OnClickListener {
     @InjectPresenter
