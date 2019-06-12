@@ -80,7 +80,6 @@ public class AccountDataDialog extends Dialog implements AccountDataView {
 
     public void prepareView(Account account) {
         try {
-
             View.OnClickListener copyToClipboardListener = (v) -> copyToClipboard(getContext(), account.getWalletAddress());
 
             userAddressText.setOnClickListener(copyToClipboardListener);

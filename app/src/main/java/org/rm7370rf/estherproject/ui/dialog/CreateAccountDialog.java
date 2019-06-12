@@ -20,6 +20,7 @@ public class CreateAccountDialog extends FieldDialog implements CreateAccountVie
     public CreateAccountDialog(CreateAccountPresenter presenter) {
         this.presenter = presenter;
         setOnClickListener(this);
+
     }
 
     @Override
