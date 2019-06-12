@@ -39,6 +39,10 @@ public class ContractManager {
         this.web3j = Web3j.build(new HttpService(NODE));
     }
 
+    public boolean isNullAccount() {
+        return (account == null);
+    }
+
     public ContractManager setAccount(Account account) {
         if(this.account == null) {
             this.account = account;
