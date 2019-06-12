@@ -33,7 +33,7 @@ public class CreateAccountActivity extends MvpAppCompatActivity {
     }
 
     public void onClick(View view) {
-        CreateAccountDialog dialog = new CreateAccountDialog(new CreateAccountPresenter());
+        CreateAccountDialog dialog = new CreateAccountDialog();
         dialog.setLayout(view.getId() == R.id.createAccountBtn ? R.layout.dialog_create_account : R.layout.dialog_import_account);
         dialog.setOnCompleteListener(this::startTopicListActivity);
         dialog.show(getSupportFragmentManager());

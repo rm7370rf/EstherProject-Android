@@ -16,11 +16,11 @@ import java.util.List;
 import moxy.presenter.InjectPresenter;
 
 public class CreateAccountDialog extends FieldDialog implements CreateAccountView, FieldDialog.OnClickListener {
-    private CreateAccountPresenter presenter;
+    @InjectPresenter
+    CreateAccountPresenter presenter;
     private OnCompleteListener listener;
 
-    public CreateAccountDialog(CreateAccountPresenter presenter) {
-        this.presenter = presenter;
+    public CreateAccountDialog() {
         setOnClickListener(this);
     }
 
@@ -45,11 +45,13 @@ public class CreateAccountDialog extends FieldDialog implements CreateAccountVie
 
     @Override
     public void showToast(int resource) {
+        System.out.println("SHOW_TOAST");
         showToast(getString(resource));
     }
 
     @Override
     public void showToast(String message) {
+        System.out.println("SHOW_TOAST");
         Toast.show(getContext(), message);
     }
 
