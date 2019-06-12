@@ -1,5 +1,7 @@
 package org.rm7370rf.estherproject.ui.view;
 
+import org.rm7370rf.estherproject.model.Account;
+
 import java.math.BigDecimal;
 
 import moxy.MvpView;
@@ -12,5 +14,5 @@ public interface AccountDataView extends MvpView {
     void showToast(String message);
     void enabledLoading(boolean bySwipe);
     void disableLoading(boolean bySwipe);
-
+    void prepareView(Account account);
 }
