@@ -1,5 +1,6 @@
 package org.rm7370rf.estherproject.ui.presenter;
 
+import android.util.Pair;
 import android.view.View;
 
 import org.rm7370rf.estherproject.contract.Contract;
@@ -14,6 +15,9 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.BiFunction;
+import io.reactivex.functions.Consumer;
+import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
 import moxy.InjectViewState;
@@ -28,7 +32,6 @@ public class TopicListPresenter extends MvpPresenter<TopicListView> {
 
     public TopicListPresenter() {
         this.contract = Contract.getInstance().setAccount(realm.copyFromRealm(account));
-        getViewState().setHasUsername(account.hasUsername());
     }
 
     private long countTopics() {
@@ -41,7 +44,9 @@ public class TopicListPresenter extends MvpPresenter<TopicListView> {
 
     public void updateDatabase(RefreshType refreshType) {
         long amount = countTopics();
-        disposable = Observable.create((ObservableEmitter<Topic> emitter) -> {
+        String address = account.getWalletAddress();
+
+        Observable<Topic> topicObservable = Observable.create((ObservableEmitter<Topic> emitter) -> {
             try {
                 BigInteger numberOfTopics = contract.countTopics();
                 BigInteger localNumberOfTopics = BigInteger.valueOf(amount);
@@ -57,18 +62,33 @@ public class TopicListPresenter extends MvpPresenter<TopicListView> {
                 e.printStackTrace();
                 emitter.onError(e);
             }
-        })
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(
-            topic -> realm.executeTransaction(r -> r.copyToRealm(topic)),
-            error -> getViewState().showToast(error.getLocalizedMessage()),
-            () -> {
-                getViewState().disableLoading(refreshType);
-                getViewState().setNoDataVisibility((countTopics() == 0) ? View.VISIBLE : View.GONE);
-            },
-            i -> getViewState().enableLoading(refreshType)
-        );
+        });
+
+        Observable<String> userNameObservable = Observable.fromCallable(() -> contract.getUsername(address));
+
+        disposable = Observable.concat(topicObservable, userNameObservable)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        result -> {
+                            if (result instanceof Topic) {
+                                realm.executeTransaction(r -> r.copyToRealm((Topic) result));
+                            }
+                            else if(result instanceof String) {
+                                String username = result.toString();
+                                if(!username.isEmpty()) {
+                                    realm.executeTransaction(r -> account.setUserName((String) result));
+                                }
+                                getViewState().setHasUsername(account.hasUsername());
+                            }
+                        },
+                        error -> getViewState().showToast(error.getLocalizedMessage()),
+                        () -> {
+                            getViewState().disableLoading(refreshType);
+                            getViewState().setNoDataVisibility((countTopics() == 0) ? View.VISIBLE : View.GONE);
+                        },
+                        i -> getViewState().enableLoading(refreshType)
+                );
     }
 
     public void logout() {
