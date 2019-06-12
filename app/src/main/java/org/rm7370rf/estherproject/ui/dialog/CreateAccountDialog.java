@@ -10,7 +10,7 @@ import java.util.List;
 
 import moxy.presenter.InjectPresenter;
 
-public class CreateAccountDialog extends FieldDialog implements CreateAccountView, CreateAccountDialog.OnClickListener {
+public class CreateAccountDialog extends FieldDialog implements CreateAccountView, FieldDialog.OnClickListener {
     @InjectPresenter
     CreateAccountPresenter presenter;
 
