@@ -115,18 +115,18 @@ public class TopicListActivity extends MvpAppCompatActivity implements TopicList
 
         switch (item.getItemId()) {
             case R.id.addTopic:
-                dialog = new AddTopicDialog(this);
+                dialog = new AddTopicDialog();
                 break;
             case R.id.accountData:
                 AccountDialog d = new AccountDialog(this);
                 d.show();
                 break;
             case R.id.setUsername:
-                dialog = new SetUsernameDialog(this);
+                dialog = new SetUsernameDialog();
                 ((SetUsernameDialog) dialog).setOnCompleteListener(this::invalidateOptionsMenu);
                 break;
             case R.id.backup:
-                dialog = new BackupDialog(this);
+                dialog = new BackupDialog();
                 break;
             case R.id.logout:
 //                realm.executeTransaction(r -> r.deleteAll());
@@ -136,7 +136,7 @@ public class TopicListActivity extends MvpAppCompatActivity implements TopicList
         }
 
         if(dialog != null) {
-            dialog.show();
+            dialog.show(getSupportFragmentManager());
         }
 
         return super.onOptionsItemSelected(item);
