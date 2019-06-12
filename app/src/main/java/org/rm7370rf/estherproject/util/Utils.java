@@ -16,7 +16,9 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import static android.content.Context.CLIPBOARD_SERVICE;
@@ -44,5 +46,13 @@ public class Utils {
 
     public static String timestampToDate(BigInteger timestamp) {
         return new SimpleDateFormat("MM/dd/yy HH:mm", Locale.US).format(new Date (timestamp.longValue()*1000));
+    }
+
+    public static List<String> listOfEditTextToString(List<EditText> editTextList) {
+        List<String> result = new ArrayList<>();
+        for (EditText editText : editTextList) {
+            result.add(editText.getText().toString());
+        }
+        return result;
     }
 }
