@@ -4,13 +4,15 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
+import android.widget.RelativeLayout;
 
 import androidx.fragment.app.FragmentManager;
 
-import moxy.MvpDialogFragment;
+import moxy.MvpAppCompatDialogFragment;
 
-public class Dialog extends MvpDialogFragment {
+public class Dialog extends MvpAppCompatDialogFragment {
     protected int layoutId;
 
     public Dialog() { }
@@ -19,17 +21,24 @@ public class Dialog extends MvpDialogFragment {
         this.layoutId = layoutId;
     }
 
+
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(layoutId, null);
     }
 
+
     @Override
-    public void onResume() {
-        super.onResume();
-        ViewGroup.LayoutParams params = getDialog().getWindow().getAttributes();
-        params.width = WindowManager.LayoutParams.MATCH_PARENT;
-        params.height = WindowManager.LayoutParams.WRAP_CONTENT;
-        getDialog().getWindow().setAttributes((WindowManager.LayoutParams) params);
+    public android.app.Dialog onCreateDialog(final Bundle savedInstanceState) {
+        RelativeLayout root = new RelativeLayout(getActivity());
+        root.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
+        final android.app.Dialog dialog = new android.app.Dialog(getActivity());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(root);
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        return dialog;
     }
 
     public void show(FragmentManager manager) {
