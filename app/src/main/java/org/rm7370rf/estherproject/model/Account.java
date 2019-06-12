@@ -1,6 +1,7 @@
 package org.rm7370rf.estherproject.model;
 
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import io.realm.Realm;
@@ -38,7 +39,7 @@ public class Account extends RealmObject {
         this.userName = userName;
     }
 
-    public void setBalance(BigInteger balance) {
+    public void setBalance(BigDecimal balance) {
         this.balance = String.valueOf(balance);
     }
 
@@ -62,8 +63,8 @@ public class Account extends RealmObject {
         return !userName.isEmpty();
     }
 
-    public BigInteger getBalance() {
-        return new BigInteger(balance);
+    public BigDecimal getBalance() {
+        return new BigDecimal(balance);
     }
 
     public static Account get() {
