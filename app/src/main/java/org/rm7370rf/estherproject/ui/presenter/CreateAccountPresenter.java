@@ -6,6 +6,7 @@ import org.rm7370rf.estherproject.contract.Contract;
 import org.rm7370rf.estherproject.expception.VerifierException;
 import org.rm7370rf.estherproject.model.Account;
 import org.rm7370rf.estherproject.ui.view.CreateAccountView;
+import org.rm7370rf.estherproject.util.DBHelper;
 import org.rm7370rf.estherproject.util.Verifier;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.Keys;
@@ -16,6 +17,8 @@ import java.io.File;
 import java.security.Provider;
 import java.security.Security;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -32,6 +35,9 @@ import static org.rm7370rf.estherproject.util.Verifier.verifyAccountExistence;
 @InjectViewState
 public class CreateAccountPresenter extends MvpPresenter<CreateAccountView> {
     private Disposable disposable;
+
+    @Inject
+    DBHelper dbHelper;
 
     public CreateAccountPresenter() {
         setupBouncyCastle();
@@ -69,7 +75,7 @@ public class CreateAccountPresenter extends MvpPresenter<CreateAccountView> {
             @Override
             public void onSuccess(Account account) {
                 if(account != null) {
-                    Realm.getDefaultInstance().executeTransaction(realm -> realm.copyToRealm(account));
+                    dbHelper.executeTransaction(realm -> realm.copyToRealm(account));
                     getViewState().showToast(account_saved);
                     getViewState().expandPositiveButton();
                     getViewState().onComplete();

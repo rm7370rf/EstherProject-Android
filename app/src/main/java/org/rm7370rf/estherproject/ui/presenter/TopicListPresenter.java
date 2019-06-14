@@ -96,12 +96,12 @@ public class TopicListPresenter extends MvpPresenter<TopicListView> {
                 .subscribe(
                         result -> {
                             if (result instanceof Topic) {
-                                realm.executeTransaction(r -> r.copyToRealm((Topic) result));
+                                dbHelper.executeTransaction(r -> r.copyToRealm((Topic) result));
                             }
                             else if(result instanceof String) {
                                 String username = result.toString();
                                 if(!username.isEmpty()) {
-                                    realm.executeTransaction(r -> account.setUserName((String) result));
+                                    dbHelper.executeTransaction(r -> account.setUserName((String) result));
                                 }
                                 getViewState().setHasUsername(account.hasUsername());
                             }
@@ -116,7 +116,7 @@ public class TopicListPresenter extends MvpPresenter<TopicListView> {
     }
 
     public void logout() {
-        realm.executeTransaction(r -> r.deleteAll());
+        dbHelper.executeTransaction(r -> r.deleteAll());
     }
 
     @Override

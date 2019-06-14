@@ -4,6 +4,7 @@ import org.rm7370rf.estherproject.EstherProject;
 import org.rm7370rf.estherproject.contract.Contract;
 import org.rm7370rf.estherproject.model.Account;
 import org.rm7370rf.estherproject.ui.view.AccountDataView;
+import org.rm7370rf.estherproject.util.DBHelper;
 
 import java.math.BigDecimal;
 
@@ -24,7 +25,9 @@ public class AccountDataPresenter extends MvpPresenter<AccountDataView> {
     @Inject
     Contract contract;
     private Account account = Account.get();
-    private Realm realm = Realm.getDefaultInstance();
+
+    @Inject
+    DBHelper dbHelper;
 
     public AccountDataPresenter() {
         EstherProject.getComponent().inject(this);
@@ -50,7 +53,7 @@ public class AccountDataPresenter extends MvpPresenter<AccountDataView> {
                     @Override
                     public void onSuccess(BigDecimal balance) {
                         getViewState().setBalance(String.valueOf(balance));
-                        realm.executeTransaction(r -> account.setBalance(balance));
+                        dbHelper.executeTransaction(r -> account.setBalance(balance));
 
                         onComplete();
                     }

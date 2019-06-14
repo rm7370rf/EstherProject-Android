@@ -80,7 +80,7 @@ public class TopicPresenter extends MvpPresenter<TopicView> {
             firstPost.setUserName(topic.getUserName());
             firstPost.setTimestamp(topic.getTimestamp());
             firstPost.createPrimaryKey();
-            realm.executeTransaction(r -> r.copyToRealm(firstPost));
+            dbHelper.executeTransaction(r -> r.copyToRealm(firstPost));
         }
     }
 
@@ -108,7 +108,7 @@ public class TopicPresenter extends MvpPresenter<TopicView> {
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
-            post -> realm.executeTransaction(r -> r.copyToRealm(post)),
+            post -> dbHelper.executeTransaction(r -> r.copyToRealm(post)),
             error -> {
                 error.printStackTrace();
                 getViewState().showToast(error);

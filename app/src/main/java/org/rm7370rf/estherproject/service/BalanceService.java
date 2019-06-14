@@ -17,6 +17,7 @@ import org.rm7370rf.estherproject.EstherProject;
 import org.rm7370rf.estherproject.R;
 import org.rm7370rf.estherproject.contract.Contract;
 import org.rm7370rf.estherproject.model.Account;
+import org.rm7370rf.estherproject.util.DBHelper;
 
 import java.math.BigDecimal;
 import java.util.concurrent.TimeUnit;
@@ -32,6 +33,10 @@ import io.realm.Realm;
 public class BalanceService extends IntentService {
     @Inject
     Contract contract;
+
+    @Inject
+    DBHelper dbHelper;
+
     private Disposable disposable;
     private int notificationId = 1;
 
@@ -51,7 +56,7 @@ public class BalanceService extends IntentService {
                 Account account = Account.get();
                 BigDecimal prevBalance = account.getBalance();
                 if(prevBalance.compareTo(balance) != 0) {
-                    Realm.getDefaultInstance().executeTransaction(r -> account.setBalance(balance));
+                    dbHelper.executeTransaction(r -> account.setBalance(balance));
                     sendNotification(balance);
                 }
             },

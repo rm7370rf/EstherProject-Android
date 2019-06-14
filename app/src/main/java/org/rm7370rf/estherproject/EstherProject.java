@@ -22,9 +22,9 @@ public class EstherProject extends Application {
     public void onCreate() {
         super.onCreate();
         component = buildComponent();
-        if(Account.get() != null) {
+        /*if(Account.get() != null) {
             startService(new Intent(this, BalanceService.class));
-        }
+        }*/
     }
 
     public static AppComponent getComponent() {

@@ -4,6 +4,7 @@ import org.rm7370rf.estherproject.EstherProject;
 import org.rm7370rf.estherproject.contract.Contract;
 import org.rm7370rf.estherproject.model.Account;
 import org.rm7370rf.estherproject.ui.view.SetUsernameView;
+import org.rm7370rf.estherproject.util.DBHelper;
 import org.rm7370rf.estherproject.util.Verifier;
 
 import java.util.List;
@@ -27,7 +28,9 @@ public class SetUsernamePresenter extends MvpPresenter<SetUsernameView> {
     private Disposable disposable;
     @Inject
     Contract contract;
-    private Realm realm = Realm.getDefaultInstance();
+
+    @Inject
+    DBHelper dbHelper;
 
     public SetUsernamePresenter() {
         EstherProject.getComponent().inject(this);
@@ -57,7 +60,7 @@ public class SetUsernamePresenter extends MvpPresenter<SetUsernameView> {
                     @Override
                     public void onComplete() {
                         getViewState().expandPositiveButton();
-                        realm.executeTransaction(r -> account.setUserName(userName));
+                        dbHelper.executeTransaction(r -> account.setUserName(userName));
                         getViewState().showToast(request_successfully_sent);
                         getViewState().onComplete();
                     }
