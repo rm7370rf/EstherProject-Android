@@ -31,7 +31,7 @@ public class EstherProject extends Application {
                 .builder()
                 .dBHelperModule(new DBHelperModule())
                 .contractModule(new ContractModule())
-                .receiverUtilsModule(new ReceiverUtilModule())
+                .receiverUtilModule(new ReceiverUtilModule())
                 .workManagerModule(new WorkManagerModule())
                 .refreshAnimationUtilModule(new RefreshAnimationUtilModule())
                 .build();
