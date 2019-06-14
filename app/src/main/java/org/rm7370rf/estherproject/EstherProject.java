@@ -6,6 +6,7 @@ import android.content.Intent;
 import org.rm7370rf.estherproject.di.AppComponent;
 import org.rm7370rf.estherproject.di.ContractModule;
 import org.rm7370rf.estherproject.di.DaggerAppComponent;
+import org.rm7370rf.estherproject.di.RealmModule;
 import org.rm7370rf.estherproject.di.RefreshAnimationUtilModule;
 import org.rm7370rf.estherproject.model.Account;
 import org.rm7370rf.estherproject.service.BalanceService;
@@ -18,7 +19,6 @@ public class EstherProject extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Realm.init(this);
         component = buildComponent();
         if(Account.get() != null) {
             startService(new Intent(this, BalanceService.class));
@@ -32,6 +32,7 @@ public class EstherProject extends Application {
     protected AppComponent buildComponent() {
         return DaggerAppComponent
                 .builder()
+                .realmModule(new RealmModule(this))
                 .contractModule(new ContractModule())
                 .refreshAnimationUtilModule(new RefreshAnimationUtilModule())
                 .build();
