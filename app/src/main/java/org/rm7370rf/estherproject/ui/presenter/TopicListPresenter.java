@@ -115,8 +115,8 @@ public class TopicListPresenter extends MvpPresenter<TopicListView> {
                 );
     }
 
-    public void logout() {
-        dbHelper.executeTransaction(r -> r.deleteAll());
+    public void logout(Realm.Transaction.OnSuccess listener) {
+        dbHelper.executeTransaction(r -> r.deleteAll(), listener);
     }
 
     @Override

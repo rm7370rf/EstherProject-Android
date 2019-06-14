@@ -53,9 +53,7 @@ public class AccountDataPresenter extends MvpPresenter<AccountDataView> {
                     @Override
                     public void onSuccess(BigDecimal balance) {
                         getViewState().setBalance(String.valueOf(balance));
-                        dbHelper.executeTransaction(r -> account.setBalance(balance));
-
-                        onComplete();
+                        dbHelper.executeTransaction(r -> account.setBalance(balance), this::onComplete);
                     }
 
                     @Override

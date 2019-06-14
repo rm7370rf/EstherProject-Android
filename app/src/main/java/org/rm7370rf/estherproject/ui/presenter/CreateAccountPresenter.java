@@ -75,12 +75,12 @@ public class CreateAccountPresenter extends MvpPresenter<CreateAccountView> {
             @Override
             public void onSuccess(Account account) {
                 if(account != null) {
-                    dbHelper.executeTransaction(realm -> realm.copyToRealm(account));
-                    getViewState().showToast(account_saved);
-                    getViewState().expandPositiveButton();
-                    getViewState().onComplete();
+                    dbHelper.executeTransaction(realm -> realm.copyToRealm(account), () -> {
+                        getViewState().showToast(account_saved);
+                        getViewState().expandPositiveButton();
+                        getViewState().onComplete();
+                    });
                 }
-
             }
 
             @Override

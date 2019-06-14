@@ -51,7 +51,6 @@ public class TopicPresenter extends MvpPresenter<TopicView> {
             setTopic();
             getViewState().setTitle(StringUtils.abbreviate(topic.getSubject(), MAX_LIST_ITEM_TEXT_LENGTH));
             setFirstPost();
-            updateDatabase((dbHelper.countPosts(topicId) == 0) ? RefreshAnimationUtil.RefreshType.FIRST : RefreshAnimationUtil.RefreshType.AFTER_START);
             setContent();
         }
         catch (Exception e) {
@@ -70,6 +69,10 @@ public class TopicPresenter extends MvpPresenter<TopicView> {
         getViewState().setRecyclerAdapter(dbHelper.getPosts(topicId));
     }
 
+    private void onStartUpdate() {
+        updateDatabase((dbHelper.countPosts(topicId) == 0) ? RefreshAnimationUtil.RefreshType.FIRST : RefreshAnimationUtil.RefreshType.AFTER_START);
+    }
+
     private void setFirstPost() {
         if(dbHelper.countPosts(topicId) == 0) {
             Post firstPost = new Post();
@@ -80,7 +83,7 @@ public class TopicPresenter extends MvpPresenter<TopicView> {
             firstPost.setUserName(topic.getUserName());
             firstPost.setTimestamp(topic.getTimestamp());
             firstPost.createPrimaryKey();
-            dbHelper.executeTransaction(r -> r.copyToRealm(firstPost));
+            dbHelper.executeTransaction(r -> r.copyToRealm(firstPost), this::onStartUpdate);
         }
     }
 
