@@ -8,6 +8,7 @@ import org.rm7370rf.estherproject.model.Post;
 import org.rm7370rf.estherproject.model.Topic;
 import org.rm7370rf.estherproject.other.Keys;
 import org.rm7370rf.estherproject.ui.view.TopicView;
+import org.rm7370rf.estherproject.util.DBHelper;
 import org.rm7370rf.estherproject.util.RefreshAnimationUtil;
 import org.rm7370rf.estherproject.util.Verifier;
 
@@ -37,6 +38,9 @@ public class TopicPresenter extends MvpPresenter<TopicView> {
     @Inject
     Contract contract;
 
+    @Inject
+    DBHelper dbHelper;
+
     private BigInteger topicId;
     private Topic topic;
 
@@ -47,7 +51,7 @@ public class TopicPresenter extends MvpPresenter<TopicView> {
             setTopic();
             getViewState().setTitle(StringUtils.abbreviate(topic.getSubject(), MAX_LIST_ITEM_TEXT_LENGTH));
             setFirstPost();
-            updateDatabase((countPosts() == 0) ? RefreshAnimationUtil.RefreshType.FIRST : RefreshAnimationUtil.RefreshType.AFTER_START);
+            updateDatabase((dbHelper.countPosts(topicId) == 0) ? RefreshAnimationUtil.RefreshType.FIRST : RefreshAnimationUtil.RefreshType.AFTER_START);
             setContent();
         }
         catch (Exception e) {
@@ -57,29 +61,17 @@ public class TopicPresenter extends MvpPresenter<TopicView> {
     }
 
     private void setTopic() throws VerifierException {
-        Topic dbTopic = realm.where(Topic.class).equalTo(Keys.Db.ID, String.valueOf(topicId)).findFirst();
+        Topic dbTopic = dbHelper.getTopic(topicId);
         Verifier.verifyRealmObject(dbTopic);
         this.topic = realm.copyFromRealm(dbTopic);
     }
 
     private void setContent() {
-        RealmResults<Post> posts = getPostsQuery()
-                .equalTo(Keys.Db.TOPIC_ID, String.valueOf(topic.getId()))
-                .sort(Keys.Db.TIMESTAMP, Sort.ASCENDING)
-                .findAll();
-        getViewState().setRecyclerAdapter(posts);
-    }
-
-    private RealmQuery<Post> getPostsQuery() {
-        return realm.where(Post.class);
-    }
-
-    private long countPosts() {
-        return getPostsQuery().equalTo(Keys.Db.TOPIC_ID, String.valueOf(topic.getId())).count();
+        getViewState().setRecyclerAdapter(dbHelper.getPosts(topicId));
     }
 
     private void setFirstPost() {
-        if(countPosts() == 0) {
+        if(dbHelper.countPosts(topicId) == 0) {
             Post firstPost = new Post();
             firstPost.setTopicId(topic.getId());
             firstPost.setId(BigInteger.ZERO);
@@ -93,7 +85,7 @@ public class TopicPresenter extends MvpPresenter<TopicView> {
     }
 
     public void updateDatabase(RefreshAnimationUtil.RefreshType refreshType) {
-        long amount = countPosts();
+        long amount = dbHelper.countPosts(topicId);
 
         disposable = Observable.create((ObservableEmitter<Post> emitter) -> {
             try {

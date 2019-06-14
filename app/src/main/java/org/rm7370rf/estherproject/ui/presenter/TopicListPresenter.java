@@ -7,6 +7,7 @@ import org.rm7370rf.estherproject.contract.Contract;
 import org.rm7370rf.estherproject.model.Account;
 import org.rm7370rf.estherproject.model.Topic;
 import org.rm7370rf.estherproject.ui.view.TopicListView;
+import org.rm7370rf.estherproject.util.DBHelper;
 import org.rm7370rf.estherproject.util.RefreshAnimationUtil.RefreshType;
 
 import java.math.BigInteger;
@@ -31,20 +32,19 @@ public class TopicListPresenter extends MvpPresenter<TopicListView> {
     @Inject
     Contract contract;
 
+    @Inject
+    DBHelper dbHelper;
+
     public TopicListPresenter() {
         EstherProject.getComponent().inject(this);
     }
 
-    private long countTopics() {
-        return realm.where(Topic.class).count();
-    }
-
     public void updateDatabase() {
-        updateDatabase(countTopics() == 0 ? RefreshType.FIRST : RefreshType.AFTER_START);
+        updateDatabase(dbHelper.countTopics() == 0 ? RefreshType.FIRST : RefreshType.AFTER_START);
     }
 
     public void updateDatabase(RefreshType refreshType) {
-        long amount = countTopics();
+        long amount = dbHelper.countTopics();
         String address = account.getWalletAddress();
 
         Observable<Topic> topicObservable = Observable.create((ObservableEmitter<Topic> emitter) -> {
@@ -86,7 +86,7 @@ public class TopicListPresenter extends MvpPresenter<TopicListView> {
                         error -> getViewState().showToast(error),
                         () -> {
                             getViewState().disableLoading(refreshType);
-                            getViewState().setNoDataVisibility((countTopics() == 0) ? View.VISIBLE : View.GONE);
+                            getViewState().setNoDataVisibility((dbHelper.countTopics() == 0) ? View.VISIBLE : View.GONE);
                         },
                         i -> getViewState().enableLoading(refreshType)
                 );
