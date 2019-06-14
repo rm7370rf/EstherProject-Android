@@ -16,10 +16,12 @@ import java.math.BigInteger;
 
 import javax.inject.Inject;
 
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.observers.DisposableCompletableObserver;
 import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
 import io.realm.RealmQuery;
@@ -83,15 +85,20 @@ public class TopicPresenter extends MvpPresenter<TopicView> {
             firstPost.setUserName(topic.getUserName());
             firstPost.setTimestamp(topic.getTimestamp());
             firstPost.createPrimaryKey();
-            dbHelper.executeTransaction(r -> r.copyToRealm(firstPost), this::onStartUpdate);
+            try(Realm realm = Realm.getDefaultInstance()) {
+                realm.executeTransactionAsync(
+                        r -> r.copyToRealm(firstPost),
+                        this::onStartUpdate
+                );
+            }
         }
     }
 
     public void updateDatabase(RefreshAnimationUtil.RefreshType refreshType) {
         long amount = dbHelper.countPosts(topicId);
 
-        disposable = Observable.create((ObservableEmitter<Post> emitter) -> {
-            try {
+        disposable = Completable.fromAction(() -> {
+
                 BigInteger numberOfPosts = contract.countPostsAtTopic(topic.getId());
 
                 BigInteger localNumberOfPosts = BigInteger.valueOf(amount).subtract(BigInteger.ONE);
@@ -99,25 +106,32 @@ public class TopicPresenter extends MvpPresenter<TopicView> {
                 if (numberOfPosts.compareTo(localNumberOfPosts) > 0) {
                     for (BigInteger i = localNumberOfPosts; i.compareTo(numberOfPosts) < 0; i = i.add(BigInteger.ONE)) {
                         Post post = contract.getPostAtTopic(topic.getId(), i);
-                        emitter.onNext(post);
+                        try(Realm realm = Realm.getDefaultInstance()) {
+                            realm.copyToRealm(post);
+                        }
                     }
                 }
-                emitter.onComplete();
-            } catch (Exception e) {
-                e.printStackTrace();
-                emitter.onError(e);
-            }
         })
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(
-            post -> dbHelper.executeTransaction(r -> r.copyToRealm(post)),
-            error -> {
-                error.printStackTrace();
-                getViewState().showToast(error);
-            },
-            () -> getViewState().disableLoading(refreshType),
-            i -> getViewState().enableLoading(refreshType)
+        .subscribeWith(
+                new DisposableCompletableObserver() {
+                    @Override
+                    protected void onStart() {
+                        getViewState().enableLoading(refreshType);
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        getViewState().disableLoading(refreshType);
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        getViewState().showToast(e);
+                    }
+                }
         );
     }
 

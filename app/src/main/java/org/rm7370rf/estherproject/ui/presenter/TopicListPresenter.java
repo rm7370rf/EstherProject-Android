@@ -21,12 +21,15 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import io.reactivex.Completable;
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.observers.DisposableCompletableObserver;
 import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
+import io.realm.RealmModel;
 import moxy.InjectViewState;
 import moxy.MvpPresenter;
 
@@ -35,7 +38,6 @@ import static androidx.work.NetworkType.CONNECTED;
 @InjectViewState
 public class TopicListPresenter extends MvpPresenter<TopicListView> {
     private Disposable disposable;
-    private Realm realm = Realm.getDefaultInstance();
     private Account account = Account.get();
 
     @Inject
@@ -47,6 +49,11 @@ public class TopicListPresenter extends MvpPresenter<TopicListView> {
     public TopicListPresenter() {
         EstherProject.getComponent().inject(this);
         prepareWorkManager();
+        setAccountUsernameListener();
+    }
+
+    private void setAccountUsernameListener() {
+        Account.get().addChangeListener(realmModel -> getViewState().setHasUsername(Account.get().hasUsername()));
     }
 
     private void prepareWorkManager() {
@@ -70,53 +77,54 @@ public class TopicListPresenter extends MvpPresenter<TopicListView> {
         long amount = dbHelper.countTopics();
         String address = account.getWalletAddress();
 
-        Observable<Topic> topicObservable = Observable.create((ObservableEmitter<Topic> emitter) -> {
-            try {
-                BigInteger numberOfTopics = contract.countTopics();
-                BigInteger localNumberOfTopics = BigInteger.valueOf(amount);
+        Completable topicCompletable = Completable.fromAction(() -> {
+            BigInteger numberOfTopics = contract.countTopics();
+            BigInteger localNumberOfTopics = BigInteger.valueOf(amount);
 
-                if (numberOfTopics.compareTo(localNumberOfTopics) > 0) {
-                    for (BigInteger i = localNumberOfTopics; i.compareTo(numberOfTopics) < 0; i = i.add(BigInteger.ONE)) {
-                        Topic topic = contract.getTopic(i);
-                        emitter.onNext(topic);
+            if (numberOfTopics.compareTo(localNumberOfTopics) > 0) {
+                for (BigInteger i = localNumberOfTopics; i.compareTo(numberOfTopics) < 0; i = i.add(BigInteger.ONE)) {
+                    Topic topic = contract.getTopic(i);
+                    try(Realm realm = Realm.getDefaultInstance()) {
+                        realm.executeTransaction(r -> r.copyToRealm(topic));
                     }
                 }
-                emitter.onComplete();
-            } catch (Exception e) {
-                e.printStackTrace();
-                emitter.onError(e);
             }
         });
 
-        Observable<String> userNameObservable = Observable.fromCallable(() -> contract.getUsername(address));
+        Completable userNameCompletable = Completable.fromAction(() -> {
+            String username = contract.getUsername(address);
+            try(Realm realm = Realm.getDefaultInstance()) {
+                realm.executeTransaction(r -> Account.get().setUserName(username));
+            }
+        });
 
-        disposable = Observable.concat(topicObservable, userNameObservable)
+
+        disposable = topicCompletable.andThen(userNameCompletable)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        result -> {
-                            if (result instanceof Topic) {
-                                dbHelper.executeTransaction(r -> r.copyToRealm((Topic) result));
-                            }
-                            else if(result instanceof String) {
-                                String username = result.toString();
-                                if(!username.isEmpty()) {
-                                    dbHelper.executeTransaction(r -> account.setUserName((String) result));
-                                }
-                                getViewState().setHasUsername(account.hasUsername());
-                            }
-                        },
-                        error -> getViewState().showToast(error),
-                        () -> {
-                            getViewState().disableLoading(refreshType);
-                            getViewState().setNoDataVisibility((dbHelper.countTopics() == 0) ? View.VISIBLE : View.GONE);
-                        },
-                        i -> getViewState().enableLoading(refreshType)
-                );
+                .subscribeWith(new DisposableCompletableObserver() {
+                    @Override
+                    protected void onStart() {
+                        getViewState().enableLoading(refreshType);
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        getViewState().disableLoading(refreshType);
+                        getViewState().setNoDataVisibility((dbHelper.countTopics() == 0) ? View.VISIBLE : View.GONE);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        getViewState().showToast(e);
+                    }
+                });
     }
 
     public void logout(Realm.Transaction.OnSuccess listener) {
-        dbHelper.executeTransaction(r -> r.deleteAll(), listener);
+        try(Realm realm = Realm.getDefaultInstance()) {
+            realm.executeTransactionAsync(r -> r.deleteAll(), listener);
+        }
     }
 
     @Override

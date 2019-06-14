@@ -47,6 +47,9 @@ public class SetUsernamePresenter extends MvpPresenter<SetUsernameView> {
                     Verifier.verifyUserName(userName);
                     Verifier.verifyPassword(password);
                     contract.setUsername(password, userName);
+                    try(Realm realm = Realm.getDefaultInstance()) {
+                        realm.executeTransaction(r -> Account.get().setUserName(userName));
+                    }
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -60,10 +63,9 @@ public class SetUsernamePresenter extends MvpPresenter<SetUsernameView> {
                     @Override
                     public void onComplete() {
                         getViewState().expandPositiveButton();
-                        dbHelper.executeTransaction(r -> account.setUserName(userName), () -> {
-                            getViewState().showToast(request_successfully_sent);
-                            getViewState().onComplete();
-                        });
+                        getViewState().showToast(request_successfully_sent);
+                        getViewState().onComplete();
+
                     }
 
                     @Override

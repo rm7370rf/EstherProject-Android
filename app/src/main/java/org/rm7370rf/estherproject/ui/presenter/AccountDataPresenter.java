@@ -24,7 +24,6 @@ public class AccountDataPresenter extends MvpPresenter<AccountDataView> {
     private Disposable disposable;
     @Inject
     Contract contract;
-    private Account account = Account.get();
 
     @Inject
     DBHelper dbHelper;
@@ -40,7 +39,13 @@ public class AccountDataPresenter extends MvpPresenter<AccountDataView> {
     }
 
     public void refreshUserData(boolean bySwipe) {
-        disposable = Single.fromCallable(() -> contract.getBalance())
+        disposable = Single.fromCallable(() -> {
+                    BigDecimal balance = contract.getBalance();
+                    try (Realm realm = Realm.getDefaultInstance()) {
+                        realm.executeTransaction(r -> Account.get().setBalance(balance));
+                    }
+                    return balance;
+                })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new DisposableSingleObserver<BigDecimal>() {
@@ -53,7 +58,6 @@ public class AccountDataPresenter extends MvpPresenter<AccountDataView> {
                     @Override
                     public void onSuccess(BigDecimal balance) {
                         getViewState().setBalance(String.valueOf(balance));
-                        dbHelper.executeTransaction(r -> account.setBalance(balance), this::onComplete);
                     }
 
                     @Override
