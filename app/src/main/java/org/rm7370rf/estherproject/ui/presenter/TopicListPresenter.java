@@ -22,14 +22,11 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
 import io.reactivex.Completable;
-import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableCompletableObserver;
 import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
-import io.realm.RealmChangeListener;
-import io.realm.RealmModel;
 import moxy.InjectViewState;
 import moxy.MvpPresenter;
 
@@ -49,11 +46,13 @@ public class TopicListPresenter extends MvpPresenter<TopicListView> {
     public TopicListPresenter() {
         EstherProject.getComponent().inject(this);
         prepareWorkManager();
-        setAccountUsernameListener();
+        setUsername();
     }
 
-    private void setAccountUsernameListener() {
-        Account.get().addChangeListener(realmModel -> getViewState().setHasUsername(Account.get().hasUsername()));
+    private void setUsername() {
+        Account account = Account.get();
+        getViewState().setHasUsername(account.hasUsername());
+        account.addChangeListener(realmModel -> getViewState().setHasUsername(Account.get().hasUsername()));
     }
 
     private void prepareWorkManager() {
