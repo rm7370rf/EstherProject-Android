@@ -1,20 +1,14 @@
 package org.rm7370rf.estherproject;
 
 import android.app.Application;
-import android.content.Intent;
 
 import org.rm7370rf.estherproject.di.AppComponent;
 import org.rm7370rf.estherproject.di.ContractModule;
 import org.rm7370rf.estherproject.di.DBHelperModule;
 import org.rm7370rf.estherproject.di.DaggerAppComponent;
-import org.rm7370rf.estherproject.di.RealmModule;
 import org.rm7370rf.estherproject.di.ReceiverUtilsModule;
 import org.rm7370rf.estherproject.di.RefreshAnimationUtilModule;
 import org.rm7370rf.estherproject.di.WorkManagerModule;
-import org.rm7370rf.estherproject.model.Account;
-import org.rm7370rf.estherproject.service.BalanceService;
-
-import io.realm.Realm;
 
 public class EstherProject extends Application {
     private static AppComponent component;
@@ -35,7 +29,6 @@ public class EstherProject extends Application {
     protected AppComponent buildComponent() {
         return DaggerAppComponent
                 .builder()
-                .realmModule(new RealmModule(this))
                 .dBHelperModule(new DBHelperModule())
                 .workManagerModule(new WorkManagerModule())
                 .contractModule(new ContractModule())
