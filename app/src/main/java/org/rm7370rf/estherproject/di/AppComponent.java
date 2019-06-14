@@ -11,6 +11,7 @@ import org.rm7370rf.estherproject.ui.presenter.SetUsernamePresenter;
 import org.rm7370rf.estherproject.ui.presenter.TopicListPresenter;
 import org.rm7370rf.estherproject.ui.presenter.TopicPresenter;
 import org.rm7370rf.estherproject.util.DBHelper;
+import org.rm7370rf.estherproject.wr.UpdateTopicsWorker;
 
 import javax.inject.Singleton;
 
@@ -29,4 +30,5 @@ public interface AppComponent {
     void inject(SetUsernamePresenter presenter);
     void inject(TopicPresenter presenter);
     void inject(BalanceService service);
+    void inject(UpdateTopicsWorker worker);
 }
