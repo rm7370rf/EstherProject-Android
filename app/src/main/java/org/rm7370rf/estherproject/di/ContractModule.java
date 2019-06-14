@@ -19,7 +19,9 @@ public class ContractModule {
     public Contract provideContract() {
         Contract contract = new Contract();
         if(Account.get() != null) {
-            contract.setAccount(Realm.getDefaultInstance().copyFromRealm(Account.get()));
+            try (Realm realm = Realm.getDefaultInstance()){
+                contract.setAccount(realm.copyFromRealm(Account.get()));
+            }
         }
         return contract;
     }
