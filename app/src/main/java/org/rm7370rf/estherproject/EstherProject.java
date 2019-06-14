@@ -6,9 +6,11 @@ import org.rm7370rf.estherproject.di.AppComponent;
 import org.rm7370rf.estherproject.di.ContractModule;
 import org.rm7370rf.estherproject.di.DBHelperModule;
 import org.rm7370rf.estherproject.di.DaggerAppComponent;
-import org.rm7370rf.estherproject.di.ReceiverUtilsModule;
+import org.rm7370rf.estherproject.di.ReceiverUtilModule;
 import org.rm7370rf.estherproject.di.RefreshAnimationUtilModule;
 import org.rm7370rf.estherproject.di.WorkManagerModule;
+
+import io.realm.Realm;
 
 public class EstherProject extends Application {
     private static AppComponent component;
@@ -16,10 +18,8 @@ public class EstherProject extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Realm.init(this);
         component = buildComponent();
-        /*if(Account.get() != null) {
-            startService(new Intent(this, BalanceService.class));
-        }*/
     }
 
     public static AppComponent getComponent() {
@@ -30,10 +30,10 @@ public class EstherProject extends Application {
         return DaggerAppComponent
                 .builder()
                 .dBHelperModule(new DBHelperModule())
-                .workManagerModule(new WorkManagerModule())
                 .contractModule(new ContractModule())
+                .receiverUtilsModule(new ReceiverUtilModule())
+                .workManagerModule(new WorkManagerModule())
                 .refreshAnimationUtilModule(new RefreshAnimationUtilModule())
-                .receiverUtilsModule(new ReceiverUtilsModule())
                 .build();
     }
 }

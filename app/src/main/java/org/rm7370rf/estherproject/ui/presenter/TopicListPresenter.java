@@ -9,15 +9,13 @@ import androidx.work.WorkManager;
 import org.rm7370rf.estherproject.EstherProject;
 import org.rm7370rf.estherproject.contract.Contract;
 import org.rm7370rf.estherproject.model.Account;
-import org.rm7370rf.estherproject.model.Topic;
 import org.rm7370rf.estherproject.other.Config;
 import org.rm7370rf.estherproject.ui.view.TopicListView;
 import org.rm7370rf.estherproject.util.DBHelper;
-import org.rm7370rf.estherproject.util.ReceiverUtils;
+import org.rm7370rf.estherproject.util.ReceiverUtil;
 import org.rm7370rf.estherproject.util.RefreshAnimationUtil.RefreshType;
 import org.rm7370rf.estherproject.wr.UpdateTopicsWorker;
 
-import java.math.BigInteger;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -33,13 +31,14 @@ import moxy.MvpPresenter;
 
 import static androidx.work.NetworkType.CONNECTED;
 
+
 @InjectViewState
 public class TopicListPresenter extends MvpPresenter<TopicListView> {
     private Disposable disposable;
     private Account account = Account.get();
 
     @Inject
-    ReceiverUtils receiverUtils;
+    ReceiverUtil receiverUtil;
 
     @Inject
     Contract contract;
@@ -64,12 +63,12 @@ public class TopicListPresenter extends MvpPresenter<TopicListView> {
                 .setRequiredNetworkType(CONNECTED)
                 .build();
 
-        PeriodicWorkRequest myWorkRequest = new PeriodicWorkRequest.Builder(UpdateTopicsWorker.class, 15, TimeUnit.MINUTES)
+        PeriodicWorkRequest request = new PeriodicWorkRequest.Builder(UpdateTopicsWorker.class, 15, TimeUnit.MINUTES)
                 .addTag(Config.UPD_TOPIC_TAG)
                 .setConstraints(constraints)
                 .build();
 
-        WorkManager.getInstance().enqueue(myWorkRequest);
+        WorkManager.getInstance().enqueue(request);
     }
 
     public void updateDatabase() {
@@ -79,7 +78,7 @@ public class TopicListPresenter extends MvpPresenter<TopicListView> {
     public void updateDatabase(RefreshType refreshType) {
         String address = account.getWalletAddress();
 
-        Completable topicCompletable = Completable.fromAction(() -> receiverUtils.loadNewTopicsToDatabase());
+        Completable topicCompletable = Completable.fromAction(() -> receiverUtil.loadNewTopicsToDatabase());
 
         Completable userNameCompletable = Completable.fromAction(() -> {
             String username = contract.getUsername(address);
@@ -87,7 +86,6 @@ public class TopicListPresenter extends MvpPresenter<TopicListView> {
                 realm.executeTransaction(r -> Account.get().setUserName(username));
             }
         });
-
 
         disposable = topicCompletable.andThen(userNameCompletable)
                 .subscribeOn(Schedulers.io())

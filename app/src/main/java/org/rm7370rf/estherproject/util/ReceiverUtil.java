@@ -1,5 +1,6 @@
 package org.rm7370rf.estherproject.util;
 
+import org.rm7370rf.estherproject.EstherProject;
 import org.rm7370rf.estherproject.contract.Contract;
 import org.rm7370rf.estherproject.model.Topic;
 
@@ -9,12 +10,17 @@ import javax.inject.Inject;
 
 import io.realm.Realm;
 
-public class ReceiverUtils {
+public class ReceiverUtil {
+    @Inject
+    DBHelper dbHelper;
+
     @Inject
     Contract contract;
 
-    @Inject
-    DBHelper dbHelper;
+    public ReceiverUtil() {
+        EstherProject.getComponent().inject(this);
+    }
+
     public void loadNewTopicsToDatabase() throws Exception {
         BigInteger numberOfTopics = contract.countTopics();
         BigInteger localNumberOfTopics = BigInteger.valueOf(dbHelper.countTopics());
@@ -23,7 +29,7 @@ public class ReceiverUtils {
             for (BigInteger i = localNumberOfTopics; i.compareTo(numberOfTopics) < 0; i = i.add(BigInteger.ONE)) {
                 Topic topic = contract.getTopic(i);
                 try(Realm realm = Realm.getDefaultInstance()) {
-                    realm.executeTransactionAsync(r -> r.copyToRealm(topic));
+                    realm.executeTransaction(r -> r.copyToRealm(topic));
                 }
             }
         }
