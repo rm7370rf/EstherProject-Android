@@ -1,5 +1,6 @@
 package org.rm7370rf.estherproject.util;
 
+import org.rm7370rf.estherproject.EstherProject;
 import org.rm7370rf.estherproject.model.Post;
 import org.rm7370rf.estherproject.model.Topic;
 import org.rm7370rf.estherproject.other.Keys;
@@ -13,7 +14,13 @@ import io.realm.RealmResults;
 import io.realm.Sort;
 
 public class DBHelper {
-    private Realm realm = Realm.getDefaultInstance(); //TODO: Change to @Inject
+    @Inject
+    Realm realm;
+
+    public DBHelper() {
+        EstherProject.getComponent().inject(this);
+    }
+
 
     public void executeTransaction(Realm.Transaction transaction) {
         realm.executeTransactionAsync(transaction);
