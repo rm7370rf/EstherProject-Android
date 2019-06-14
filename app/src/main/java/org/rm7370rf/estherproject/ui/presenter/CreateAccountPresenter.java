@@ -1,6 +1,7 @@
 package org.rm7370rf.estherproject.ui.presenter;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.rm7370rf.estherproject.EstherProject;
 import org.rm7370rf.estherproject.R;
 import org.rm7370rf.estherproject.contract.Contract;
 import org.rm7370rf.estherproject.expception.VerifierException;
@@ -40,6 +41,7 @@ public class CreateAccountPresenter extends MvpPresenter<CreateAccountView> {
     DBHelper dbHelper;
 
     public CreateAccountPresenter() {
+        EstherProject.getComponent().inject(this);
         setupBouncyCastle();
     }
 
@@ -75,11 +77,14 @@ public class CreateAccountPresenter extends MvpPresenter<CreateAccountView> {
             @Override
             public void onSuccess(Account account) {
                 if(account != null) {
-                    dbHelper.executeTransaction(realm -> realm.copyToRealm(account), () -> {
-                        getViewState().showToast(account_saved);
-                        getViewState().expandPositiveButton();
-                        getViewState().onComplete();
-                    });
+                    dbHelper.executeTransaction(
+                            realm -> realm.copyToRealm(account),
+                            () -> {
+                                getViewState().showToast(account_saved);
+                                getViewState().expandPositiveButton();
+                                getViewState().onComplete();
+                            }
+                    );
                 }
             }
 
