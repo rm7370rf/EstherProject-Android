@@ -13,6 +13,7 @@ import org.rm7370rf.estherproject.model.Topic;
 import org.rm7370rf.estherproject.other.Config;
 import org.rm7370rf.estherproject.ui.view.TopicListView;
 import org.rm7370rf.estherproject.util.DBHelper;
+import org.rm7370rf.estherproject.util.ReceiverUtils;
 import org.rm7370rf.estherproject.util.RefreshAnimationUtil.RefreshType;
 import org.rm7370rf.estherproject.wr.UpdateTopicsWorker;
 
@@ -36,6 +37,9 @@ import static androidx.work.NetworkType.CONNECTED;
 public class TopicListPresenter extends MvpPresenter<TopicListView> {
     private Disposable disposable;
     private Account account = Account.get();
+
+    @Inject
+    ReceiverUtils receiverUtils;
 
     @Inject
     Contract contract;
@@ -73,22 +77,9 @@ public class TopicListPresenter extends MvpPresenter<TopicListView> {
     }
 
     public void updateDatabase(RefreshType refreshType) {
-        long amount = dbHelper.countTopics();
         String address = account.getWalletAddress();
 
-        Completable topicCompletable = Completable.fromAction(() -> {
-            BigInteger numberOfTopics = contract.countTopics();
-            BigInteger localNumberOfTopics = BigInteger.valueOf(amount);
-
-            if (numberOfTopics.compareTo(localNumberOfTopics) > 0) {
-                for (BigInteger i = localNumberOfTopics; i.compareTo(numberOfTopics) < 0; i = i.add(BigInteger.ONE)) {
-                    Topic topic = contract.getTopic(i);
-                    try(Realm realm = Realm.getDefaultInstance()) {
-                        realm.executeTransaction(r -> r.copyToRealm(topic));
-                    }
-                }
-            }
-        });
+        Completable topicCompletable = Completable.fromAction(() -> receiverUtils.loadNewTopicsToDatabase());
 
         Completable userNameCompletable = Completable.fromAction(() -> {
             String username = contract.getUsername(address);

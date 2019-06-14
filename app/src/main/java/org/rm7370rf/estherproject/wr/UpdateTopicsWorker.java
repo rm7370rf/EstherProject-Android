@@ -12,6 +12,7 @@ import org.rm7370rf.estherproject.contract.Contract;
 import org.rm7370rf.estherproject.model.Account;
 import org.rm7370rf.estherproject.model.Topic;
 import org.rm7370rf.estherproject.util.DBHelper;
+import org.rm7370rf.estherproject.util.ReceiverUtils;
 
 import java.math.BigInteger;
 import java.util.concurrent.TimeUnit;
@@ -27,7 +28,7 @@ public class UpdateTopicsWorker extends Worker {
     Contract contract;
 
     @Inject
-    DBHelper dbHelper;
+    ReceiverUtils receiverUtils;
 
     public UpdateTopicsWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
@@ -38,20 +39,12 @@ public class UpdateTopicsWorker extends Worker {
     @Override
     public Result doWork() {
         try {
-            BigInteger numberOfTopics = contract.countTopics();
-            BigInteger localNumberOfTopics = BigInteger.valueOf(dbHelper.countTopics());
-
-            if (numberOfTopics.compareTo(localNumberOfTopics) > 0) {
-                for (BigInteger i = localNumberOfTopics; i.compareTo(numberOfTopics) < 0; i = i.add(BigInteger.ONE)) {
-                    Topic topic = contract.getTopic(i);
-                    dbHelper.executeTransaction(r -> r.copyToRealm(topic));
-                }
-            }
-        } catch (Exception e) {
+            receiverUtils.loadNewTopicsToDatabase();
+        }
+        catch (Exception e) {
             e.printStackTrace();
             return Result.failure();
         }
-
         return Result.success();
     }
 }
