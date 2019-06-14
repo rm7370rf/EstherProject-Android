@@ -8,6 +8,7 @@ import org.rm7370rf.estherproject.di.ContractModule;
 import org.rm7370rf.estherproject.di.DBHelperModule;
 import org.rm7370rf.estherproject.di.DaggerAppComponent;
 import org.rm7370rf.estherproject.di.RealmModule;
+import org.rm7370rf.estherproject.di.ReceiverUtilsModule;
 import org.rm7370rf.estherproject.di.RefreshAnimationUtilModule;
 import org.rm7370rf.estherproject.di.WorkManagerModule;
 import org.rm7370rf.estherproject.model.Account;
@@ -39,6 +40,7 @@ public class EstherProject extends Application {
                 .workManagerModule(new WorkManagerModule())
                 .contractModule(new ContractModule())
                 .refreshAnimationUtilModule(new RefreshAnimationUtilModule())
+                .receiverUtilsModule(new ReceiverUtilsModule())
                 .build();
     }
 }

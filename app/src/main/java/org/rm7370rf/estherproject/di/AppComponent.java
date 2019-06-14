@@ -18,7 +18,7 @@ import javax.inject.Singleton;
 
 import dagger.Component;
 
-@Component(modules = {ContractModule.class, RefreshAnimationUtilModule.class, RealmModule.class, WorkManagerModule.class, DBHelperModule.class})
+@Component(modules = {ContractModule.class, RefreshAnimationUtilModule.class, RealmModule.class, WorkManagerModule.class, DBHelperModule.class, ReceiverUtilsModule.class})
 @Singleton
 public interface AppComponent {
     void inject(TopicActivity activity);
