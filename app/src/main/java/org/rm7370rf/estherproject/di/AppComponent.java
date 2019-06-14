@@ -12,6 +12,7 @@ import org.rm7370rf.estherproject.ui.presenter.SetUsernamePresenter;
 import org.rm7370rf.estherproject.ui.presenter.TopicListPresenter;
 import org.rm7370rf.estherproject.ui.presenter.TopicPresenter;
 import org.rm7370rf.estherproject.util.DBHelper;
+import org.rm7370rf.estherproject.util.ReceiverUtil;
 import org.rm7370rf.estherproject.wr.UpdateTopicsWorker;
 
 import javax.inject.Singleton;
@@ -34,4 +35,5 @@ public interface AppComponent {
     void inject(UpdateTopicsWorker worker);
     void inject(DBHelper helper);
     void inject(CreateAccountPresenter presenter);
+    void inject(ReceiverUtil util);
 }
