@@ -16,6 +16,10 @@ public class DBHelper {
     @Inject
     Realm realm;
 
+    public void executeTransaction(Realm.Transaction transaction) {
+        realm.executeTransaction(transaction);
+    }
+
     public long countTopics() {
         return realm.where(Topic.class).count();
     }
