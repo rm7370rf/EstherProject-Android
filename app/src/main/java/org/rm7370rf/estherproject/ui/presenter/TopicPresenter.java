@@ -107,7 +107,7 @@ public class TopicPresenter extends MvpPresenter<TopicView> {
                     for (BigInteger i = localNumberOfPosts; i.compareTo(numberOfPosts) < 0; i = i.add(BigInteger.ONE)) {
                         Post post = contract.getPostAtTopic(topic.getId(), i);
                         try(Realm realm = Realm.getDefaultInstance()) {
-                            realm.copyToRealm(post);
+                            realm.executeTransaction(r -> r.copyToRealm(post));
                         }
                     }
                 }
