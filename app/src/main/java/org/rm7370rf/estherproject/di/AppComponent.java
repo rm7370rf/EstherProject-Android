@@ -7,6 +7,7 @@ import org.rm7370rf.estherproject.ui.presenter.AccountDataPresenter;
 import org.rm7370rf.estherproject.ui.presenter.AddPostPresenter;
 import org.rm7370rf.estherproject.ui.presenter.AddTopicPresenter;
 import org.rm7370rf.estherproject.ui.presenter.BackupPresenter;
+import org.rm7370rf.estherproject.ui.presenter.CreateAccountPresenter;
 import org.rm7370rf.estherproject.ui.presenter.SetUsernamePresenter;
 import org.rm7370rf.estherproject.ui.presenter.TopicListPresenter;
 import org.rm7370rf.estherproject.ui.presenter.TopicPresenter;
@@ -31,4 +32,6 @@ public interface AppComponent {
     void inject(TopicPresenter presenter);
     void inject(BalanceService service);
     void inject(UpdateTopicsWorker worker);
+    void inject(DBHelper helper);
+    void inject(CreateAccountPresenter presenter);
 }
