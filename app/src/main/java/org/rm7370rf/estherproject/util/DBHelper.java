@@ -41,7 +41,7 @@ public class DBHelper {
 
     public Topic getTopic(BigInteger topicId) {
         try (Realm realm = Realm.getDefaultInstance()) {
-            return realm.where(Topic.class).equalTo(Keys.Db.TOPIC_ID, String.valueOf(topicId)).findFirst();
+            return realm.where(Topic.class).equalTo(Keys.Db.ID, String.valueOf(topicId)).findFirst();
         }
     }
 
