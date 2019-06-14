@@ -13,11 +13,14 @@ import io.realm.RealmResults;
 import io.realm.Sort;
 
 public class DBHelper {
-    @Inject
-    Realm realm;
+    private Realm realm = Realm.getDefaultInstance(); //TODO: Change to @Inject
 
     public void executeTransaction(Realm.Transaction transaction) {
-        realm.executeTransaction(transaction);
+        realm.executeTransactionAsync(transaction);
+    }
+
+    public void executeTransaction(Realm.Transaction transaction, Realm.Transaction.OnSuccess listener) {
+        realm.executeTransactionAsync(transaction, listener);
     }
 
     public long countTopics() {
