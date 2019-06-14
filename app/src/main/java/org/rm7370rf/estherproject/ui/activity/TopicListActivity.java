@@ -32,6 +32,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.Realm;
 import moxy.MvpAppCompatActivity;
 import moxy.presenter.InjectPresenter;
 
@@ -133,8 +134,7 @@ public class TopicListActivity extends MvpAppCompatActivity implements TopicList
                 dialog = new BackupDialog();
                 break;
             case R.id.logout:
-                presenter.logout();
-                startActivity(createIntentWithoutHistory(this, CreateAccountActivity.class));
+                presenter.logout(() -> startActivity(createIntentWithoutHistory(this, CreateAccountActivity.class)));
                 break;
         }
 
