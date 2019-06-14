@@ -28,6 +28,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
 
+@Deprecated
 public class BalanceService extends IntentService {
     @Inject
     Contract contract;
