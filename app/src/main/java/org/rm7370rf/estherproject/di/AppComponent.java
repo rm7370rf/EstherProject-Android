@@ -10,12 +10,13 @@ import org.rm7370rf.estherproject.ui.presenter.BackupPresenter;
 import org.rm7370rf.estherproject.ui.presenter.SetUsernamePresenter;
 import org.rm7370rf.estherproject.ui.presenter.TopicListPresenter;
 import org.rm7370rf.estherproject.ui.presenter.TopicPresenter;
+import org.rm7370rf.estherproject.util.DBHelper;
 
 import javax.inject.Singleton;
 
 import dagger.Component;
 
-@Component(modules = {ContractModule.class, RefreshAnimationUtilModule.class, RealmModule.class})
+@Component(modules = {ContractModule.class, RefreshAnimationUtilModule.class, RealmModule.class, WorkManagerModule.class, DBHelperModule.class})
 @Singleton
 public interface AppComponent {
     void inject(TopicActivity activity);
