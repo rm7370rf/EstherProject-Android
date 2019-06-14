@@ -2,15 +2,22 @@ package org.rm7370rf.estherproject.ui.presenter;
 
 import android.view.View;
 
+import androidx.work.Constraints;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
+
 import org.rm7370rf.estherproject.EstherProject;
 import org.rm7370rf.estherproject.contract.Contract;
 import org.rm7370rf.estherproject.model.Account;
 import org.rm7370rf.estherproject.model.Topic;
+import org.rm7370rf.estherproject.other.Config;
 import org.rm7370rf.estherproject.ui.view.TopicListView;
 import org.rm7370rf.estherproject.util.DBHelper;
 import org.rm7370rf.estherproject.util.RefreshAnimationUtil.RefreshType;
+import org.rm7370rf.estherproject.wr.UpdateTopicsWorker;
 
 import java.math.BigInteger;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -22,6 +29,8 @@ import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
 import moxy.InjectViewState;
 import moxy.MvpPresenter;
+
+import static androidx.work.NetworkType.CONNECTED;
 
 @InjectViewState
 public class TopicListPresenter extends MvpPresenter<TopicListView> {
@@ -37,6 +46,20 @@ public class TopicListPresenter extends MvpPresenter<TopicListView> {
 
     public TopicListPresenter() {
         EstherProject.getComponent().inject(this);
+        prepareWorkManager();
+    }
+
+    private void prepareWorkManager() {
+        Constraints constraints = new Constraints.Builder()
+                .setRequiredNetworkType(CONNECTED)
+                .build();
+
+        PeriodicWorkRequest myWorkRequest = new PeriodicWorkRequest.Builder(UpdateTopicsWorker.class, 15, TimeUnit.MINUTES)
+                .addTag(Config.UPD_TOPIC_TAG)
+                .setConstraints(constraints)
+                .build();
+
+        WorkManager.getInstance().enqueue(myWorkRequest);
     }
 
     public void updateDatabase() {
