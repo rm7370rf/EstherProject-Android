@@ -106,7 +106,6 @@ public class TopicPresenter extends MvpPresenter<TopicView> {
                     @Override
                     public void onComplete() {
                         getViewState().disableLoading(refreshType);
-
                     }
 
                     @Override
