@@ -2,8 +2,10 @@ package org.rm7370rf.estherproject.util;
 
 import org.rm7370rf.estherproject.EstherProject;
 import org.rm7370rf.estherproject.contract.Contract;
+import org.rm7370rf.estherproject.model.Account;
 import org.rm7370rf.estherproject.model.Topic;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import javax.inject.Inject;
@@ -19,6 +21,20 @@ public class ReceiverUtil {
 
     public ReceiverUtil() {
         EstherProject.getComponent().inject(this);
+    }
+
+    public boolean loadNewBalanceToDatabase() throws Exception {
+        Account account = Account.get();
+        BigDecimal prevBalance = account.getBalance();
+        BigDecimal balance = contract.getBalance();
+
+        boolean balanceChanged = (prevBalance.compareTo(balance) != 0);
+        if(balanceChanged) {
+            try (Realm realm = Realm.getDefaultInstance()) {
+                realm.executeTransaction(r -> account.setBalance(balance));
+            }
+        }
+        return balanceChanged;
     }
 
     public void loadNewTopicsToDatabase() throws Exception {
