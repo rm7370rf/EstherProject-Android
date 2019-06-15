@@ -11,27 +11,25 @@ import java.util.concurrent.TimeUnit;
 import static androidx.work.NetworkType.CONNECTED;
 
 public class RefreshScheduler {
-    private Constraints constraints;
-
-    public RefreshScheduler() {
-        this.constraints = new Constraints.Builder()
+    public static Constraints buildConstraints() {
+        return new Constraints.Builder()
                 .setRequiredNetworkType(CONNECTED)
                 .build();
     }
 
-    public void prepareWorkManager() {
+    public static void prepareWorkManager() {
         PeriodicWorkRequest request = buildUpdateTopicWork();
         WorkManager.getInstance().enqueue(request);
     }
 
-    public void cancelAll() {
+    public static void cancelAll() {
         WorkManager.getInstance().cancelAllWork();
     }
 
-    private PeriodicWorkRequest buildUpdateTopicWork() {
+    private static PeriodicWorkRequest buildUpdateTopicWork() {
         return new PeriodicWorkRequest.Builder(UpdateTopicsWorker.class, 15, TimeUnit.MINUTES)
                 .addTag(Config.UPD_TOPIC_TAG)
-                .setConstraints(constraints)
+                .setConstraints(buildConstraints())
                 .build();
     }
 }
