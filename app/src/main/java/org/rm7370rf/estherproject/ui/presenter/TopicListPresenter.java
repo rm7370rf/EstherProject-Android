@@ -48,7 +48,6 @@ public class TopicListPresenter extends MvpPresenter<TopicListView> {
 
     public TopicListPresenter() {
         EstherProject.getComponent().inject(this);
-        prepareWorkManager();
         setUsername();
     }
 
@@ -56,19 +55,6 @@ public class TopicListPresenter extends MvpPresenter<TopicListView> {
         Account account = Account.get();
         getViewState().setHasUsername(account.hasUsername());
         account.addChangeListener(realmModel -> getViewState().setHasUsername(Account.get().hasUsername()));
-    }
-
-    private void prepareWorkManager() {
-        Constraints constraints = new Constraints.Builder()
-                .setRequiredNetworkType(CONNECTED)
-                .build();
-
-        PeriodicWorkRequest request = new PeriodicWorkRequest.Builder(UpdateTopicsWorker.class, 15, TimeUnit.MINUTES)
-                .addTag(Config.UPD_TOPIC_TAG)
-                .setConstraints(constraints)
-                .build();
-
-        WorkManager.getInstance().enqueue(request);
     }
 
     public void updateDatabase() {
@@ -120,6 +106,11 @@ public class TopicListPresenter extends MvpPresenter<TopicListView> {
         if(disposable != null && !disposable.isDisposed()) {
             disposable.dispose();
         }
+
+        if(Account.get() != null) {
+            Account.get().removeAllChangeListeners();
+        }
+
         super.onDestroy();
     }
 }
