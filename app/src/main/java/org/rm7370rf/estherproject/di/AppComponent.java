@@ -1,6 +1,5 @@
 package org.rm7370rf.estherproject.di;
 
-import org.rm7370rf.estherproject.service.BalanceService;
 import org.rm7370rf.estherproject.ui.activity.TopicActivity;
 import org.rm7370rf.estherproject.ui.activity.TopicListActivity;
 import org.rm7370rf.estherproject.ui.presenter.AccountDataPresenter;
@@ -31,7 +30,6 @@ public interface AppComponent {
     void inject(BackupPresenter presenter);
     void inject(SetUsernamePresenter presenter);
     void inject(TopicPresenter presenter);
-    void inject(BalanceService service);
     void inject(UpdateTopicsWorker worker);
     void inject(DBHelper helper);
     void inject(CreateAccountPresenter presenter);
