@@ -33,12 +33,11 @@ public class EstherProject extends Application implements LifecycleObserver {
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     protected void onEnterForeground() {
-        Log.d("AppController", "Foreground");
-        RefreshScheduler.prepareWorkManager();
+        RefreshScheduler.cancelAll();
     }
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     protected void onEnterBackground() {
-        RefreshScheduler.cancelAll();
+        RefreshScheduler.prepareWorkManager();
     }
 
     public static AppComponent getComponent() {
