@@ -8,6 +8,7 @@ import org.rm7370rf.estherproject.model.Post;
 import org.rm7370rf.estherproject.model.Topic;
 import org.rm7370rf.estherproject.ui.view.TopicView;
 import org.rm7370rf.estherproject.util.DBHelper;
+import org.rm7370rf.estherproject.util.ReceiverUtil;
 import org.rm7370rf.estherproject.util.RefreshAnimationUtil;
 import org.rm7370rf.estherproject.util.Verifier;
 
@@ -36,6 +37,9 @@ public class TopicPresenter extends MvpPresenter<TopicView> {
 
     @Inject
     DBHelper dbHelper;
+
+    @Inject
+    ReceiverUtil receiverUtil;
 
     private BigInteger topicId;
     private Topic topic;
@@ -89,23 +93,7 @@ public class TopicPresenter extends MvpPresenter<TopicView> {
     }
 
     public void updateDatabase(RefreshAnimationUtil.RefreshType refreshType) {
-        long amount = dbHelper.countPosts(topicId);
-
-        disposable = Completable.fromAction(() -> {
-
-                BigInteger numberOfPosts = contract.countPostsAtTopic(topic.getId());
-
-                BigInteger localNumberOfPosts = BigInteger.valueOf(amount).subtract(BigInteger.ONE);
-
-                if (numberOfPosts.compareTo(localNumberOfPosts) > 0) {
-                    for (BigInteger i = localNumberOfPosts; i.compareTo(numberOfPosts) < 0; i = i.add(BigInteger.ONE)) {
-                        Post post = contract.getPostAtTopic(topic.getId(), i);
-                        try(Realm realm = Realm.getDefaultInstance()) {
-                            realm.executeTransaction(r -> r.copyToRealm(post));
-                        }
-                    }
-                }
-        })
+        disposable = Completable.fromAction(() -> receiverUtil.loadPostsOfTopicToDatabase(topicId))
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeWith(

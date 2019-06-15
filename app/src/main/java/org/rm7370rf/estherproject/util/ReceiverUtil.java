@@ -3,6 +3,7 @@ package org.rm7370rf.estherproject.util;
 import org.rm7370rf.estherproject.EstherProject;
 import org.rm7370rf.estherproject.contract.Contract;
 import org.rm7370rf.estherproject.model.Account;
+import org.rm7370rf.estherproject.model.Post;
 import org.rm7370rf.estherproject.model.Topic;
 
 import java.math.BigDecimal;
@@ -21,6 +22,22 @@ public class ReceiverUtil {
 
     public ReceiverUtil() {
         EstherProject.getComponent().inject(this);
+    }
+
+    public void loadPostsOfTopicToDatabase(BigInteger topicId) throws Exception {
+        long amount = dbHelper.countPosts(topicId);
+        BigInteger numberOfPosts = contract.countPostsAtTopic(topicId);
+
+        BigInteger localNumberOfPosts = BigInteger.valueOf(amount).subtract(BigInteger.ONE);
+
+        if (numberOfPosts.compareTo(localNumberOfPosts) > 0) {
+            for (BigInteger i = localNumberOfPosts; i.compareTo(numberOfPosts) < 0; i = i.add(BigInteger.ONE)) {
+                Post post = contract.getPostAtTopic(topicId, i);
+                try(Realm realm = Realm.getDefaultInstance()) {
+                    realm.executeTransaction(r -> r.copyToRealm(post));
+                }
+            }
+        }
     }
 
     public void loadNewUsernameToDatabase(String address) throws Exception {
