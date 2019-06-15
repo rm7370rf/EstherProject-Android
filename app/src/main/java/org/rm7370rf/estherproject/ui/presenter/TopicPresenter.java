@@ -6,7 +6,6 @@ import org.rm7370rf.estherproject.contract.Contract;
 import org.rm7370rf.estherproject.expception.VerifierException;
 import org.rm7370rf.estherproject.model.Post;
 import org.rm7370rf.estherproject.model.Topic;
-import org.rm7370rf.estherproject.other.Keys;
 import org.rm7370rf.estherproject.ui.view.TopicView;
 import org.rm7370rf.estherproject.util.DBHelper;
 import org.rm7370rf.estherproject.util.RefreshAnimationUtil;
@@ -17,16 +16,11 @@ import java.math.BigInteger;
 import javax.inject.Inject;
 
 import io.reactivex.Completable;
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableCompletableObserver;
 import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
-import io.realm.RealmQuery;
-import io.realm.RealmResults;
-import io.realm.Sort;
 import moxy.InjectViewState;
 import moxy.MvpPresenter;
 

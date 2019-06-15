@@ -1,7 +1,6 @@
 package org.rm7370rf.estherproject;
 
 import android.app.Application;
-import android.util.Log;
 
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;

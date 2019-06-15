@@ -32,7 +32,6 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.realm.Realm;
 import moxy.MvpAppCompatActivity;
 import moxy.presenter.InjectPresenter;
 
