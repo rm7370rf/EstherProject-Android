@@ -28,7 +28,7 @@ public class TopicsAdapter extends RealmRecyclerViewAdapter<Topic, TopicsAdapter
 
     public TopicsAdapter() {
         super(
-                Realm.getDefaultInstance().where(Topic.class).findAll().sort(Keys.Db.ID, Sort.DESCENDING),
+                Realm.getDefaultInstance().where(Topic.class).findAll().sort(Keys.Db.TIMESTAMP, Sort.DESCENDING),
                 true
         );
         setHasStableIds(true);

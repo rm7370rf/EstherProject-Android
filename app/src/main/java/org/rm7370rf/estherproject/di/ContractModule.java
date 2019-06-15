@@ -17,6 +17,12 @@ public class ContractModule {
     @NonNull
     @Singleton
     public Contract provideContract() {
-        return new Contract().setAccount(Realm.getDefaultInstance().copyFromRealm(Account.get()));
+        Contract contract = new Contract();
+        if(Account.get() != null) {
+            try (Realm realm = Realm.getDefaultInstance()){
+                contract.setAccount(realm.copyFromRealm(Account.get()));
+            }
+        }
+        return contract;
     }
 }

@@ -1,11 +1,13 @@
 package org.rm7370rf.estherproject.ui.presenter;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.rm7370rf.estherproject.EstherProject;
 import org.rm7370rf.estherproject.R;
 import org.rm7370rf.estherproject.contract.Contract;
 import org.rm7370rf.estherproject.expception.VerifierException;
 import org.rm7370rf.estherproject.model.Account;
 import org.rm7370rf.estherproject.ui.view.CreateAccountView;
+import org.rm7370rf.estherproject.util.DBHelper;
 import org.rm7370rf.estherproject.util.Verifier;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.Keys;
@@ -17,10 +19,12 @@ import java.security.Provider;
 import java.security.Security;
 import java.util.List;
 
-import io.reactivex.Single;
+import javax.inject.Inject;
+
+import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.observers.DisposableSingleObserver;
+import io.reactivex.observers.DisposableCompletableObserver;
 import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
 import moxy.InjectViewState;
@@ -33,7 +37,11 @@ import static org.rm7370rf.estherproject.util.Verifier.verifyAccountExistence;
 public class CreateAccountPresenter extends MvpPresenter<CreateAccountView> {
     private Disposable disposable;
 
+    @Inject
+    DBHelper dbHelper;
+
     public CreateAccountPresenter() {
+        EstherProject.getComponent().inject(this);
         setupBouncyCastle();
     }
 
@@ -57,32 +65,33 @@ public class CreateAccountPresenter extends MvpPresenter<CreateAccountView> {
     }
 
     public void onClick(int layoutId, List<String> valueList, String path) {
-        this.disposable = Single.fromCallable(() -> createAccount(layoutId, valueList, path))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new DisposableSingleObserver<Account>() {
+        this.disposable = Completable.fromAction(() -> {
+            Account account = createAccount(layoutId, valueList, path);
+            try(Realm realm = Realm.getDefaultInstance()) {
+                realm.executeTransaction(r -> r.copyToRealm(account));
+            }
+        })
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribeWith(new DisposableCompletableObserver() {
             @Override
             protected void onStart() {
                 getViewState().collapsePositiveButton();
             }
 
             @Override
-            public void onSuccess(Account account) {
-                if(account != null) {
-                    Realm.getDefaultInstance().executeTransaction(realm -> realm.copyToRealm(account));
-                    getViewState().showToast(account_saved);
-                    getViewState().expandPositiveButton();
-                    getViewState().onComplete();
-                }
-
+            public void onComplete() {
+                getViewState().showToast(account_saved);
+                getViewState().expandPositiveButton();
+                getViewState().onComplete();
             }
+
 
             @Override
             public void onError(Throwable e) {
-                if(e instanceof VerifierException) {
+                if (e instanceof VerifierException) {
                     getViewState().showToast(((VerifierException) e).getResource());
-                }
-                else {
+                } else {
                     getViewState().showToast(e);
                 }
                 e.printStackTrace();

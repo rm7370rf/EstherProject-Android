@@ -133,8 +133,7 @@ public class TopicListActivity extends MvpAppCompatActivity implements TopicList
                 dialog = new BackupDialog();
                 break;
             case R.id.logout:
-                presenter.logout();
-                startActivity(createIntentWithoutHistory(this, CreateAccountActivity.class));
+                presenter.logout(() -> startActivity(createIntentWithoutHistory(this, CreateAccountActivity.class)));
                 break;
         }
 
