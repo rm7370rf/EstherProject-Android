@@ -23,6 +23,13 @@ public class ReceiverUtil {
         EstherProject.getComponent().inject(this);
     }
 
+    public void loadNewUsernameToDatabase(String address) throws Exception {
+        String username = contract.getUsername(address);
+        try(Realm realm = Realm.getDefaultInstance()) {
+            realm.executeTransaction(r -> Account.get().setUserName(username));
+        }
+    }
+
     public boolean loadNewBalanceToDatabase() throws Exception {
         Account account = Account.get();
         BigDecimal prevBalance = account.getBalance();

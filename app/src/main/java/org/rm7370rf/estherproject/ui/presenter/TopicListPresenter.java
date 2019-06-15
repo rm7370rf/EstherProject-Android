@@ -56,12 +56,7 @@ public class TopicListPresenter extends MvpPresenter<TopicListView> {
 
         Completable topicCompletable = Completable.fromAction(() -> receiverUtil.loadNewTopicsToDatabase());
 
-        Completable userNameCompletable = Completable.fromAction(() -> {
-            String username = contract.getUsername(address);
-            try(Realm realm = Realm.getDefaultInstance()) {
-                realm.executeTransaction(r -> Account.get().setUserName(username));
-            }
-        });
+        Completable userNameCompletable = Completable.fromAction(() -> receiverUtil.loadNewUsernameToDatabase(address));
 
         disposable = topicCompletable.andThen(userNameCompletable)
                 .subscribeOn(Schedulers.io())
