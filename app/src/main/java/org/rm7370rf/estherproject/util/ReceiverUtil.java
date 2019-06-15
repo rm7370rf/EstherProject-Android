@@ -26,9 +26,14 @@ public class ReceiverUtil {
 
     public void loadPostsOfTopicToDatabase(BigInteger topicId) throws Exception {
         long amount = dbHelper.countPosts(topicId);
+
+        if(amount > 0) {
+            amount--;
+        }
+
         BigInteger numberOfPosts = contract.countPostsAtTopic(topicId);
 
-        BigInteger localNumberOfPosts = BigInteger.valueOf(amount).subtract(BigInteger.ONE);
+        BigInteger localNumberOfPosts = BigInteger.valueOf(amount);
 
         if (numberOfPosts.compareTo(localNumberOfPosts) > 0) {
             for (BigInteger i = localNumberOfPosts; i.compareTo(numberOfPosts) < 0; i = i.add(BigInteger.ONE)) {
