@@ -34,6 +34,7 @@ public class EstherProject extends Application implements LifecycleObserver {
     protected void onEnterForeground() {
         RefreshScheduler.cancelAll();
     }
+
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     protected void onEnterBackground() {
         RefreshScheduler.prepareWorkManager();
